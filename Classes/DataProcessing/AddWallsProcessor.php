@@ -91,7 +91,7 @@ class AddWallsProcessor implements DataProcessorInterface
 
     protected function getCreationText(int $creationTime): string
     {
-        $creationTime = $creationTime / 1000;
+        $creationTime = (int)ceil($creationTime / 1000);
         $currentTimestamp = (int)date('U');
         $diffInSeconds = $currentTimestamp - $creationTime;
 
