@@ -19,6 +19,7 @@ use JWeiland\WallsIoProxy\Service\WallsService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\FlexFormService;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\ContentObject\DataProcessorInterface;
 
@@ -80,8 +81,47 @@ class AddWallsProcessor implements DataProcessorInterface
                 if ($property === 'post_image_aspect_ratio') {
                     $walls[$key]['post_image_padding'] = 100 / $value;
                 }
+                if ($property === 'external_created_timestamp') {
+                    $walls[$key]['external_created_timestamp_as_text'] = $this->getCreationText((int)$value);
+                }
             }
         }
         return $walls;
+    }
+
+    protected function getCreationText(int $creationTime): string
+    {
+        $creationTime = $creationTime / 1000;
+        $currentTimestamp = (int)date('U');
+        $diffInSeconds = $currentTimestamp - $creationTime;
+
+        $creationDate = new \DateTime(date('c', $creationTime));
+        $currentDate = new \DateTime(date('c', $currentTimestamp));
+        $dateInterval = $currentDate->diff($creationDate);
+
+        if ($diffInSeconds <= 60) {
+            return LocalizationUtility::translate(
+                'creationTime.seconds',
+                'walls_io_proxy'
+            );
+        } elseif ($diffInSeconds > 60 && $diffInSeconds <= 3600) {
+            return LocalizationUtility::translate(
+                'creationTime.minutes',
+                'walls_io_proxy',
+                [$dateInterval->format('%i')]
+            );
+        } elseif ($diffInSeconds > 3600 && $diffInSeconds <= 86400) {
+            return LocalizationUtility::translate(
+                'creationTime.hours',
+                'walls_io_proxy',
+                [$dateInterval->format('%h')]
+            );
+        } else {
+            return LocalizationUtility::translate(
+                'creationTime.date',
+                'walls_io_proxy',
+                [$creationDate->format('d.m.Y H:i')]
+            );
+        }
     }
 }
