@@ -1,0 +1,99 @@
+<html
+				xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+				data-namespace-typo3-fluid="true"
+>
+
+<f:layout name="Default"/>
+
+<f:section name="Main">
+	<div class="socialwall_container masonrygrid">
+		<div class="masonrygrid-sizer"></div>
+		<f:for each="{walls}" as="wall">
+			<div class="checkin-wrapper checkin-wrapper-{wall.id} checkin-wrapper-with-image checkin-wrapper-with-message checkin-wrapper-with-image-and-message is-visible masonrygrid-item"
+					 data-id="{wall.id}"
+					 data-original-id="{wall.id}"
+			>
+				<f:if condition="{wall.post_image}">
+					<f:then>
+						<f:variable name="checkinClass">checkin checkin-{wall.id} checkin-color-1 checkin-with-image checkin-with-message checkin-with-image-and-message</f:variable>
+					</f:then>
+					<f:else>
+						<f:variable name="checkinClass">checkin checkin-{wall.id} checkin-color-1 checkin-with-message checkin-without-image</f:variable>
+					</f:else>
+				</f:if>
+				<div class="{checkinClass}"
+						 data-id="{wall.id}"
+						 data-original-id="{wall.id}"
+						 data-weight="{wall.weight}"
+						 data-timestamp="{wall.external_created_timestamp}"
+						 data-bonus="0"
+						 data-is-looped=""
+						 data-tags=""
+						 data-type="facebook"
+						 data-user-id="{wall.external_user_id}"
+				>
+					<f:if condition="{wall.post_image}">
+						<div class="checkin-image-wrapper checkin-image-preview-holder">
+							<div class="checkin-image" data-action="show-detail"
+									 style="background-image:url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.post_image->f:format.urlencode()}&amp;w=700&amp;h=&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.post_image_key}); padding-bottom: {wall.post_image_padding}%">
+								<a href="{wall.post_link}" target="_blank"
+									 rel="nofollow noopener" class="checkin-image-link"></a>
+							</div>
+						</div>
+					</f:if>
+					<div class="checkin-message" dir="auto">{wall.html_comment->f:format.raw()->f:format.crop(maxCharacters: 200, respectWordBoundaries: 1, respectHtml: 1)}</div>
+					<div class="checkin-user clearfix">
+						<f:render section="renderFooter" arguments="{_all}" />
+					</div>
+				</div>
+			</div>
+		</f:for>
+	</div>
+</f:section>
+
+<f:section name="renderFooter">
+	<f:switch expression="{wall.type}">
+		<f:case value="facebook"><f:render section="renderFacebook" arguments="{_all}" /></f:case>
+		<f:case value="twitter"><f:render section="renderTwitter" arguments="{_all}" /></f:case>
+		<f:case value="instagram"><f:render section="renderInstagram" arguments="{_all}" /></f:case>
+	</f:switch>
+</f:section>
+
+<f:section name="renderFacebook">
+	<a href="https://www.facebook.com/{wall.external_user_id}" class="checkin-user-image" target="_blank"
+		 rel="nofollow noopener"
+		 style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.external_image_key})"></a>
+	<div class="checkin-user-name" title="{wall.external_fullname}">
+		<a href="https://www.facebook.com/{wall.external_user_id}" target="_blank" rel="nofollow noopener">
+			{wall.external_fullname}
+		</a>
+	</div>
+	<a href="{wall.post_link}" class="checkin-timestamp"
+		 data-timestamp="{wall.external_created_timestamp}" target="_blank" rel="nofollow noopener">vor einer Stunde</a>
+	<div class="checkin-type checkin-type-facebook" title="Facebook" data-action="show-detail"></div>
+</f:section>
+
+<f:section name="renderTwitter">
+	<a href="https://twitter.com/{wall.external_name}" class="checkin-user-image" target="_blank" rel="nofollow noopener" style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.external_image_key})"></a>
+	<div class="checkin-user-name" title="@{wall.external_name} ({wall.external_fullname})">
+		<a href="https://twitter.com/{wall.external_name}" target="_blank" rel="nofollow noopener">
+			<span class="checkin-user-name-part checkin-user-name-full">{wall.external_fullname}</span>
+			<span class="checkin-user-name-part checkin-user-name-short">@{wall.external_name}</span>
+		</a>
+	</div>
+	<a href="{wall.post_link}" class="checkin-timestamp" data-timestamp="{wall.external_created_timestamp}" target="_blank" rel="nofollow noopener">vor einer Stunde</a>
+	<div class="checkin-type checkin-type-twitter" title="Twitter" data-action="show-detail"></div>
+</f:section>
+
+<f:section name="renderInstagram">
+	<a href="https://www.instagram.com/{wall.external_name}/" class="checkin-user-image" target="_blank" rel="nofollow noopener" style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key=b944a3512d2c64c7dd4707ba58aa21a3)"></a>
+	<div class="checkin-user-name" title="@{wall.external_name} (external_fullname)">
+		<a href="https://www.instagram.com/{wall.external_name}/" target="_blank" rel="nofollow noopener">
+			<span class="checkin-user-name-part checkin-user-name-full">{wall.external_fullname}</span>
+			<span class="checkin-user-name-part checkin-user-name-short">@{wall.external_name}</span>
+		</a>
+	</div>
+	<a href="{wall.post_link}" class="checkin-timestamp" data-timestamp="{wall.external_created_timestamp}" target="_blank" rel="nofollow noopener">vor 22 Stunden</a>
+	<div class="checkin-type checkin-type-instagram" title="Instagram" data-action="show-detail"></div>
+</f:section>
+</html>

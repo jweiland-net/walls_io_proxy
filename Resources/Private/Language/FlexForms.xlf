@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
+		<header/>
+		<body>
+			<trans-unit id="sheetGeneral">
+				<source>General</source>
+			</trans-unit>
+			<trans-unit id="wallId">
+				<source>Wall ID</source>
+			</trans-unit>
+			<trans-unit id="entriesToLoad">
+				<source>Amount of entries to load</source>
+			</trans-unit>
+			<trans-unit id="entriesToShow">
+				<source>Amount of entries to show</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
