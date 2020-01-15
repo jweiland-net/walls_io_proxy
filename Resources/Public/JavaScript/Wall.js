@@ -12,6 +12,11 @@ function showWallIoEntries(wallIoUid)
         visibleWallIoElements[wallIoUid]++;
     }
 
+    // if masonry is loaded, jquery is loaded as well. Re-Layout masonry
+    if (document.getElementsByClassName('masonrygrid').length) {
+        $('.masonrygrid').masonry();
+    }
+
     // Hide >"load more" button, if there are no more entries
     if (visibleWallIoElements[wallIoUid] === wallIoElements[wallIoUid].length) {
         let buttons = wallIoSocialWallContainers[wallIoUid].getElementsByClassName('wallsio-load-more-button');
