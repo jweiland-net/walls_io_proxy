@@ -1,6 +1,5 @@
-<html
-				xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-				data-namespace-typo3-fluid="true"
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+			data-namespace-typo3-fluid="true"
 >
 
 <f:layout name="Default"/>
@@ -63,7 +62,9 @@
 </f:section>
 
 <f:section name="renderFacebook">
-	<a href="https://www.facebook.com/{wall.external_user_id}" class="checkin-user-image" target="_blank"
+	<a href="https://www.facebook.com/{wall.external_user_id}"
+		 class="checkin-user-image"
+		 target="_blank"
 		 rel="nofollow noopener"
 		 style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.external_image_key})"></a>
 	<div class="checkin-user-name" title="{wall.external_fullname}">
@@ -77,7 +78,11 @@
 </f:section>
 
 <f:section name="renderTwitter">
-	<a href="https://twitter.com/{wall.external_name}" class="checkin-user-image" target="_blank" rel="nofollow noopener" style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.external_image_key})"></a>
+	<a href="https://twitter.com/{wall.external_name}"
+		 class="checkin-user-image"
+		 target="_blank"
+		 rel="nofollow noopener"
+		 style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.external_image_key})"></a>
 	<div class="checkin-user-name" title="@{wall.external_name} ({wall.external_fullname})">
 		<a href="https://twitter.com/{wall.external_name}" target="_blank" rel="nofollow noopener">
 			<span class="checkin-user-name-part checkin-user-name-full">{wall.external_fullname}</span>
@@ -89,7 +94,11 @@
 </f:section>
 
 <f:section name="renderInstagram">
-	<a href="https://www.instagram.com/{wall.external_name}/" class="checkin-user-image" target="_blank" rel="nofollow noopener" style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key=b944a3512d2c64c7dd4707ba58aa21a3)"></a>
+	<a href="https://www.instagram.com/{wall.external_name}/"
+		 class="checkin-user-image"
+		 target="_blank"
+		 rel="nofollow noopener"
+		 style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.external_image_key})"></a>
 	<div class="checkin-user-name" title="@{wall.external_name} (external_fullname)">
 		<a href="https://www.instagram.com/{wall.external_name}/" target="_blank" rel="nofollow noopener">
 			<span class="checkin-user-name-part checkin-user-name-full">{wall.external_fullname}</span>
