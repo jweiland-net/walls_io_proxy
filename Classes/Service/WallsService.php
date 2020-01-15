@@ -15,6 +15,9 @@ namespace JWeiland\WallsIoProxy\Service;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -31,6 +34,11 @@ class WallsService
      * @var int
      */
     protected $wallId = 0;
+
+    /**
+     * @var FrontendInterface
+     */
+    protected $cache;
 
     /**
      * @var int
@@ -62,10 +70,27 @@ class WallsService
      */
     protected $header = [];
 
+    public function __construct()
+    {
+        $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
+        try {
+            $this->cache = $cacheManager->getCache('wallsioproxy');
+        } catch (NoSuchCacheException $exception) {
+        }
+    }
+
     public function getWalls(int $wallId, int $entriesToLoad): array
     {
         $this->wallId = $wallId;
         $this->entriesToLoad = $entriesToLoad;
+
+        if (
+            $this->cache instanceof FrontendInterface
+            && $this->cache->has('WallId:' . $this->wallId)
+        ) {
+            return $this->getDataFromResult($this->cache->get('WallId:' . $this->wallId), 3);
+        }
+
         return $this->getEntries(
             $this->getSessionId()
         );
@@ -110,6 +135,9 @@ class WallsService
         if (is_string($result)) {
             $data = $this->getDataFromResult($result, 3);
             if (!empty($data)) {
+                if ($this->cache instanceof FrontendInterface) {
+                    $this->cache->set('WallId:' . $this->wallId, $result);
+                }
                 return $data;
             }
         }
@@ -150,6 +178,7 @@ class WallsService
         $wallsUriParameters = [
             'wallId' => (string)$this->wallId,
             'client' => 'wallsio-frontend',
+            'cookieSupport' => (string)(int)$this->useCookies,
             'network' => '',
             'EIO' => '3',
             'transport' => 'polling'

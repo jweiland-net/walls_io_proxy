@@ -38,6 +38,16 @@ tt_content.wallsioproxy {
             '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.txt">'
         );
 
+        // activate caching for walls.io requests
+        if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['wallsioproxy'])) {
+            $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['wallsioproxy'] = [
+                'groups' => ['pages', 'all'],
+                'options' => [
+                    'defaultLifetime' => 900
+                ]
+            ];
+        }
+
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache'] =
             \JWeiland\WallsIoProxy\Hook\DataHandler::class . '->clearCachePostProc';
     }
