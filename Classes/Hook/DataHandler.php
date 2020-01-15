@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-namespace JWeiland\WallsIoProxy\Hooks;
+namespace JWeiland\WallsIoProxy\Hook;
 
 /*
  * This file is part of the walls_io_proxy project.

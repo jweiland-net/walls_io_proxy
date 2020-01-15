@@ -11,3 +11,6 @@ mod.wizards.newContentElement.wizardItems.special {
   }
   show := addToList(wallsioproxy)
 }
+
+# Add CType Preview
+mod.web_layout.tt_content.preview.wallsioproxy = EXT:walls_io_proxy/Resources/Private/Templates/PluginPreview/TableView.html
