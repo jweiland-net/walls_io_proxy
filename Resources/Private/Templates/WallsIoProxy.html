@@ -21,7 +21,7 @@
 							<f:variable name="checkinClass">checkin checkin-{wall.id} checkin-color-1 checkin-with-message checkin-without-image</f:variable>
 						</f:else>
 					</f:if>
-					<div class="{checkinClass}"
+					<div class="{checkinClass}{f:if(condition: wall.post_video, then: ' checkin-with-video')}"
 							 data-id="{wall.id}"
 							 data-original-id="{wall.id}"
 							 data-weight="{wall.weight}"
@@ -34,10 +34,24 @@
 					>
 						<f:if condition="{wall.post_image}">
 							<div class="checkin-image-wrapper checkin-image-preview-holder">
-								<div class="checkin-image" data-action="show-detail"
-										 style="background-image:url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.post_image->f:format.urlencode()}&amp;w=700&amp;h=&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.post_image_key}); padding-bottom: {wall.post_image_padding}%">
+								<div class="checkin-image"
+										 data-action="show-detail"
+										 style="background-image:url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.post_image->f:format.urlencode()}&amp;w=700&amp;h=&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.post_image_key}); padding-bottom: {wall.post_image_padding}%"
+								>
+									<f:if condition="{wall.post_video}">
+										<div class="video-wrapper checkin-video-wrapper video-muted video-playing video-has-played">
+											<video class="checkin-video" playsinline="" loop="" muted="">
+												<source src="{wall.post_video}" type="video/mp4">
+											</video>
+											<div class="video-mute-button"></div>
+										</div>
+									</f:if>
 									<a href="{wall.post_link}" target="_blank"
-										 rel="nofollow noopener" class="checkin-image-link"></a>
+										 rel="nofollow noopener" class="checkin-image-link"
+									></a>
+									<f:if condition="{wall.post_video}">
+										<div class="video-play-button"></div>
+									</f:if>
 								</div>
 							</div>
 						</f:if>
