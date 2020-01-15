@@ -86,9 +86,9 @@ class WallsService
 
         if (
             $this->cache instanceof FrontendInterface
-            && $this->cache->has('WallId:' . $this->wallId)
+            && $this->cache->has('WallId_' . $this->wallId)
         ) {
-            return $this->getDataFromResult($this->cache->get('WallId:' . $this->wallId), 3);
+            return $this->getDataFromResult($this->cache->get('WallId_' . $this->wallId), 3);
         }
 
         return $this->getEntries(
@@ -136,7 +136,7 @@ class WallsService
             $data = $this->getDataFromResult($result, 3);
             if (!empty($data)) {
                 if ($this->cache instanceof FrontendInterface) {
-                    $this->cache->set('WallId:' . $this->wallId, $result);
+                    $this->cache->set('WallId_' . $this->wallId, $result);
                 }
                 return $data;
             }

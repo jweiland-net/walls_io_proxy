@@ -6,7 +6,7 @@
 <f:layout name="Default"/>
 
 <f:section name="Main">
-	<div class="socialwall_container masonrygrid">
+	<div class="socialwall_container masonrygrid" data-uid="{data.uid}" data-entries-to-show="{conf.entriesToShow}">
 		<div class="masonrygrid-sizer"></div>
 		<f:for each="{walls}" as="wall">
 			<div class="checkin-wrapper checkin-wrapper-{wall.id} checkin-wrapper-with-image checkin-wrapper-with-message checkin-wrapper-with-image-and-message is-visible masonrygrid-item"
@@ -48,6 +48,7 @@
 				</div>
 			</div>
 		</f:for>
+		<button type="button" class="wallsio-load-more-button" onclick="showWallIoEntries({data.uid})">Lade weitere Posts</button>
 	</div>
 </f:section>
 

@@ -4,6 +4,11 @@ tt_content.wallsioproxy {
     1 = JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor
   }
 }
+
 page.includeCSS {
   wall-fluid = EXT:walls_io_proxy/Resources/Public/Css/WallFluid.css
+}
+
+page.includeJSFooterlibs {
+  wall-fluid = EXT:walls_io_proxy/Resources/Public/JavaScript/Wall.js
 }
