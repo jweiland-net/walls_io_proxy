@@ -12,9 +12,12 @@ function showWallIoEntries(wallIoUid)
         visibleWallIoElements[wallIoUid]++;
     }
 
-    // if masonry is loaded, jquery is loaded as well. Re-Layout masonry
+    // If masonry is loaded, jquery is loaded as well. Re-Layout masonry
     if (document.getElementsByClassName('masonrygrid').length) {
-        $('.masonrygrid').masonry();
+        let $masonryGrids = $('.masonrygrid');
+        if (typeof $masonryGrids.masonry === 'function') {
+            $masonryGrids.masonry();
+        }
     }
 
     // Hide >"load more" button, if there are no more entries
