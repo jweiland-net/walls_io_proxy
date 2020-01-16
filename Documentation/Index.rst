@@ -20,10 +20,10 @@ Extension Name
    en
 
 :Authors:
-   Your name
+   Stefan Froemken
 
 :Email:
-   you@domain.tld
+   projects@jweiland.net
 
 :License:
    This extension documentation is published under the
@@ -40,7 +40,7 @@ Extension Name
 
 **Community Documentation:**
 
-   This documentation is community documentation for the TYPO3 extension {extension.name}
+   This documentation is community documentation for the TYPO3 extension walls_io_proxy
 
    It is maintained as part of this third party extension.
 
@@ -49,7 +49,7 @@ Extension Name
 
 **Extension Manual**
 
-   This documentation is for the TYPO3 extension <extkey>.
+   This documentation is for the TYPO3 extension walls_io_proxy.
 
 
 
@@ -70,10 +70,10 @@ Extension Name
 
 
    Introduction/Index
-   Editor/Index
    Installation/Index
    Configuration/Index
-   Developer/Index
+   Contribute/Index
    KnownProblems/Index
+   ChangeLog/Index
    Sitemap
 

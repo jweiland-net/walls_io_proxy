@@ -3,57 +3,37 @@
 
 .. _introduction:
 
-============
 Introduction
 ============
 
 
-.. tip::
-
-   New to reStructuredText and Sphinx?
-
-   Get an introduction:
-   https://docs.typo3.org/m/typo3/docs-how-to-document/master/en-us/WritingReST/Index.html
-
-   Use this cheat sheet as reference:
-   https://docs.typo3.org/m/typo3/docs-how-to-document/master/en-us/WritingReST/CheatSheet.html
-
 .. _what-it-does:
 
 What does it do?
-================
+----------------
 
-The aim of this chapter is to provide a general overview of your extension.
+walls.io is a service to show you entries/posts of a specific topic or hashtag from various social media websites
+like Facebook, Twitter and Instagram on your website. But as long as you don't have a
+Premium Account (500 € each month. Date: 10.01.2020) you can not use their API and you have to accept their cookies
+while using their embedded iframe or JS file implementation. With walls_io_proxy no Cookie of walls.io will be set
+on client-side anymore, as we have moved all XHR/Ajax Requests of their JS file to server-side (PHP).
 
-* What does it do?
-* What problems does it solve?
-* Who is the target audience?
+Our walls_io_proxy is no API and will not use the API of walls.io.
 
-This chapter should provide information that will help inform 
-potential users and assist them in deciding if they should 
-install and use this extension.
-
-.. important::
-
-   Don't forget to repeat your extension's version number in the
-   :file:`Settings.cfg` file, in the :code:`release` property. It will be
-   automatically picked up on the cover page by the :code:`|release|`
-   substitution.
+As walls_io_proxy gets all data from walls.io now it's up to you to create your own FluidTemplate for your
+social wall. We don't support all their integrated Themes, Styles and Views. You have the data now, do what you want.
 
 
 .. _screenshots:
 
 Screenshots
-===========
+-----------
 
-This chapter should help people understand how the extension works. Remove it
-if it is not relevant.
+See walls_io_proxy in action.
 
-.. figure:: ../Images/IntroductionPackage.png
-   :class: with-shadow
-   :alt: Introduction Package
-   :width: 300px
+Point
+~~~~~
 
-   Introduction Package just after installation (caption of the image)
-
-How the Frontend of the Introduction Package looks like just after installation (legend of the image)
+.. figure:: ../Images/Introduction/walls-io-proxy.png
+   :width: 500px
+   :alt: Walls.io Proxy in action

@@ -1,17 +1,19 @@
 .. include:: ../Includes.txt
 
 
-
 .. _installation:
 
-============
 Installation
 ============
 
 Target group: **Administrators**
 
-- How is the extension installed?
-- Are there any dependencies that need to be resolved?
+The extension needs to be installed like any other extension of TYPO3 CMS:
 
-You can also refer to general TYPO3 documentation, for example the
-:ref:`t3install:start`.
+#. Visit ExtensionManager
+
+#. Switch over to `Get Extensions`
+
+#. Search for `walls_io_proxy`
+
+#. Install extension

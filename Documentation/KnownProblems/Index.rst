@@ -7,5 +7,5 @@
 Known Problems
 ==============
 
-Use this section for informing about any type of of problem
-that are not necessarily named in the bug tracker such as performance issues, ...
+If walls.io will change their JS implementation and their XHR/Ajax Requests, this extensions
+may not work anymore.

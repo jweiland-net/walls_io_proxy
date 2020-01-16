@@ -3,59 +3,67 @@
 
 .. _configuration:
 
-=============
 Configuration
 =============
 
 Target group: **Developers, Integrators**
 
-How is the extension configured? Aim to provide simple instructions detailing 
-how the extension is configured. Always assume that the user has no prior experience 
-of using your extension.
 
-Try and provide a typical use case for your extension and detail each of the 
-steps required to get the extension running.
+Minimal Example
+---------------
 
+- It is necessary to include static template `Walls.io Proxy (walls_io_proxy)`
 
-Typical Example
-===============
-
-- Do we need to include a static template?
-- For example add a code snippet with comments
-
-Minimal example of TypoScript:
-
-- Code-blocks have support for syntax highlighting
-- Use any supported language
+This will set the path to our Main Template file, which can can change of cause:
 
 .. code-block:: typoscript
 
-   plugin.tx_myextension.settings {
-      # configure basic email settings
-      email {
-         subject = Some subject
-         from = someemail@domain.de
-      }
+   tt_content.wallsioproxy {
+      # Override our template, if you want
+      templateRootPaths.10 = EXT:your_ext/Resources/Private/Templates/
    }
+
 
 .. _configuration-typoscript:
 
-TypoScript Reference
-====================
+TypoScript Setup Reference
+--------------------------
 
-Possible subsections: Reference of TypoScript options.
-The construct below show the recommended structure for
-TypoScript properties listing and description.
+You can change the templateRootPaths. See above.
 
-When detailing data types or standard TypoScript
-features, don't hesitate to cross-link to the TypoScript
-Reference as shown below.
+Further you can change walls.io CSS file and our JS:
 
+.. code-block:: typoscript
 
-See `Hyperlinks & Cross-Referencing <https://docs.typo3.org/typo3cms/HowToDocument/WritingReST/Hyperlinks.html>`
-for information about how to use cross-references.
+   # Change CSS file
+   page.includeCSS.wall-fluid = EXT:your_ext/Resources/Public/Css/WhatEver.css
 
-See the :file:`Settings.cgf` file for the declaration of cross-linking keys.
-You can add more keys besides tsref.
+   # Change our JS file
+   page.includeJSFooterlibs.wall-fluid = EXT:your_ext/Resources/Public/JavaScript/Wall.js
 
 
+.. _configuration-wallsioproxy:
+
+ContentElement Settings
+-----------------------
+
+After installation of walls_io_proxy you will find a new ContentElement in newContentElementWizard called
+"Walls.io Proxy". On Tab "Walls.io" you can configure the Output as follows:
+
+Wall ID
+~~~~~~~
+
+To show the correct Wall which you have configured in customer menu of walls.io, you have to
+add the specific wallId here. Click the label of this field to get more information about where you can
+find the WallId.
+
+Amount of entries to load
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+How many entries should be loaded with request? Should be a multiple of "Amount of entries to show".
+
+Amount of entries to show
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This amount of entries will be visible displayed in frontend. With each hit on the load more button this amount
+of entries will be appended to the current visible entries in frontend.
