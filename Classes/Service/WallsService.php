@@ -31,6 +31,13 @@ class WallsService
     protected $wallsUri = 'https://walls.io/socket.io/';
 
     /**
+     * Needed to clear cache individually
+     *
+     * @var int
+     */
+    protected $contentElementUid = 0;
+
+    /**
      * @var int
      */
     protected $wallId = 0;
@@ -79,8 +86,9 @@ class WallsService
         }
     }
 
-    public function getWalls(int $wallId, int $entriesToLoad): array
+    public function getWalls(int $contentElementUid, int $wallId, int $entriesToLoad): array
     {
+        $this->contentElementUid = $contentElementUid;
         $this->wallId = $wallId;
         $this->entriesToLoad = $entriesToLoad;
 
@@ -136,7 +144,13 @@ class WallsService
             $data = $this->getDataFromResult($result, 3);
             if (!empty($data)) {
                 if ($this->cache instanceof FrontendInterface) {
-                    $this->cache->set('WallId_' . $this->wallId, $result);
+                    $this->cache->set(
+                        'WallId_' . $this->wallId,
+                        $result,
+                        [
+                            'tt_content_uid_' . $this->contentElementUid
+                        ]
+                    );
                 }
                 return $data;
             }

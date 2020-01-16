@@ -49,6 +49,7 @@ class AddWallsProcessor implements DataProcessorInterface
 
         $wallsService = GeneralUtility::makeInstance(WallsService::class);
         $walls = $wallsService->getWalls(
+            (int)$cObj->data['uid'],
             (int)$processedData['conf']['wallId'],
             (int)$processedData['conf']['entriesToLoad']
         );

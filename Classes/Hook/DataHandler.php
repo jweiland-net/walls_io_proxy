@@ -15,6 +15,8 @@ namespace JWeiland\WallsIoProxy\Hook;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -29,11 +31,19 @@ class DataHandler
      */
     public function clearCachePostProc(array $params)
     {
-        if (
-            (isset($params['table']) && $params['table'] === 'tt_content')
-            || (isset($params['cacheCmd']) && in_array($params['cacheCmd'], ['all', 'pages', 'system'], true))
-        ) {
-            // @ToDo: Delete walls_io_proxy related cache
+        if (isset($params['table']) && $params['table'] === 'tt_content') {
+            $cacheTagsToFlush = [];
+            if (isset($params['uid'])) {
+                $cacheTagsToFlush[] = 'tt_content_uid_' . (int)$params['uid'];
+            }
+            $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
+            foreach ($cacheTagsToFlush as $cacheTag) {
+                try {
+                    $cacheManager->flushCachesInGroupByTag('pages', $cacheTag);
+                } catch (NoSuchCacheGroupException $exception) {
+                    continue;
+                }
+            }
         }
     }
 }
