@@ -1,4 +1,4 @@
-# walls_io_cache
+# TYPO3 Extension: walls_io_cache
 
 walls.io is a service to show you entries/posts of a specific topic or hashtag from various social media websites
 like Facebook, Twitter and Instagram on your website. But as long as you don't have a
@@ -10,3 +10,9 @@ Our walls_io_proxy is no API and will not use the API of walls.io.
 
 As walls_io_proxy gets all data from walls.io now it's up to you to create your own FluidTemplate for your
 social wall. We don't support all their integrated Themes, Styles and Views. You have the data now, do what you want.
+
+# Installation
+
+You can install this extension via Composer with:
+
+`composer req jweiland/walls-io-proxy`
