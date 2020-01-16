@@ -82,14 +82,14 @@ class AddWallsProcessor implements DataProcessorInterface
                     $walls[$key]['post_image_padding'] = 100 / $value;
                 }
                 if ($property === 'external_created_timestamp') {
-                    $walls[$key]['external_created_timestamp_as_text'] = $this->getCreationText((int)$value);
+                    $walls[$key]['external_created_timestamp_as_text'] = $this->getCreationText((float)$value);
                 }
             }
         }
         return $walls;
     }
 
-    protected function getCreationText(int $creationTime): string
+    protected function getCreationText(float $creationTime): string
     {
         $creationTime = (int)ceil($creationTime / 1000);
         $currentTimestamp = (int)date('U');
