@@ -1,9 +1,12 @@
 # walls_io_cache
 
-If you use the service of walls.io you accept the use of their Cookies.
-In times of GDPR/DSGVO these Cookies may be a problem for you. That's why we
-have analyzed their JavaScript and extracted the walls.io requests and adapted
-them to PHP. So yes, a Cookie will still be set, but on Server side, not on
-Client side. 
+walls.io is a service to show you entries/posts of a specific topic or hashtag from various social media websites
+like Facebook, Twitter and Instagram on your website. But as long as you don't have a
+Premium Account (500 € each month. Date: 10.01.2020) you can not use their API and you have to accept their cookies
+while using their embedded iframe or JS file implementation. With walls_io_proxy no Cookie of walls.io will be set
+on client-side anymore, as we have moved all XHR/Ajax Requests of their JS file to server-side (PHP).
 
-As the data is managed through PHP, it's up to you to modify the template on your own now.
+Our walls_io_proxy is no API and will not use the API of walls.io.
+
+As walls_io_proxy gets all data from walls.io now it's up to you to create your own FluidTemplate for your
+social wall. We don't support all their integrated Themes, Styles and Views. You have the data now, do what you want.
