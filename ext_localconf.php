@@ -23,7 +23,7 @@ tt_content.wallsioproxy {
         // Register SVG Icon Identifier
         $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
         $svgIcons = [
-            'ext-wallsioproxy-wizard-icon' => 'extension.svg',
+            'ext-wallsioproxy-wizard-icon' => 'Extension.svg',
         ];
         foreach ($svgIcons as $identifier => $fileName) {
             $iconRegistry->registerIcon(
