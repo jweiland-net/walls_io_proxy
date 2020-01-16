@@ -41,6 +41,7 @@
 	"extra": {
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",
+			"extension-key": "walls_io_proxy",
 			"web-dir": ".Build/public"
 		}
 	}
