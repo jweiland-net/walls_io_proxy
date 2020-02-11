@@ -78,8 +78,13 @@ class WallsService
         $this->wallId = $wallId;
         $this->entriesToLoad = $entriesToLoad;
 
-        if ($this->registry->has('WallId_' . $this->wallId)) {
-            return $this->getDataFromResult($this->registry->get('WallsIoProxy', 'WallId_' . $this->wallId), 3);
+        $storedWall = $this->getDataFromResult(
+            $this->registry->get('WallsIoProxy', 'WallId_' . $this->wallId),
+            3
+        );
+
+        if ($storedWall !== null) {
+            return $storedWall;
         }
 
         return $this->getEntries(
