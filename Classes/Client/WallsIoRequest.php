@@ -100,7 +100,6 @@ class WallsIoRequest
         $this->includeHeader = $includeHeader;
     }
 
-
     public function getUseBinarySupport(): bool
     {
         return $this->useBinarySupport;
