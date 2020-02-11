@@ -47,8 +47,5 @@ tt_content.wallsioproxy {
                 ]
             ];
         }
-
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache'] =
-            \JWeiland\WallsIoProxy\Hook\DataHandler::class . '->clearCachePostProc';
     }
 );
