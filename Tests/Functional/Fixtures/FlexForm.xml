@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3FlexForms>
+	<data>
+		<sheet index="sDEF">
+			<language index="lDEF">
+				<field index="wallId">
+					<value index="vDEF">12345</value>
+				</field>
+				<field index="entriesToLoad">
+					<value index="vDEF">24</value>
+				</field>
+				<field index="entriesToShow">
+					<value index="vDEF">8</value>
+				</field>
+			</language>
+		</sheet>
+	</data>
+</T3FlexForms>
