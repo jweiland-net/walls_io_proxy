@@ -45,7 +45,7 @@ class WallsService
     {
         $storedWall = $this->registry->get('WallsIoProxy', 'WallId_' . $wallId);
         if ($storedWall !== null) {
-            return $this->getDataFromResult($storedWall,3);
+            return $this->getDataFromResult($storedWall, 3);
         }
 
         return $this->getEntries($wallId, $entriesToLoad);
