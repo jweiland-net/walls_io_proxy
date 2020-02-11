@@ -79,7 +79,6 @@ class WallsIoRequest
         $this->sessionId = $sessionId;
     }
 
-
     public function getEntriesToLoad(): int
     {
         return $this->entriesToLoad;
