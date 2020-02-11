@@ -58,7 +58,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getHeaderInitiallyReturnsEmptyString()
+    public function processAddsWallsToProcessedData()
     {
         $cObj = new ContentObjectRenderer();
         $processedData = [
