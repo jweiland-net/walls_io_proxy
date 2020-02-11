@@ -38,7 +38,7 @@ class WallsService
     public function __construct(Registry $registry = null, WallsIoClient $client = null)
     {
         $this->registry = $registry ?? GeneralUtility::makeInstance(Registry::class);
-        $this->client = $client ?? GeneralUtility::makeInstance(WallsIoClient::class);
+        $this->client = $client ?? GeneralUtility::makeInstance(WallsIoClient::class, $this);
     }
 
     public function getWalls(int $wallId, int $entriesToLoad): array
@@ -51,16 +51,16 @@ class WallsService
         return $this->getEntries($wallId, $entriesToLoad);
     }
 
-    protected function getEntries($wallId, int $entriesToLoad): array
+    protected function getEntries(int $wallId, int $entriesToLoad): array
     {
         $sessionId = $this->getSessionId($wallId);
         if ($sessionId) {
-            $wallsIoSessionRequest = GeneralUtility::makeInstance(WallsIoRequest::class);
-            $wallsIoSessionRequest->setWallId($wallId);
-            $wallsIoSessionRequest->setSessionId($sessionId);
-            $wallsIoSessionRequest->setEntriesToLoad($entriesToLoad);
-            $wallsIoSessionRequest->setIncludeHeader(0);
-            $response = $this->client->processRequest($wallsIoSessionRequest);
+            $wallsIoEntryRequest = GeneralUtility::makeInstance(WallsIoRequest::class);
+            $wallsIoEntryRequest->setWallId($wallId);
+            $wallsIoEntryRequest->setSessionId($sessionId);
+            $wallsIoEntryRequest->setEntriesToLoad($entriesToLoad);
+            $wallsIoEntryRequest->setIncludeHeader(0);
+            $response = $this->client->processRequest($wallsIoEntryRequest);
 
             if ($response->getBody()) {
                 $data = $this->getDataFromResult($response->getBody(), 3);
@@ -106,4 +106,32 @@ class WallsService
         return is_array($data) ? $data : [];
     }
 
+    /**
+     * Walls.io works with a special Timestamp format
+     * I have adapted the JS part into PHP
+     *
+     * function r(t) {
+     *   var e = "";
+     *   do e = s[t % a] + e, t = Math.floor(t / a); while (t > 0);
+     *   return e
+     * }
+     *
+     * @param int $timestamp
+     * @return string
+     */
+    public function getFormattedTimestamp(int $timestamp): string
+    {
+        $chars = range(0, 9);
+        array_push($chars, ...range('A', 'Z'));
+        array_push($chars, ...range('a', 'z'));
+        array_push($chars, ...['-', '_']);
+        $amountOfChars = count($chars);
+        $timestamp = $timestamp * 1000; // we need Microseconds
+        $formattedTimestamp = '';
+        do {
+            $formattedTimestamp = $chars[$timestamp % $amountOfChars] . $formattedTimestamp;
+            $timestamp = floor($timestamp / $amountOfChars);
+        } while ($timestamp > 0);
+        return $formattedTimestamp;
+    }
 }

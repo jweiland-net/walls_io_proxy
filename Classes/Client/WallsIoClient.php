@@ -15,6 +15,7 @@ namespace JWeiland\WallsIoProxy\Client;
  * The TYPO3 project - inspiring people to share!
  */
 
+use JWeiland\WallsIoProxy\Service\WallsService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -28,6 +29,11 @@ class WallsIoClient
     protected $wallsUri = 'https://walls.io/socket.io/';
 
     /**
+     * @var WallsService
+     */
+    protected $wallsService;
+
+    /**
      * Needed to catch Cookie information
      *
      * @var array
@@ -39,10 +45,19 @@ class WallsIoClient
      */
     protected $error = [];
 
-    public function processRequest(WallsIoRequest $request)
+    public function __construct(WallsService $wallsService)
     {
-        // Remove previous request error
+        $this->wallsService = $wallsService;
+    }
+
+    public function processRequest(WallsIoRequest $request): WallsIoResponse
+    {
         $this->error = [];
+        $response = GeneralUtility::makeInstance(WallsIoResponse::class);
+
+        if (!$this->isValidRequest($request)) {
+            return $response;
+        }
 
         $result = GeneralUtility::getUrl(
             $this->buildWallsUri($request),
@@ -51,7 +66,9 @@ class WallsIoClient
             $this->error
         );
 
-        $response = GeneralUtility::makeInstance(WallsIoResponse::class);
+        if ($this->hasError()) {
+            return $response;
+        }
 
         if ($request->getIncludeHeader()) {
             // Explode 2 \r\n to separate header from body
@@ -69,6 +86,18 @@ class WallsIoClient
         }
 
         return $response;
+    }
+
+    protected function isValidRequest(WallsIoRequest $request): bool
+    {
+        if (!$request->getWallId()) {
+            $this->error = [
+                'message' => 'You have forgotten to define a Wall ID in Plugin Configuration',
+                'title' => 'Missing mandatory Wall ID in Request'
+            ];
+            return false;
+        }
+        return true;
     }
 
     public function hasError()
@@ -112,7 +141,7 @@ class WallsIoClient
             'network' => '',
             'EIO' => '3',
             'transport' => 'polling',
-            't' => $this->getFormattedTimestamp()
+            't' => $this->wallsService->getFormattedTimestamp((int)date('U'))
         ];
 
         if ($request->getEntriesToLoad()) {
@@ -160,33 +189,5 @@ class WallsIoClient
             }
         }
         return implode(';', $cookies);
-    }
-
-    /**
-     * Walls.io works with a special Timestamp format
-     * I have adapted the JS part into PHP
-     *
-     * function r(t) {
-     *   var e = "";
-     *   do e = s[t % a] + e, t = Math.floor(t / a); while (t > 0);
-     *   return e
-     * }
-     *
-     * @return string
-     */
-    protected function getFormattedTimestamp(): string
-    {
-        $chars = range(0, 9);
-        array_push($chars, ...range('A', 'Z'));
-        array_push($chars, ...range('a', 'z'));
-        array_push($chars, ...['-', '_']);
-        $amountOfChars = count($chars);
-        $timestamp = date('U') * 1000; // we need Microseconds
-        $formattedTimestamp = '';
-        do {
-            $formattedTimestamp = $chars[$timestamp % $amountOfChars] . $formattedTimestamp;
-            $timestamp = floor($timestamp / $amountOfChars);
-        } while ($timestamp > 0);
-        return $formattedTimestamp;
     }
 }
