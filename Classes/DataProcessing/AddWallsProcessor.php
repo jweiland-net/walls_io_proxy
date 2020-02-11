@@ -16,8 +16,8 @@ namespace JWeiland\WallsIoProxy\DataProcessing;
  */
 
 use JWeiland\WallsIoProxy\Service\WallsService;
+use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Service\FlexFormService;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -65,7 +65,11 @@ class AddWallsProcessor implements DataProcessorInterface
 
     protected function updateProcessedData(array &$processedData)
     {
-        $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
+        if (version_compare(TYPO3_branch, '9.4', '>=')) {
+            $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
+        } else {
+            $flexFormService = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Service\FlexFormService::class);
+        }
         $conf = $flexFormService->convertFlexFormContentToArray(
             $processedData['data']['pi_flexform'] ?? []
         );
