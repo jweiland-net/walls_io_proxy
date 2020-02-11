@@ -72,6 +72,7 @@ Extension Name
    Introduction/Index
    Installation/Index
    Configuration/Index
+   AdministratorManual/Index
    Contribute/Index
    KnownProblems/Index
    ChangeLog/Index
