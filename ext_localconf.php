@@ -37,15 +37,5 @@ tt_content.wallsioproxy {
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
             '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.txt">'
         );
-
-        // activate caching for walls.io requests
-        if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['wallsioproxy'])) {
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['wallsioproxy'] = [
-                'groups' => ['pages', 'all'],
-                'options' => [
-                    'defaultLifetime' => 900
-                ]
-            ];
-        }
     }
 );

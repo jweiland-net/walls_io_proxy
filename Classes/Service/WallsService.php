@@ -15,9 +15,7 @@ namespace JWeiland\WallsIoProxy\Service;
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -31,21 +29,14 @@ class WallsService
     protected $wallsUri = 'https://walls.io/socket.io/';
 
     /**
-     * Needed to clear cache individually
-     *
-     * @var int
-     */
-    protected $contentElementUid = 0;
-
-    /**
      * @var int
      */
     protected $wallId = 0;
 
     /**
-     * @var FrontendInterface
+     * @var Registry
      */
-    protected $cache;
+    protected $registry;
 
     /**
      * @var int
@@ -77,26 +68,18 @@ class WallsService
      */
     protected $header = [];
 
-    public function __construct()
+    public function __construct(Registry $registry = null)
     {
-        $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
-        try {
-            $this->cache = $cacheManager->getCache('wallsioproxy');
-        } catch (NoSuchCacheException $exception) {
-        }
+        $this->registry = $registry ?? GeneralUtility::makeInstance(Registry::class);
     }
 
-    public function getWalls(int $contentElementUid, int $wallId, int $entriesToLoad): array
+    public function getWalls(int $wallId, int $entriesToLoad): array
     {
-        $this->contentElementUid = $contentElementUid;
         $this->wallId = $wallId;
         $this->entriesToLoad = $entriesToLoad;
 
-        if (
-            $this->cache instanceof FrontendInterface
-            && $this->cache->has('WallId_' . $this->wallId)
-        ) {
-            return $this->getDataFromResult($this->cache->get('WallId_' . $this->wallId), 3);
+        if ($this->registry->has('WallId_' . $this->wallId)) {
+            return $this->getDataFromResult($this->registry->get('WallsIoProxy', 'WallId_' . $this->wallId), 3);
         }
 
         return $this->getEntries(
@@ -143,15 +126,11 @@ class WallsService
         if (is_string($result)) {
             $data = $this->getDataFromResult($result, 3);
             if (!empty($data)) {
-                if ($this->cache instanceof FrontendInterface) {
-                    $this->cache->set(
-                        'WallId_' . $this->wallId,
-                        $result,
-                        [
-                            'tt_content_uid_' . $this->contentElementUid
-                        ]
-                    );
-                }
+                $this->registry->set(
+                    'WallsIoProxy',
+                    'WallId_' . $this->wallId,
+                    $result
+                );
                 return $data;
             }
         }
