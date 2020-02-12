@@ -1,6 +1,8 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
 			data-namespace-typo3-fluid="true">
 
+<f:be.pageRenderer includeRequireJsModules="{0: 'TYPO3/CMS/WallsIoProxy/ClearCache'}" />
+
 <table class="table">
 	<thead>
 	<tr>
@@ -23,4 +25,9 @@
 	</tr>
 	</tbody>
 </table>
+<div class="btn btn-default wallsIoProxyClearCache"
+		 data-wall-id="{pi_flexform_transformed.wallId}"
+		 data-clear-cache-uri="{f:be.uri(route: 'tce_db', parameters: {cacheCmd: 'WallIoProxy', wallId: pi_flexform_transformed.wallId})}">
+	Clear Cache
+</div>
 </html>
