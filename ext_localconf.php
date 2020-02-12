@@ -37,5 +37,8 @@ tt_content.wallsioproxy {
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
             '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.txt">'
         );
+
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache'] =
+            \JWeiland\WallsIoProxy\Hook\DataHandler::class . '->clearCachePostProc';
     }
 );
