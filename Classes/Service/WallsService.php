@@ -100,6 +100,16 @@ class WallsService
 
     protected function getDataFromResult(string $result, int $explodeParts): array
     {
+        // Remove BOM
+        if (strpos(bin2hex($result), 'efbbbf') === 0) {
+            $result = substr($result, 3);
+        }
+
+        // Remove unwanted control chars from JSON String
+        for ($i = 0; $i <= 31; ++$i) {
+            $result = str_replace(chr($i), "", $result);
+        }
+
         $parts = GeneralUtility::trimExplode(':', $result, true, $explodeParts);
         $jsonString = preg_replace('/^\d+/', '', $parts[$explodeParts - 1]);
         $data = json_decode($jsonString, true);
