@@ -107,7 +107,7 @@ class WallsService
 
         // Remove unwanted control chars from JSON String
         for ($i = 0; $i <= 31; ++$i) {
-            $result = str_replace(chr($i), "", $result);
+            $result = str_replace(chr($i), '', $result);
         }
 
         $parts = GeneralUtility::trimExplode(':', $result, true, $explodeParts);
