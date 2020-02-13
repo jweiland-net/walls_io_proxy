@@ -27,9 +27,11 @@
 	</tbody>
 </table>
 
-<div class="btn btn-default wallsIoProxyClearCache"
-		 data-wall-id="{pi_flexform_transformed.wallId}"
-		 data-clear-cache-uri="{w:be.uriBuilder(moduleName: 'tce_db', urlParameters: {cacheCmd: 'WallIoProxy', wallId: pi_flexform_transformed.wallId})}">
-	Clear Cache
-</div>
+<w:be.security.isAdministrator>
+	<div class="btn btn-default wallsIoProxyClearCache"
+			 data-wall-id="{pi_flexform_transformed.wallId}"
+			 data-clear-cache-uri="{w:be.uriBuilder(moduleName: 'tce_db', urlParameters: {cacheCmd: 'WallIoProxy', wallId: pi_flexform_transformed.wallId})}">
+		Clear Cache
+	</div>
+</w:be.security.isAdministrator>
 </html>
