@@ -46,8 +46,12 @@ class WallsServiceTest extends FunctionalTestCase
     protected function setUp()
     {
         parent::setUp();
+
         $this->registry = GeneralUtility::makeInstance(Registry::class);
+        $this->registry->removeAllByNamespace('WallsIoProxy');
+
         $this->client = $this->prophesize(WallsIoClient::class);
+
         $this->subject = new WallsService(
             $this->registry,
             $this->client->reveal()
@@ -65,13 +69,36 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallsWillGetWallsFromRegistry()
+    public function getWallsWithBrokenRequestWillGetWallsFromRegistry()
     {
         $this->registry->set(
             'WallsIoProxy',
             'WallId_12345',
             '1:2:{"walls":2}'
         );
+
+        $wallsIoRequestForSession = new WallsIoRequest();
+        $wallsIoRequestForSession->setWallId(12345);
+        $wallsIoRequestForSession->setIncludeHeader(1);
+
+        $wallsIoResponseForSession = new WallsIoResponse();
+        $wallsIoResponseForSession->setBody('1:0{"sid":""}');
+
+        $this->client
+            ->processRequest($wallsIoRequestForSession)
+            ->shouldBeCalled()
+            ->willReturn($wallsIoResponseForSession);
+        $this->client
+            ->hasError()
+            ->shouldBeCalled()
+            ->willReturn(true);
+        $this->client
+            ->getError()
+            ->shouldBeCalled()
+            ->willReturn([
+                'message' => 'Session ID empty'
+            ]);
+
         $this->assertSame(
             [
                 'walls' => 2
@@ -85,7 +112,6 @@ class WallsServiceTest extends FunctionalTestCase
      */
     public function getWallsWillGetFreshWalls()
     {
-        $this->registry->removeAllByNamespace('WallsIoProxy');
         $wallsIoRequestForSession = new WallsIoRequest();
         $wallsIoRequestForSession->setWallId(12345);
         $wallsIoRequestForSession->setIncludeHeader(1);
@@ -121,6 +147,11 @@ class WallsServiceTest extends FunctionalTestCase
                 'walls' => 25
             ],
             $this->subject->getWalls(12345,8)
+        );
+
+        $this->assertSame(
+            '1:2:{"walls":25}',
+            $this->registry->get('WallsIoProxy', 'WallId_12345')
         );
     }
 }

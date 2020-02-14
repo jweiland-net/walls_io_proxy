@@ -43,12 +43,18 @@ class WallsService
 
     public function getWalls(int $wallId, int $entriesToLoad): array
     {
-        $storedWall = $this->registry->get('WallsIoProxy', 'WallId_' . $wallId);
-        if ($storedWall !== null) {
-            return $this->getDataFromResult($storedWall, 3);
+        // First: Try to get fresh data
+        $walls = $this->getEntries($wallId, $entriesToLoad);
+
+        // Second: If no data or request has errors, try to get old data from last response stored in sys_registry
+        if (array_key_exists('error', $walls)) {
+            $storedWall = $this->registry->get('WallsIoProxy', 'WallId_' . $wallId);
+            if ($storedWall !== null) {
+                $walls = $this->getDataFromResult($storedWall, 3);
+            }
         }
 
-        return $this->getEntries($wallId, $entriesToLoad);
+        return $walls;
     }
 
     protected function getEntries(int $wallId, int $entriesToLoad): array
@@ -77,7 +83,7 @@ class WallsService
 
         return [
             'sessionId' => $sessionId,
-            'errors' => $this->client->getError()
+            'error' => $this->client->getError()
         ];
     }
 
