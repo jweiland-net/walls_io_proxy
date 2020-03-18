@@ -79,9 +79,6 @@ class AddWallsProcessor implements DataProcessorInterface
     {
         foreach ($walls as $key => $wall) {
             foreach ($wall as $property => $value) {
-                if (is_string($value)) {
-                    $walls[$key][$property] = utf8_decode($value);
-                }
                 if ($property === 'post_image_aspect_ratio') {
                     $walls[$key]['post_image_padding'] = 100 / $value;
                 }

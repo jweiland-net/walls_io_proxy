@@ -50,7 +50,7 @@ class WallsService
         if (array_key_exists('error', $walls)) {
             $storedWall = $this->registry->get('WallsIoProxy', 'WallId_' . $wallId);
             if ($storedWall !== null) {
-                $walls = $this->getDataFromResult($storedWall, 3);
+                $walls = $this->getDataFromResult($storedWall);
             }
         }
 
@@ -59,7 +59,7 @@ class WallsService
 
     protected function getEntries(int $wallId, int $entriesToLoad): array
     {
-        $sessionId = $this->getSessionId($wallId);
+        $sessionId = $this->getSessionId($wallId, $entriesToLoad);
         if ($sessionId) {
             $wallsIoEntryRequest = GeneralUtility::makeInstance(WallsIoRequest::class);
             $wallsIoEntryRequest->setWallId($wallId);
@@ -69,7 +69,7 @@ class WallsService
             $response = $this->client->processRequest($wallsIoEntryRequest);
 
             if ($response->getBody()) {
-                $data = $this->getDataFromResult($response->getBody(), 3);
+                $data = $this->getDataFromResult($response->getBody());
                 if (!empty($data)) {
                     $this->registry->set(
                         'WallsIoProxy',
@@ -87,15 +87,16 @@ class WallsService
         ];
     }
 
-    protected function getSessionId(int $wallId): string
+    protected function getSessionId(int $wallId, int $entriesToLoad): string
     {
         $wallsIoSessionRequest = GeneralUtility::makeInstance(WallsIoRequest::class);
         $wallsIoSessionRequest->setWallId($wallId);
+        $wallsIoSessionRequest->setEntriesToLoad($entriesToLoad);
         $wallsIoSessionRequest->setIncludeHeader(1);
         $response = $this->client->processRequest($wallsIoSessionRequest);
 
         if (!$this->client->hasError() && $response->getBody()) {
-            $data = $this->getDataFromResult($response->getBody(), 2);
+            $data = $this->getDataFromResult($response->getBody());
             if (array_key_exists('sid', $data)) {
                 return $data['sid'];
             }
@@ -104,7 +105,7 @@ class WallsService
         return '';
     }
 
-    protected function getDataFromResult(string $result, int $explodeParts): array
+    protected function getDataFromResult(string $result): array
     {
         // Remove BOM
         if (strpos(bin2hex($result), 'efbbbf') === 0) {
@@ -116,10 +117,32 @@ class WallsService
             $result = str_replace(chr($i), '', $result);
         }
 
-        $parts = GeneralUtility::trimExplode(':', $result, true, $explodeParts);
-        $jsonString = preg_replace('/^\d+/', '', $parts[$explodeParts - 1]);
-        $data = json_decode($jsonString, true);
+        $jsonMatches = $this->getJsonMatchesFromResult($result);
+        if (empty($jsonMatches)) {
+            return [];
+        }
+
+        $data = json_decode(trim($jsonMatches[0], '0123456789:'), true);
         return is_array($data) ? $data : [];
+    }
+
+    protected function getJsonMatchesFromResult(string $result)
+    {
+        $matches = [];
+        $jsonMatches = [];
+        if (preg_match_all('/\d+:\d+(?:\{|\[)/', $result, $matches, PREG_OFFSET_CAPTURE)) {
+            $jsonLength = mb_strlen($result);
+            $matches = $matches[0];
+            $positionIndex = 0;
+            $match = 0;
+            while ($positionIndex < $jsonLength) {
+                $offsetOfNextMatch = $matches[$match + 1][1] ?? $jsonLength + 1;
+                $jsonMatches[] = mb_substr($result, $positionIndex, $offsetOfNextMatch - $positionIndex);
+                $positionIndex = $offsetOfNextMatch;
+                $match++;
+            }
+        }
+        return $jsonMatches;
     }
 
     /**
