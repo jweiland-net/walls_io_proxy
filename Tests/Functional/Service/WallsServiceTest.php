@@ -74,11 +74,12 @@ class WallsServiceTest extends FunctionalTestCase
         $this->registry->set(
             'WallsIoProxy',
             'WallId_12345',
-            '1:2:{"walls":2}'
+            '1:2{"walls":2}'
         );
 
         $wallsIoRequestForSession = new WallsIoRequest();
         $wallsIoRequestForSession->setWallId(12345);
+        $wallsIoRequestForSession->setEntriesToLoad(8);
         $wallsIoRequestForSession->setIncludeHeader(1);
 
         $wallsIoResponseForSession = new WallsIoResponse();
@@ -114,6 +115,7 @@ class WallsServiceTest extends FunctionalTestCase
     {
         $wallsIoRequestForSession = new WallsIoRequest();
         $wallsIoRequestForSession->setWallId(12345);
+        $wallsIoRequestForSession->setEntriesToLoad(8);
         $wallsIoRequestForSession->setIncludeHeader(1);
 
         $wallsIoResponseForSession = new WallsIoResponse();
@@ -135,7 +137,7 @@ class WallsServiceTest extends FunctionalTestCase
         $wallsIoRequestForEntries->setIncludeHeader(0);
 
         $wallsIoResponseForEntries = new WallsIoResponse();
-        $wallsIoResponseForEntries->setBody('1:2:{"walls":25}');
+        $wallsIoResponseForEntries->setBody('1:2{"walls":25}');
 
         $this->client
             ->processRequest($wallsIoRequestForEntries)
@@ -150,7 +152,7 @@ class WallsServiceTest extends FunctionalTestCase
         );
 
         $this->assertSame(
-            '1:2:{"walls":25}',
+            '1:2{"walls":25}',
             $this->registry->get('WallsIoProxy', 'WallId_12345')
         );
     }
