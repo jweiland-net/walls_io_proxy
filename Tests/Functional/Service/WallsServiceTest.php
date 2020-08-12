@@ -104,7 +104,7 @@ class WallsServiceTest extends FunctionalTestCase
             [
                 'walls' => 2
             ],
-            $this->subject->getWalls(12345,8)
+            $this->subject->getWalls(12345, 8)
         );
     }
 
@@ -148,7 +148,7 @@ class WallsServiceTest extends FunctionalTestCase
             [
                 'walls' => 25
             ],
-            $this->subject->getWalls(12345,8)
+            $this->subject->getWalls(12345, 8)
         );
 
         $this->assertSame(
