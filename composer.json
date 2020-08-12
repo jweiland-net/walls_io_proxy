@@ -21,8 +21,8 @@
 		"typo3/cms-core": "^8.7 || ^9.5"
 	},
 	"require-dev": {
-		"friendsofphp/php-cs-fixer": "^2.0",
-		"nimut/testing-framework": "^4.1"
+		"friendsofphp/php-cs-fixer": "^2.14",
+		"nimut/testing-framework": "^5.1"
 	},
 	"autoload": {
 		"psr-4": {
@@ -35,14 +35,12 @@
 		}
 	},
 	"config": {
-		"vendor-dir": ".Build/vendor",
-		"bin-dir": ".Build/bin"
+		"vendor-dir": ".build/vendor"
 	},
 	"extra": {
 		"typo3/cms": {
-			"cms-package-dir": "{$vendor-dir}/typo3/cms",
-			"extension-key": "walls_io_proxy",
-			"web-dir": ".Build/public"
+			"app-dir": ".build",
+			"web-dir": ".build/public"
 		}
 	},
 	"scripts": {
