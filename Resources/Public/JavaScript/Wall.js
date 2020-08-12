@@ -8,8 +8,10 @@ function showWallIoEntries(wallIoUid)
     let wallIoStart = visibleWallIoElements[wallIoUid]; // initially 0
     let wallIoUntil = wallIoStart +  wallIoEntriesToShow[wallIoUid]; // 0 + 8 + 8 + 8...
     for (let x = wallIoStart; x < wallIoUntil; x++) {
-        wallIoElements[wallIoUid][x].style.display = 'block';
-        visibleWallIoElements[wallIoUid]++;
+        if (wallIoElements[wallIoUid].item(x) !== null) {
+            wallIoElements[wallIoUid].item(x).style.display = 'block';
+            visibleWallIoElements[wallIoUid]++;
+        }
     }
 
     // If masonry is loaded, jquery is loaded as well. Re-Layout masonry
@@ -43,7 +45,7 @@ for (let x = 0; x < document.getElementsByClassName('socialwall_container').leng
 
     // First of all hide all entries
     for (let y = 0; y < wallIoElements[wallIoUid].length; y++) {
-        wallIoElements[wallIoUid][y].style.display = 'none';
+        wallIoElements[wallIoUid].item(y).style.display = 'none';
     }
 
     showWallIoEntries(wallIoUid);
