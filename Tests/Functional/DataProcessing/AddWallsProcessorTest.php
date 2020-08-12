@@ -1,18 +1,13 @@
 <?php
-namespace JWeiland\WallsIoProxy\Tests\Unit\DataProcessing;
 
 /*
- * This file is part of the walls_io_proxy project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
+ * This file is part of the package jweiland/walls-io-proxy.
  *
  * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
+ * LICENSE file that was distributed with this source code.
  */
+
+namespace JWeiland\WallsIoProxy\Tests\Unit\DataProcessing;
 
 use JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor;
 use JWeiland\WallsIoProxy\Service\WallsService;
@@ -87,11 +82,11 @@ class AddWallsProcessorTest extends FunctionalTestCase
 
         $newProcessedData = $this->subject->process($cObj, [], [], $processedData);
 
-        $this->assertArrayHasKey(
+        self::assertArrayHasKey(
             'conf',
             $newProcessedData
         );
-        $this->assertArrayHasKey(
+        self::assertArrayHasKey(
             'walls',
             $newProcessedData
         );

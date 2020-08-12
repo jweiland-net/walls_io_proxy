@@ -1,18 +1,13 @@
 <?php
-namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
 /*
- * This file is part of the walls_io_proxy project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
+ * This file is part of the package jweiland/walls-io-proxy.
  *
  * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
+ * LICENSE file that was distributed with this source code.
  */
+
+namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
 use JWeiland\WallsIoProxy\Client\WallsIoRequest;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -45,7 +40,7 @@ class WallsIoRequestTest extends UnitTestCase
      */
     public function getWallIdInitiallyReturnsZero()
     {
-        $this->assertSame(
+        self::assertSame(
             0,
             $this->subject->getWallId()
         );
@@ -58,7 +53,7 @@ class WallsIoRequestTest extends UnitTestCase
     {
         $this->subject->setWallId(123456);
 
-        $this->assertSame(
+        self::assertSame(
             123456,
             $this->subject->getWallId()
         );
@@ -71,7 +66,7 @@ class WallsIoRequestTest extends UnitTestCase
     {
         $this->subject->setWallId('123Test');
 
-        $this->assertSame(
+        self::assertSame(
             123,
             $this->subject->getWallId()
         );
@@ -84,7 +79,7 @@ class WallsIoRequestTest extends UnitTestCase
     {
         $this->subject->setWallId(true);
 
-        $this->assertSame(
+        self::assertSame(
             1,
             $this->subject->getWallId()
         );
@@ -95,7 +90,7 @@ class WallsIoRequestTest extends UnitTestCase
      */
     public function getSessionIdInitiallyReturnsEmptyString()
     {
-        $this->assertSame(
+        self::assertSame(
             '',
             $this->subject->getSessionId()
         );
@@ -108,7 +103,7 @@ class WallsIoRequestTest extends UnitTestCase
     {
         $this->subject->setSessionId('foo bar');
 
-        $this->assertSame(
+        self::assertSame(
             'foo bar',
             $this->subject->getSessionId()
         );
@@ -120,7 +115,7 @@ class WallsIoRequestTest extends UnitTestCase
     public function setSessionIdWithIntegerResultsInString()
     {
         $this->subject->setSessionId(123);
-        $this->assertSame('123', $this->subject->getSessionId());
+        self::assertSame('123', $this->subject->getSessionId());
     }
 
     /**
@@ -129,7 +124,7 @@ class WallsIoRequestTest extends UnitTestCase
     public function setSessionIdWithBooleanResultsInString()
     {
         $this->subject->setSessionId(true);
-        $this->assertSame('1', $this->subject->getSessionId());
+        self::assertSame('1', $this->subject->getSessionId());
     }
 
     /**
@@ -137,7 +132,7 @@ class WallsIoRequestTest extends UnitTestCase
      */
     public function getEntriesToLoadInitiallyReturnsZero()
     {
-        $this->assertSame(
+        self::assertSame(
             0,
             $this->subject->getEntriesToLoad()
         );
@@ -150,7 +145,7 @@ class WallsIoRequestTest extends UnitTestCase
     {
         $this->subject->setEntriesToLoad(123456);
 
-        $this->assertSame(
+        self::assertSame(
             123456,
             $this->subject->getEntriesToLoad()
         );
@@ -163,7 +158,7 @@ class WallsIoRequestTest extends UnitTestCase
     {
         $this->subject->setEntriesToLoad('123Test');
 
-        $this->assertSame(
+        self::assertSame(
             123,
             $this->subject->getEntriesToLoad()
         );
@@ -176,7 +171,7 @@ class WallsIoRequestTest extends UnitTestCase
     {
         $this->subject->setEntriesToLoad(true);
 
-        $this->assertSame(
+        self::assertSame(
             1,
             $this->subject->getEntriesToLoad()
         );
@@ -187,7 +182,7 @@ class WallsIoRequestTest extends UnitTestCase
      */
     public function getIncludeHeaderInitiallyReturnsZero()
     {
-        $this->assertSame(
+        self::assertSame(
             0,
             $this->subject->getIncludeHeader()
         );
@@ -200,7 +195,7 @@ class WallsIoRequestTest extends UnitTestCase
     {
         $this->subject->setIncludeHeader(123456);
 
-        $this->assertSame(
+        self::assertSame(
             123456,
             $this->subject->getIncludeHeader()
         );
@@ -213,7 +208,7 @@ class WallsIoRequestTest extends UnitTestCase
     {
         $this->subject->setIncludeHeader('123Test');
 
-        $this->assertSame(
+        self::assertSame(
             123,
             $this->subject->getIncludeHeader()
         );
@@ -226,7 +221,7 @@ class WallsIoRequestTest extends UnitTestCase
     {
         $this->subject->setIncludeHeader(true);
 
-        $this->assertSame(
+        self::assertSame(
             1,
             $this->subject->getIncludeHeader()
         );
@@ -237,7 +232,7 @@ class WallsIoRequestTest extends UnitTestCase
      */
     public function getUseBinarySupportInitiallyReturnsFalse()
     {
-        $this->assertFalse(
+        self::assertFalse(
             $this->subject->getUseBinarySupport()
         );
     }
@@ -248,7 +243,7 @@ class WallsIoRequestTest extends UnitTestCase
     public function setUseBinarySupportSetsUseBinarySupport()
     {
         $this->subject->setUseBinarySupport(true);
-        $this->assertTrue(
+        self::assertTrue(
             $this->subject->getUseBinarySupport()
         );
     }
@@ -259,7 +254,7 @@ class WallsIoRequestTest extends UnitTestCase
     public function setUseBinarySupportWithStringReturnsTrue()
     {
         $this->subject->setUseBinarySupport('foo bar');
-        $this->assertTrue($this->subject->getUseBinarySupport());
+        self::assertTrue($this->subject->getUseBinarySupport());
     }
 
     /**
@@ -268,7 +263,7 @@ class WallsIoRequestTest extends UnitTestCase
     public function setUseBinarySupportWithZeroReturnsFalse()
     {
         $this->subject->setUseBinarySupport(0);
-        $this->assertFalse($this->subject->getUseBinarySupport());
+        self::assertFalse($this->subject->getUseBinarySupport());
     }
 
     /**
@@ -276,7 +271,7 @@ class WallsIoRequestTest extends UnitTestCase
      */
     public function getUseCookiesInitiallyReturnsTrue()
     {
-        $this->assertTrue(
+        self::assertTrue(
             $this->subject->getUseCookies()
         );
     }
@@ -287,7 +282,7 @@ class WallsIoRequestTest extends UnitTestCase
     public function setUseCookiesSetsUseCookies()
     {
         $this->subject->setUseCookies(true);
-        $this->assertTrue(
+        self::assertTrue(
             $this->subject->getUseCookies()
         );
     }
@@ -298,7 +293,7 @@ class WallsIoRequestTest extends UnitTestCase
     public function setUseCookiesWithStringReturnsTrue()
     {
         $this->subject->setUseCookies('foo bar');
-        $this->assertTrue($this->subject->getUseCookies());
+        self::assertTrue($this->subject->getUseCookies());
     }
 
     /**
@@ -307,6 +302,6 @@ class WallsIoRequestTest extends UnitTestCase
     public function setUseCookiesWithZeroReturnsFalse()
     {
         $this->subject->setUseCookies(0);
-        $this->assertFalse($this->subject->getUseCookies());
+        self::assertFalse($this->subject->getUseCookies());
     }
 }

@@ -1,18 +1,13 @@
 <?php
-namespace JWeiland\WallsIoProxy\Tests\Functional\Service;
 
 /*
- * This file is part of the walls_io_proxy project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
+ * This file is part of the package jweiland/walls-io-proxy.
  *
  * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
+ * LICENSE file that was distributed with this source code.
  */
+
+namespace JWeiland\WallsIoProxy\Tests\Functional\Service;
 
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Client\WallsIoRequest;
@@ -100,7 +95,7 @@ class WallsServiceTest extends FunctionalTestCase
                 'message' => 'Session ID empty'
             ]);
 
-        $this->assertSame(
+        self::assertSame(
             [
                 'walls' => 2
             ],
@@ -144,14 +139,14 @@ class WallsServiceTest extends FunctionalTestCase
             ->shouldBeCalled()
             ->willReturn($wallsIoResponseForEntries);
 
-        $this->assertSame(
+        self::assertSame(
             [
                 'walls' => 25
             ],
             $this->subject->getWalls(12345, 8)
         );
 
-        $this->assertSame(
+        self::assertSame(
             '1:2{"walls":25}',
             $this->registry->get('WallsIoProxy', 'WallId_12345')
         );
