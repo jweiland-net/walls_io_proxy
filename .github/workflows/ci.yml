@@ -1,7 +1,7 @@
 # Adapted from https://github.com/TYPO3GmbH/blog/blob/master/.github/workflows/ci.yml
 name: CI
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   build:
