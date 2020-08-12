@@ -1,18 +1,13 @@
 <?php
-namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
 /*
- * This file is part of the walls_io_proxy project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
+ * This file is part of the package jweiland/walls-io-proxy.
  *
  * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
+ * LICENSE file that was distributed with this source code.
  */
+
+namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
 use JWeiland\WallsIoProxy\Client\WallsIoResponse;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
@@ -45,7 +40,7 @@ class WallsIoResponseTest extends UnitTestCase
      */
     public function getHeaderInitiallyReturnsEmptyString()
     {
-        $this->assertSame(
+        self::assertSame(
             '',
             $this->subject->getHeader()
         );
@@ -58,7 +53,7 @@ class WallsIoResponseTest extends UnitTestCase
     {
         $this->subject->setHeader('foo bar');
 
-        $this->assertSame(
+        self::assertSame(
             'foo bar',
             $this->subject->getHeader()
         );
@@ -70,7 +65,7 @@ class WallsIoResponseTest extends UnitTestCase
     public function setHeaderWithIntegerResultsInString()
     {
         $this->subject->setHeader(123);
-        $this->assertSame('123', $this->subject->getHeader());
+        self::assertSame('123', $this->subject->getHeader());
     }
 
     /**
@@ -79,7 +74,7 @@ class WallsIoResponseTest extends UnitTestCase
     public function setHeaderWithBooleanResultsInString()
     {
         $this->subject->setHeader(true);
-        $this->assertSame('1', $this->subject->getHeader());
+        self::assertSame('1', $this->subject->getHeader());
     }
 
     /**
@@ -87,7 +82,7 @@ class WallsIoResponseTest extends UnitTestCase
      */
     public function getBodyInitiallyReturnsEmptyString()
     {
-        $this->assertSame(
+        self::assertSame(
             '',
             $this->subject->getBody()
         );
@@ -100,7 +95,7 @@ class WallsIoResponseTest extends UnitTestCase
     {
         $this->subject->setBody('foo bar');
 
-        $this->assertSame(
+        self::assertSame(
             'foo bar',
             $this->subject->getBody()
         );
@@ -112,7 +107,7 @@ class WallsIoResponseTest extends UnitTestCase
     public function setBodyWithIntegerResultsInString()
     {
         $this->subject->setBody(123);
-        $this->assertSame('123', $this->subject->getBody());
+        self::assertSame('123', $this->subject->getBody());
     }
 
     /**
@@ -121,6 +116,6 @@ class WallsIoResponseTest extends UnitTestCase
     public function setBodyWithBooleanResultsInString()
     {
         $this->subject->setBody(true);
-        $this->assertSame('1', $this->subject->getBody());
+        self::assertSame('1', $this->subject->getBody());
     }
 }

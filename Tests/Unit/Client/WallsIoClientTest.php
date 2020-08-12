@@ -1,18 +1,13 @@
 <?php
-namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
 /*
- * This file is part of the walls_io_proxy project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
+ * This file is part of the package jweiland/walls-io-proxy.
  *
  * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
+ * LICENSE file that was distributed with this source code.
  */
+
+namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Client\WallsIoRequest;
@@ -65,14 +60,14 @@ class WallsIoClientTest extends UnitTestCase
         $request = new WallsIoRequest();
         $expectedResponse = new WallsIoResponse();
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedResponse,
             $this->subject->processRequest($request)
         );
-        $this->assertTrue(
+        self::assertTrue(
             $this->subject->hasError()
         );
-        $this->assertContains(
+        self::assertContains(
             'Missing mandatory Wall ID',
             $this->subject->getError()['title']
         );
@@ -109,7 +104,7 @@ class WallsIoClientTest extends UnitTestCase
         $expectedResponse = new WallsIoResponse();
         $expectedResponse->setBody('Test');
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedResponse,
             $this->subject->processRequest($request)
         );
@@ -150,7 +145,7 @@ class WallsIoClientTest extends UnitTestCase
         $expectedResponse = new WallsIoResponse();
         $expectedResponse->setBody('Test');
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedResponse,
             $this->subject->processRequest($request)
         );
@@ -177,7 +172,7 @@ class WallsIoClientTest extends UnitTestCase
         $expectedResponse = new WallsIoResponse();
         $expectedResponse->setBody('Body');
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedResponse,
             $this->subject->processRequest($request)
         );
@@ -207,15 +202,15 @@ class WallsIoClientTest extends UnitTestCase
         $expectedResponse->setBody('Body');
 
         $response = $this->subject->processRequest($request);
-        $this->assertEquals(
+        self::assertEquals(
             'Body',
             $response->getBody()
         );
-        $this->assertContains(
+        self::assertContains(
             'Host: walls.io',
             $response->getHeader()
         );
-        $this->assertContains(
+        self::assertContains(
             'Connection: close',
             $response->getHeader()
         );

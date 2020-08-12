@@ -101,24 +101,25 @@ class AddWallsProcessor implements DataProcessorInterface
                 'creationTime.seconds',
                 'walls_io_proxy'
             );
-        } elseif ($diffInSeconds > 60 && $diffInSeconds <= 3600) {
+        }
+        if ($diffInSeconds > 60 && $diffInSeconds <= 3600) {
             return LocalizationUtility::translate(
                 'creationTime.minutes',
                 'walls_io_proxy',
                 [$dateInterval->format('%i')]
             );
-        } elseif ($diffInSeconds > 3600 && $diffInSeconds <= 86400) {
+        }
+        if ($diffInSeconds > 3600 && $diffInSeconds <= 86400) {
             return LocalizationUtility::translate(
                 'creationTime.hours',
                 'walls_io_proxy',
                 [$dateInterval->format('%h')]
             );
-        } else {
-            return LocalizationUtility::translate(
-                'creationTime.date',
-                'walls_io_proxy',
-                [$creationDate->format('d.m.Y H:i')]
-            );
         }
+        return LocalizationUtility::translate(
+            'creationTime.date',
+            'walls_io_proxy',
+            [$creationDate->format('d.m.Y H:i')]
+        );
     }
 }
