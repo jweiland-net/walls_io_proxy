@@ -17,7 +17,7 @@ use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Controller
+ * Service to retrieve result from WallsIO, decode the result and store entries into Cache
  */
 class WallsService
 {
