@@ -68,7 +68,6 @@ class AddWallsProcessorTest extends FunctionalTestCase
         $wallsServiceProphecy = $this->prophesize(WallsService::class);
         $wallsServiceProphecy
             ->getWalls(
-                Argument::exact(12345),
                 Argument::exact(24)
             )
             ->shouldBeCalled()
@@ -78,6 +77,10 @@ class AddWallsProcessorTest extends FunctionalTestCase
                     'key' => 'value'
                 ]
             ]);
+        $wallsServiceProphecy
+            ->getTargetDirectory()
+            ->shouldBeCalled()
+            ->willReturn('');
         GeneralUtility::addInstance(WallsService::class, $wallsServiceProphecy->reveal());
 
         $newProcessedData = $this->subject->process($cObj, [], [], $processedData);
