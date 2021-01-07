@@ -13,7 +13,6 @@ namespace JWeiland\WallsIoProxy\Service;
 
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Client\WallsIoRequest;
-use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
@@ -148,6 +147,12 @@ class WallsService
 
     public function getTargetDirectory(): string
     {
-        return Environment::getPublicPath() . '/' . $this->targetDirectory . '/' . $this->wallId . '/';
+        if (version_compare(TYPO3_branch, '9.2', '>=')) {
+            $publicPath = \TYPO3\CMS\Core\Core\Environment::getPublicPath();
+        } else {
+            $publicPath = rtrim(PATH_site, '/');
+        }
+
+        return $publicPath . '/' . $this->targetDirectory . '/' . $this->wallId . '/';
     }
 }
