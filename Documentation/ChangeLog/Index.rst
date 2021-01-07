@@ -6,6 +6,13 @@
 ChangeLog
 =========
 
+**Version 3.0.0**
+
+- Use WebSocket connection to get walls.io entries
+- Update fluid templates to use local file paths
+- All external files will be proxied now
+- Clear Cache of Content Element now truncates Cache Directory, too.
+
 **Version 2.0.0**
 
 - Remove ClearCacheHook which removes cached Walls from Caching Framework

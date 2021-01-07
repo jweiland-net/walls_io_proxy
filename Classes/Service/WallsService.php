@@ -13,6 +13,7 @@ namespace JWeiland\WallsIoProxy\Service;
 
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Client\WallsIoRequest;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
@@ -23,6 +24,16 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 class WallsService
 {
     /**
+     * @var string
+     */
+    protected $targetDirectory = 'typo3temp/assets/walls_io_proxy';
+
+    /**
+     * @var int
+     */
+    protected $wallId = 0;
+
+    /**
      * @var Registry
      */
     protected $registry;
@@ -32,21 +43,22 @@ class WallsService
      */
     protected $client;
 
-    public function __construct(Registry $registry = null, WallsIoClient $client = null)
+    public function __construct(int $wallsId, Registry $registry = null, WallsIoClient $client = null)
     {
+        $this->wallId = $wallsId;
         $this->registry = $registry ?? GeneralUtility::makeInstance(Registry::class);
         $this->client = $client ?? GeneralUtility::makeInstance(WallsIoClient::class, $this);
     }
 
-    public function getWalls(int $wallId, int $entriesToLoad): array
+    public function getWalls(int $entriesToLoad): array
     {
         // First: Try to get fresh data
-        $walls = $this->getEntries($wallId, $entriesToLoad);
+        $walls = $this->getEntries($entriesToLoad);
 
         // Second: If no data or request has errors, try to get old data from last response stored in sys_registry
         if (array_key_exists('error', $walls)) {
             DebuggerUtility::var_dump($walls['error']);
-            $storedWall = $this->registry->get('WallsIoProxy', 'WallId_' . $wallId);
+            $storedWall = $this->registry->get('WallsIoProxy', 'WallId_' . $this->wallId);
             if ($storedWall !== null) {
                 $walls = $this->getDataFromResult($storedWall);
             }
@@ -55,10 +67,10 @@ class WallsService
         return $walls;
     }
 
-    protected function getEntries(int $wallId, int $entriesToLoad): array
+    protected function getEntries(int $entriesToLoad): array
     {
         $wallsIoEntryRequest = GeneralUtility::makeInstance(WallsIoRequest::class);
-        $wallsIoEntryRequest->setWallId($wallId);
+        $wallsIoEntryRequest->setWallId($this->wallId);
         $wallsIoEntryRequest->setEntriesToLoad($entriesToLoad);
         $wallsIoEntryRequest->setIncludeHeader(0);
         $response = $this->client->processRequest($wallsIoEntryRequest);
@@ -68,7 +80,7 @@ class WallsService
             if (!empty($data)) {
                 $this->registry->set(
                     'WallsIoProxy',
-                    'WallId_' . $wallId,
+                    'WallId_' . $this->wallId,
                     $response->getBody()
                 );
                 return $data;
@@ -114,5 +126,28 @@ class WallsService
             $timestamp = floor($timestamp / $amountOfChars);
         } while ($timestamp > 0);
         return $formattedTimestamp;
+    }
+
+    public function clearCache(): int
+    {
+        if ($this->wallId) {
+            $registry = GeneralUtility::makeInstance(Registry::class);
+            $registry->remove('WallsIoProxy', 'WallId_' . $this->wallId);
+
+            GeneralUtility::flushDirectory($this->getTargetDirectory());
+
+            return 1;
+        }
+        return 0;
+    }
+
+    public function getWallId(): int
+    {
+        return $this->wallId;
+    }
+
+    public function getTargetDirectory(): string
+    {
+        return Environment::getPublicPath() . '/' . $this->targetDirectory . '/' . $this->wallId . '/';
     }
 }

@@ -36,8 +36,7 @@
 							<div class="checkin-image-wrapper checkin-image-preview-holder">
 								<div class="checkin-image"
 										 data-action="show-detail"
-										 style="background-image:url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.post_image->f:format.urlencode()}&amp;w=700&amp;h=&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.post_image_key}); padding-bottom: {wall.post_image_padding}%"
-								>
+										 style="background-image:url({wall.post_image}); padding-bottom: {wall.post_image_padding}%">
 									<f:if condition="{wall.post_video}">
 										<div class="video-wrapper checkin-video-wrapper video-muted video-playing video-has-played">
 											<video class="checkin-video" playsinline="" loop="" muted="">
@@ -47,8 +46,7 @@
 										</div>
 									</f:if>
 									<a href="{wall.post_link}" target="_blank"
-										 rel="nofollow noopener" class="checkin-image-link"
-									>
+										 rel="nofollow noopener" class="checkin-image-link">
 										<f:if condition="{wall.post_video}">
 											<div class="video-play-button"></div>
 										</f:if>
@@ -56,7 +54,9 @@
 								</div>
 							</div>
 						</f:if>
-						<div class="checkin-message" dir="auto">{wall.html_comment->f:format.raw()->f:format.crop(maxCharacters: 200, respectWordBoundaries: 1, respectHtml: 1)}</div>
+						<div class="checkin-message" dir="auto">
+							{wall.html_comment->f:format.raw()->f:format.crop(maxCharacters: 200, respectWordBoundaries: 1, respectHtml: 1)}
+						</div>
 						<div class="checkin-user clearfix">
 							<f:render section="renderFooter" arguments="{_all}" />
 						</div>
@@ -64,7 +64,9 @@
 				</div>
 			</f:for>
 		</div>
-		<button type="button" class="wallsio-load-more-button" onclick="showWallIoEntries({data.uid})">Lade weitere Posts</button>
+		<button type="button" class="wallsio-load-more-button" onclick="showWallIoEntries({data.uid})">
+			Lade weitere Posts
+		</button>
 	</div>
 </f:section>
 
@@ -81,7 +83,7 @@
 		 class="checkin-user-image"
 		 target="_blank"
 		 rel="nofollow noopener"
-		 style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.external_image_key})"></a>
+		 style="background-image: url({wall.external_image})"></a>
 	<div class="checkin-user-name" title="{wall.external_fullname}">
 		<a href="https://www.facebook.com/{wall.external_user_id}" target="_blank" rel="nofollow noopener">
 			{wall.external_fullname}
@@ -97,7 +99,7 @@
 		 class="checkin-user-image"
 		 target="_blank"
 		 rel="nofollow noopener"
-		 style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.external_image_key})"></a>
+		 style="background-image: url({wall.external_image})"></a>
 	<div class="checkin-user-name" title="@{wall.external_name} ({wall.external_fullname})">
 		<a href="https://twitter.com/{wall.external_name}" target="_blank" rel="nofollow noopener">
 			<span class="checkin-user-name-part checkin-user-name-full">{wall.external_fullname}</span>
@@ -113,7 +115,7 @@
 		 class="checkin-user-image"
 		 target="_blank"
 		 rel="nofollow noopener"
-		 style="background-image: url(https://dpt5udl8tkpo9.cloudfront.net/slimproxy/?src={wall.external_image->f:format.urlencode()}&amp;w=200&amp;h=200&amp;q=85&amp;nu=1&amp;salt=&amp;key={wall.external_image_key})"></a>
+		 style="background-image: url({wall.external_image})"></a>
 	<div class="checkin-user-name" title="@{wall.external_name} (external_fullname)">
 		<a href="https://www.instagram.com/{wall.external_name}/" target="_blank" rel="nofollow noopener">
 			<span class="checkin-user-name-part checkin-user-name-full">{wall.external_fullname}</span>

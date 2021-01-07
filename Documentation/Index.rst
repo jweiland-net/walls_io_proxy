@@ -76,5 +76,4 @@ Extension Name
    Contribute/Index
    KnownProblems/Index
    ChangeLog/Index
-   Sitemap
 

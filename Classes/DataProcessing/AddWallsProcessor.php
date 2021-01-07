@@ -12,8 +12,11 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\DataProcessing;
 
 use JWeiland\WallsIoProxy\Service\WallsService;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -25,6 +28,11 @@ use TYPO3\CMS\Frontend\ContentObject\DataProcessorInterface;
  */
 class AddWallsProcessor implements DataProcessorInterface
 {
+    /**
+     * @var string
+     */
+    protected $targetDirectory = '';
+
     /**
      * Process data of a record to resolve File objects to the view
      *
@@ -42,12 +50,14 @@ class AddWallsProcessor implements DataProcessorInterface
         }
 
         $this->updateProcessedData($processedData);
-
-        $wallsService = GeneralUtility::makeInstance(WallsService::class);
-        $walls = $wallsService->getWalls(
-            (int)$processedData['conf']['wallId'],
-            (int)$processedData['conf']['entriesToLoad']
+        $entriesToLoad = (int)$processedData['conf']['entriesToLoad'];
+        $wallsService = GeneralUtility::makeInstance(
+            WallsService::class, (int)$processedData['conf']['wallId']
         );
+
+        $this->targetDirectory = $wallsService->getTargetDirectory();
+        $walls = $wallsService->getWalls($entriesToLoad);
+
         if (
             array_key_exists('errors', $walls)
             && $walls['errors']['error'] !== 0
@@ -55,6 +65,7 @@ class AddWallsProcessor implements DataProcessorInterface
             DebuggerUtility::var_dump($walls);
         }
         $processedData['walls'] = $this->sanitizeData($walls[1] ?? []);
+
         return $processedData;
     }
 
@@ -73,7 +84,7 @@ class AddWallsProcessor implements DataProcessorInterface
 
     protected function sanitizeData(array $walls): array
     {
-        foreach ($walls as $key => $wall) {
+        foreach ($walls as $key => &$wall) {
             foreach ($wall as $property => $value) {
                 if ($property === 'post_image_aspect_ratio') {
                     $walls[$key]['post_image_padding'] = 100 / $value;
@@ -81,9 +92,59 @@ class AddWallsProcessor implements DataProcessorInterface
                 if ($property === 'external_created_timestamp') {
                     $walls[$key]['external_created_timestamp_as_text'] = $this->getCreationText((float)$value);
                 }
+                if (
+                    in_array($property, ['external_image', 'post_image'], true)
+                    && !empty($value)
+                    && StringUtility::beginsWith($value, 'http')
+                ) {
+                    $wall[$property] = $this->cacheExternalResources($value);
+                }
+
+                $matches = [];
+                if (
+                    in_array($property, ['comment', 'html_comment'], true)
+                    && !empty($value)
+                    && preg_match_all('/<img.*?src=["|\'](?<src>.*?)["|\'].*?>/', $value, $matches)
+                ) {
+                    if (
+                        array_key_exists('src', $matches)
+                        && is_array($matches['src'])
+                    ) {
+                        foreach ($matches['src'] as $uri) {
+                            if (StringUtility::beginsWith($uri, 'http')) {
+                                $wall[$property] = str_replace(
+                                    $matches['src'],
+                                    $this->cacheExternalResources($uri),
+                                    $value
+                                );
+                            }
+                        }
+                    }
+                }
             }
         }
         return $walls;
+    }
+
+    protected function cacheExternalResources(string $resource): string
+    {
+        if (!is_dir($this->targetDirectory)) {
+            GeneralUtility::mkdir_deep($this->targetDirectory);
+        }
+
+        $pathParts = GeneralUtility::split_fileref(parse_url($resource, PHP_URL_PATH));
+        $filePath = sprintf(
+            '%s%s.%s',
+            $this->targetDirectory,
+            $pathParts['filebody'],
+            $pathParts['fileext']
+        );
+
+        if (!file_exists($filePath)) {
+            GeneralUtility::writeFile($filePath, GeneralUtility::getUrl($resource));
+        }
+
+        return PathUtility::getAbsoluteWebPath($filePath);
     }
 
     protected function getCreationText(float $creationTime): string
