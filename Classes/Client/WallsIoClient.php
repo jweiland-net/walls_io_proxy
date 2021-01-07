@@ -61,10 +61,9 @@ class WallsIoClient
         );
 
         $connector = new \Ratchet\Client\Connector($loop, $reactConnector);
-        $tmp = 'wss://broadcaster.walls.io:443/socket.io/?wallId=110727&client=wallsio-frontend&initialCheckins=24&network=&EIO=3&transport=websocket';
         $connector($this->buildWallsUri($request), ['protocol1', 'subprotocol2'], $this->getHeaders())
-            ->then(function(WebSocket $conn) use ($wallsIoResponse) {
-                $conn->on('message', function(\Ratchet\RFC6455\Messaging\MessageInterface $msg) use ($conn, $wallsIoResponse) {
+            ->then(function (WebSocket $conn) use ($wallsIoResponse) {
+                $conn->on('message', function (\Ratchet\RFC6455\Messaging\MessageInterface $msg) use ($conn, $wallsIoResponse) {
                     $matches = [];
                     if (preg_match('/(?<json>[\{|\[].*[\]|\}])/', $msg->getContents(), $matches)) {
                         if (isset($matches['json']) && !empty($matches['json'])) {
@@ -78,7 +77,7 @@ class WallsIoClient
                         }
                     }
                 });
-            }, function(\Exception $e) use ($loop) {
+            }, function (\Exception $e) use ($loop) {
                 $this->error = [
                     'message' => 'An error occurred while retrieving data from walls.io',
                     'title' => 'Error from walls.io: ' . $e->getMessage()
