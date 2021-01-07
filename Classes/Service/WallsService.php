@@ -15,6 +15,7 @@ use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Client\WallsIoRequest;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Service to retrieve result from WallsIO, decode the result and store entries into Cache
@@ -44,6 +45,7 @@ class WallsService
 
         // Second: If no data or request has errors, try to get old data from last response stored in sys_registry
         if (array_key_exists('error', $walls)) {
+            DebuggerUtility::var_dump($walls['error']);
             $storedWall = $this->registry->get('WallsIoProxy', 'WallId_' . $wallId);
             if ($storedWall !== null) {
                 $walls = $this->getDataFromResult($storedWall);
@@ -55,90 +57,34 @@ class WallsService
 
     protected function getEntries(int $wallId, int $entriesToLoad): array
     {
-        $sessionId = $this->getSessionId($wallId, $entriesToLoad);
-        if ($sessionId) {
-            $wallsIoEntryRequest = GeneralUtility::makeInstance(WallsIoRequest::class);
-            $wallsIoEntryRequest->setWallId($wallId);
-            $wallsIoEntryRequest->setSessionId($sessionId);
-            $wallsIoEntryRequest->setEntriesToLoad($entriesToLoad);
-            $wallsIoEntryRequest->setIncludeHeader(0);
-            $response = $this->client->processRequest($wallsIoEntryRequest);
+        $wallsIoEntryRequest = GeneralUtility::makeInstance(WallsIoRequest::class);
+        $wallsIoEntryRequest->setWallId($wallId);
+        $wallsIoEntryRequest->setEntriesToLoad($entriesToLoad);
+        $wallsIoEntryRequest->setIncludeHeader(0);
+        $response = $this->client->processRequest($wallsIoEntryRequest);
 
-            if ($response->getBody()) {
-                $data = $this->getDataFromResult($response->getBody());
-                if (!empty($data)) {
-                    $this->registry->set(
-                        'WallsIoProxy',
-                        'WallId_' . $wallId,
-                        $response->getBody()
-                    );
-                    return $data;
-                }
+        if ($response->getBody()) {
+            $data = $this->getDataFromResult($response->getBody());
+            if (!empty($data)) {
+                $this->registry->set(
+                    'WallsIoProxy',
+                    'WallId_' . $wallId,
+                    $response->getBody()
+                );
+                return $data;
             }
         }
 
         return [
-            'sessionId' => $sessionId,
             'error' => $this->client->getError()
         ];
     }
 
-    protected function getSessionId(int $wallId, int $entriesToLoad): string
-    {
-        $wallsIoSessionRequest = GeneralUtility::makeInstance(WallsIoRequest::class);
-        $wallsIoSessionRequest->setWallId($wallId);
-        $wallsIoSessionRequest->setEntriesToLoad($entriesToLoad);
-        $wallsIoSessionRequest->setIncludeHeader(1);
-        $response = $this->client->processRequest($wallsIoSessionRequest);
-
-        if (!$this->client->hasError() && $response->getBody()) {
-            $data = $this->getDataFromResult($response->getBody());
-            if (array_key_exists('sid', $data)) {
-                return $data['sid'];
-            }
-        }
-
-        return '';
-    }
-
     protected function getDataFromResult(string $result): array
     {
-        // Remove BOM
-        if (strpos(bin2hex($result), 'efbbbf') === 0) {
-            $result = substr($result, 3);
-        }
+        $data = json_decode($result, true);
 
-        // Remove unwanted control chars from JSON String
-        for ($i = 0; $i <= 31; ++$i) {
-            $result = str_replace(chr($i), '', $result);
-        }
-
-        $jsonMatches = $this->getJsonMatchesFromResult($result);
-        if (empty($jsonMatches)) {
-            return [];
-        }
-
-        $data = json_decode(trim($jsonMatches[0], '0123456789:'), true);
         return is_array($data) ? $data : [];
-    }
-
-    protected function getJsonMatchesFromResult(string $result)
-    {
-        $matches = [];
-        $jsonMatches = [];
-        if (preg_match_all('/\d+:\d+(?:\{|\[)/', $result, $matches, PREG_OFFSET_CAPTURE)) {
-            $jsonLength = mb_strlen($result);
-            $matches = $matches[0];
-            $positionIndex = 0;
-            $match = 0;
-            while ($positionIndex < $jsonLength) {
-                $offsetOfNextMatch = $matches[$match + 1][1] ?? $jsonLength + 1;
-                $jsonMatches[] = mb_substr($result, $positionIndex, $offsetOfNextMatch - $positionIndex);
-                $positionIndex = $offsetOfNextMatch;
-                $match++;
-            }
-        }
-        return $jsonMatches;
     }
 
     /**
