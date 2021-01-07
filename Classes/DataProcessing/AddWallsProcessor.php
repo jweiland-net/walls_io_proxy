@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\DataProcessing;
 
 use JWeiland\WallsIoProxy\Service\WallsService;
-use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -52,7 +51,8 @@ class AddWallsProcessor implements DataProcessorInterface
         $this->updateProcessedData($processedData);
         $entriesToLoad = (int)$processedData['conf']['entriesToLoad'];
         $wallsService = GeneralUtility::makeInstance(
-            WallsService::class, (int)$processedData['conf']['wallId']
+            WallsService::class,
+            (int)$processedData['conf']['wallId']
         );
 
         $this->targetDirectory = $wallsService->getTargetDirectory();
