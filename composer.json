@@ -3,7 +3,7 @@
 	"type": "typo3-cms-extension",
 	"description": "Cache and Proxy for walls.io, so no Cookie will be set on Client",
 	"license": "GPL-2.0-or-later",
-	"keywords": ["typo3", "TYPO3 CMS", "walls", "walls.io", "cache", "cookie", "proxy"],
+	"keywords": ["typo3", "TYPO3 CMS", "walls", "walls.io", "cache", "proxy"],
 	"homepage": "http://www.jweiland.net",
 	"authors": [
 		{
@@ -18,7 +18,8 @@
 		"source": "https://github.com/jweiland-net/walls_io_proxy"
 	},
 	"require": {
-		"typo3/cms-core": "^8.7 || ^9.5"
+		"typo3/cms-core": "^8.7 || ^9.5",
+		"ratchet/pawl": "^0.3.5"
 	},
 	"require-dev": {
 		"friendsofphp/php-cs-fixer": "^2.14",
