@@ -89,10 +89,9 @@ class WallsIoClientTest extends UnitTestCase
                 Argument::allOf(
                     Argument::containingString('wallId=12345'),
                     Argument::containingString('client=wallsio-frontend'),
-                    Argument::containingString('cookieSupport=1'),
                     Argument::containingString('network='),
                     Argument::containingString('EIO=3'),
-                    Argument::containingString('transport=polling'),
+                    Argument::containingString('transport=websocket'),
                     Argument::containingString('t=')
                 ),
                 Argument::cetera()
@@ -198,21 +197,12 @@ class WallsIoClientTest extends UnitTestCase
         GeneralUtility::addInstance(RequestFactory::class, $this->requestFactoryProphecy->reveal());
 
         $expectedResponse = new WallsIoResponse();
-        $expectedResponse->setHeader('cache-control: no-pragma');
         $expectedResponse->setBody('Body');
 
         $response = $this->subject->processRequest($request);
         self::assertEquals(
             'Body',
             $response->getBody()
-        );
-        self::assertContains(
-            'Host: walls.io',
-            $response->getHeader()
-        );
-        self::assertContains(
-            'Connection: close',
-            $response->getHeader()
         );
     }
 }
