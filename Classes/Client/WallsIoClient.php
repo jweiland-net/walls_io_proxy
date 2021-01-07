@@ -12,29 +12,25 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Client;
 
 use JWeiland\WallsIoProxy\Service\WallsService;
+use Ratchet\Client\WebSocket;
+use React\EventLoop\Factory;
+use React\Socket\Connector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Walls IO Client
+ * This is the walls.io client which will send the request to the walls.io server
  */
 class WallsIoClient
 {
     /**
      * @var string
      */
-    protected $wallsUri = 'https://walls.io/socket.io/';
+    protected $wallsUri = 'wss://broadcaster.walls.io:443/socket.io/';
 
     /**
      * @var WallsService
      */
     protected $wallsService;
-
-    /**
-     * Needed to catch Cookie information
-     *
-     * @var array
-     */
-    protected $headersOfPreviousRequest = [];
 
     /**
      * @var array
@@ -49,39 +45,50 @@ class WallsIoClient
     public function processRequest(WallsIoRequest $request): WallsIoResponse
     {
         $this->error = [];
-        $response = GeneralUtility::makeInstance(WallsIoResponse::class);
+        $wallsIoResponse = GeneralUtility::makeInstance(WallsIoResponse::class);
 
         if (!$this->isValidRequest($request)) {
-            return $response;
+            return $wallsIoResponse;
         }
 
-        $result = GeneralUtility::getUrl(
-            $this->buildWallsUri($request),
-            $request->getIncludeHeader(),
-            $this->getHeaders(),
-            $this->error
+        $loop = Factory::create();
+        $reactConnector = new Connector(
+            $loop,
+            [
+                'dns' => '8.8.8.8',
+                'timeout' => 6,
+            ]
         );
 
-        if ($this->hasError()) {
-            return $response;
-        }
+        $connector = new \Ratchet\Client\Connector($loop, $reactConnector);
+        $tmp = 'wss://broadcaster.walls.io:443/socket.io/?wallId=110727&client=wallsio-frontend&initialCheckins=24&network=&EIO=3&transport=websocket';
+        $connector($this->buildWallsUri($request), ['protocol1', 'subprotocol2'], $this->getHeaders())
+            ->then(function(WebSocket $conn) use ($wallsIoResponse) {
+                $conn->on('message', function(\Ratchet\RFC6455\Messaging\MessageInterface $msg) use ($conn, $wallsIoResponse) {
+                    $matches = [];
+                    if (preg_match('/(?<json>[\{|\[].*[\]|\}])/', $msg->getContents(), $matches)) {
+                        if (isset($matches['json']) && !empty($matches['json'])) {
+                            $data = json_decode($matches['json'], true);
+                            if (!empty($data)) {
+                                if (array_key_exists(0, $data) && $data[0] === 'new checkins') {
+                                    $wallsIoResponse->setBody($matches['json']);
+                                    $conn->close();
+                                }
+                            }
+                        }
+                    }
+                });
+            }, function(\Exception $e) use ($loop) {
+                $this->error = [
+                    'message' => 'An error occurred while retrieving data from walls.io',
+                    'title' => 'Error from walls.io: ' . $e->getMessage()
+                ];
+                $loop->stop();
+            });
 
-        if ($request->getIncludeHeader()) {
-            // Explode 2 \r\n to separate header from body
-            list($header, $body) = GeneralUtility::trimExplode(
-                chr(13) . chr(10) . chr(13) . chr(10),
-                $result
-            );
+        $loop->run();
 
-            $this->storeResponseHeaderForNextRequest($header);
-
-            $response->setHeader($header);
-            $response->setBody($body);
-        } else {
-            $response->setBody($result);
-        }
-
-        return $response;
+        return $wallsIoResponse;
     }
 
     protected function isValidRequest(WallsIoRequest $request): bool
@@ -96,31 +103,17 @@ class WallsIoClient
         return true;
     }
 
-    public function hasError()
+    public function hasError(): bool
     {
         return !empty($this->error['message']);
     }
 
-    public function getError()
+    public function getError(): array
     {
         if (!empty($this->error['message'])) {
             return $this->error;
         }
         return [];
-    }
-
-    /**
-     * Store all header data.
-     * Helpful to extract Cookie information for next request
-     *
-     * @param string $header
-     */
-    protected function storeResponseHeaderForNextRequest(string $header)
-    {
-        foreach (GeneralUtility::trimExplode(chr(10), $header) as $headerData) {
-            $headerParts = GeneralUtility::trimExplode(':', $headerData, true, 2);
-            $this->headersOfPreviousRequest[$headerParts[0]] = $headerParts[1];
-        }
     }
 
     protected function buildWallsUri(WallsIoRequest $request): string
@@ -133,11 +126,10 @@ class WallsIoClient
         $wallsUriParameters = [
             'wallId' => (string)$request->getWallId(),
             'client' => 'wallsio-frontend',
-            'cookieSupport' => (string)(int)$request->getUseCookies(),
             'network' => '',
             'EIO' => '3',
-            'transport' => 'polling',
-            't' => $this->wallsService->getFormattedTimestamp((int)date('U'))
+            'transport' => 'websocket',
+            't' => $this->getTimestamp()
         ];
 
         if ($request->getEntriesToLoad()) {
@@ -148,14 +140,15 @@ class WallsIoClient
             $wallsUriParameters['b64'] = '1';
         }
 
-        if ($request->getSessionId()) {
-            $wallsUriParameters['sid'] = $request->getSessionId();
-        }
-
         return $wallsUriParameters;
     }
 
-    protected function getHeaders()
+    public function getTimestamp(): string
+    {
+        return $this->wallsService->getFormattedTimestamp((int)date('U'));
+    }
+
+    protected function getHeaders(): array
     {
         $headers = [
             'accept' => '*/*',
@@ -167,23 +160,6 @@ class WallsIoClient
             'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36'
         ];
 
-        $cookie = $this->getCookie();
-        if (!empty($cookie)) {
-            $headers['cookie'] = $cookie;
-        }
-
         return $headers;
-    }
-
-    protected function getCookie()
-    {
-        $cookies = [];
-        if (array_key_exists('Set-Cookie', $this->headersOfPreviousRequest)) {
-            foreach (GeneralUtility::trimExplode(',', $this->headersOfPreviousRequest['Set-Cookie']) as $cookie) {
-                $cookieParts = GeneralUtility::trimExplode(';', $cookie);
-                $cookies[] = current($cookieParts);
-            }
-        }
-        return implode(';', $cookies);
     }
 }

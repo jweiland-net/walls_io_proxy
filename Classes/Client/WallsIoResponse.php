@@ -19,22 +19,7 @@ class WallsIoResponse
     /**
      * @var string
      */
-    protected $header = '';
-
-    /**
-     * @var string
-     */
     protected $body = '';
-
-    public function getHeader(): string
-    {
-        return $this->header;
-    }
-
-    public function setHeader(string $header)
-    {
-        $this->header = $header;
-    }
 
     public function getBody(): string
     {
