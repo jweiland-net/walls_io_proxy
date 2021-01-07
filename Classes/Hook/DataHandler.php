@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Hook;
 
-use TYPO3\CMS\Core\Registry;
+use JWeiland\WallsIoProxy\Service\WallsService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -31,14 +31,12 @@ class DataHandler
             isset($params['cacheCmd'])
             && strtolower($params['cacheCmd']) === 'wallioproxy'
         ) {
-            $wallId = (int)GeneralUtility::_GET('wallId');
-            if ($wallId) {
-                $registry = GeneralUtility::makeInstance(Registry::class);
-                $registry->remove('WallsIoProxy', 'WallId_' . $wallId);
-                echo 1;
-            } else {
-                echo 0;
-            }
+            $wallsService = GeneralUtility::makeInstance(
+                WallsService::class,
+                (int)GeneralUtility::_GET('wallId')
+            );
+
+            echo $wallsService->clearCache();
         }
     }
 }

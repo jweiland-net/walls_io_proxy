@@ -7,6 +7,9 @@
 Known Problems
 ==============
 
+Empty data
+==========
+
 If walls.io will change their JS implementation and their XHR/Ajax Requests, this extensions
 may not work anymore.
 
@@ -18,3 +21,8 @@ the cache is cleared again.
 That's why we store the request in sys_registry. If you clear the cache and we don't get data from walls.io we
 can still access the entry from sys_registry and show the wall. But how to remove the entry from sys_registry? We
 have added a button into Plugin Preview in Backend to clear the cache for the configured wall in the plugin.
+
+Composer package
+================
+
+As we need ReactPhp as compoaser package it is not possible anymore to install walls_io_proxy from TER anymore.

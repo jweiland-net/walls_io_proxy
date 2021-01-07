@@ -5,6 +5,12 @@ Updating
 
 If you update EXT:walls_io_proxy to a newer version, please read this section carefully!
 
+Update to Version 3.0.0
+-----------------------
+
+We are not using cloudfront in Fluid templates anymore. As we download all external resources now, you should
+update your Fluid templates to use the local file path.
+
 Update to Version 2.0.0
 -----------------------
 
