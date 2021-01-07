@@ -38,48 +38,6 @@ class WallsIoResponseTest extends UnitTestCase
     /**
      * @test
      */
-    public function getHeaderInitiallyReturnsEmptyString()
-    {
-        self::assertSame(
-            '',
-            $this->subject->getHeader()
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function setHeaderSetsHeader()
-    {
-        $this->subject->setHeader('foo bar');
-
-        self::assertSame(
-            'foo bar',
-            $this->subject->getHeader()
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function setHeaderWithIntegerResultsInString()
-    {
-        $this->subject->setHeader(123);
-        self::assertSame('123', $this->subject->getHeader());
-    }
-
-    /**
-     * @test
-     */
-    public function setHeaderWithBooleanResultsInString()
-    {
-        $this->subject->setHeader(true);
-        self::assertSame('1', $this->subject->getHeader());
-    }
-
-    /**
-     * @test
-     */
     public function getBodyInitiallyReturnsEmptyString()
     {
         self::assertSame(
