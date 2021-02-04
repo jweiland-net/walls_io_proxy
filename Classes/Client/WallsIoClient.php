@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Client;
 
-use GuzzleHttp\Exception\GuzzleException;
 use JWeiland\WallsIoProxy\Client\Request\RequestInterface;
 use JWeiland\WallsIoProxy\Helper\MessageHelper;
 use Psr\Http\Message\ResponseInterface;
@@ -119,7 +118,9 @@ class WallsIoClient
                 FlashMessage::ERROR
             );
             return true;
-        } elseif ($response['status'] !== 'success') {
+        }
+
+        if ($response['status'] !== 'success') {
             // SF: Haven't found an error request as example.
             // Correct following line, if you get one ;-)
             $this->messageHelper->addFlashMessage(
@@ -129,6 +130,7 @@ class WallsIoClient
             );
             return true;
         }
+
         return false;
     }
 }
