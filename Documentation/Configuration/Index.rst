@@ -53,9 +53,7 @@ After installation of walls_io_proxy you will find a new ContentElement in newCo
 Wall ID
 ~~~~~~~
 
-To show the correct Wall which you have configured in customer menu of walls.io, you have to
-add the specific wallId here. Click the label of this field to get more information about where you can
-find the WallId.
+Please insert the walls.io ID
 
 Amount of entries to load
 ~~~~~~~~~~~~~~~~~~~~~~~~~
