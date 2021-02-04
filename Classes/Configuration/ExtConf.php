@@ -46,7 +46,7 @@ class ExtConf implements SingletonInterface
         return $this->accessToken;
     }
 
-    public function setAccessToken(string $accessToken): void
+    public function setAccessToken(string $accessToken)
     {
         $this->accessToken = $accessToken;
     }
