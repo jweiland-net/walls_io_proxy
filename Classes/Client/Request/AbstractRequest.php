@@ -76,7 +76,7 @@ abstract class AbstractRequest implements RequestInterface
      */
     public function setParameters(array $parameters)
     {
-        $this->parameters = $parameters;
+        $this->parameters = array_intersect_key($parameters, $this->allowedParameters);
     }
 
     /**
@@ -87,7 +87,9 @@ abstract class AbstractRequest implements RequestInterface
      */
     public function addParameter(string $parameter, $value)
     {
-        $this->parameters[$parameter] = $value;
+        if (array_key_exists($parameter, $this->allowedParameters)) {
+            $this->parameters[$parameter] = $value;
+        }
     }
 
     /**
