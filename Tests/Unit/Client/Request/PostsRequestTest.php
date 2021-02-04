@@ -7,7 +7,7 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
+namespace JWeiland\WallsIoProxy\Tests\Unit\Client\Request;
 
 use JWeiland\WallsIoProxy\Client\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Configuration\ExtConf;
@@ -328,5 +328,4 @@ class PostsRequestTest extends UnitTestCase
             $this->subject->getParameter('include_inactive')
         );
     }
-
 }

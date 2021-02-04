@@ -11,11 +11,13 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Client;
 
+use GuzzleHttp\Exception\GuzzleException;
 use JWeiland\WallsIoProxy\Client\Request\RequestInterface;
 use JWeiland\WallsIoProxy\Helper\MessageHelper;
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * This is the walls.io client which will send the request to the walls.io server
@@ -23,12 +25,20 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 class WallsIoClient
 {
     /**
+     * @var RequestFactory
+     */
+    protected $requestFactory;
+
+    /**
      * @var MessageHelper
      */
     protected $messageHelper;
 
-    public function __construct(MessageHelper $messageHelper = null)
-    {
+    public function __construct(
+        RequestFactory $requestFactory = null,
+        MessageHelper $messageHelper = null
+    ) {
+        $this->requestFactory = $requestFactory ?? GeneralUtility::makeInstance(RequestFactory::class);
         $this->messageHelper = $messageHelper ?? GeneralUtility::makeInstance(MessageHelper::class);
     }
 
@@ -44,16 +54,22 @@ class WallsIoClient
         }
 
         $processedResponse = [];
-        $clientReport = [];
-        $response = GeneralUtility::getUrl($request->buildUri(), 0, null, $clientReport);
-        $this->checkClientReportForErrors($clientReport);
-        if (!$this->hasErrors()) {
-            $processedResponse = json_decode($response, true);
-            $this->checkResponseForErrors($processedResponse);
-        }
+        try {
+            $response = $this->requestFactory->request($request->buildUri());
+            $this->checkClientResponseForErrors($response);
 
-        if ($this->hasErrors()) {
-            $processedResponse = [];
+            if (!$this->hasErrors()) {
+                $processedResponse = json_decode((string)$response->getBody(), true);
+                if ($this->hasResponseErrors($processedResponse)) {
+                    $processedResponse = [];
+                }
+            }
+        } catch (\Exception $exception) {
+            $this->messageHelper->addFlashMessage(
+                $exception->getMessage(),
+                'Error Code: ' . $exception->getCode(),
+                FlashMessage::ERROR
+            );
         }
 
         return $processedResponse;
@@ -75,15 +91,15 @@ class WallsIoClient
     /**
      * This method will only check the report of the client and not the result itself.
      *
-     * @param array $clientReport
+     * @param ResponseInterface $response
      */
-    protected function checkClientReportForErrors(array $clientReport)
+    protected function checkClientResponseForErrors(ResponseInterface $response)
     {
-        if (!empty($clientReport['message'])) {
+        if ($response->getStatusCode() !== 200) {
             $this->messageHelper->addFlashMessage(
-                $clientReport['message'],
-                $clientReport['title'],
-                $clientReport['severity']
+                'Walls.io responses with a status code different from 200',
+                'Status Code: ' . $response->getStatusCode(),
+                FlashMessage::ERROR
             );
         }
     }
@@ -92,8 +108,9 @@ class WallsIoClient
      * Check processed response from Google Maps Server for errors
      *
      * @param array|null $response
+     * @return true
      */
-    protected function checkResponseForErrors($response)
+    protected function hasResponseErrors(array $response = null): bool
     {
         if ($response === null) {
             $this->messageHelper->addFlashMessage(
@@ -101,6 +118,7 @@ class WallsIoClient
                 'Invalid JSON response',
                 FlashMessage::ERROR
             );
+            return true;
         } elseif ($response['status'] !== 'success') {
             // SF: Haven't found an error request as example.
             // Correct following line, if you get one ;-)
@@ -109,6 +127,8 @@ class WallsIoClient
                 $response['status'],
                 FlashMessage::ERROR
             );
+            return true;
         }
+        return false;
     }
 }
