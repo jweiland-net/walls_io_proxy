@@ -6,6 +6,10 @@
 ChangeLog
 =========
 
+**Version 4.0.0**
+
+- Using API access instead of WebSocket
+
 **Version 3.0.0**
 
 - Use WebSocket connection to get walls.io entries

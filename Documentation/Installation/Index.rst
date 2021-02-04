@@ -17,3 +17,5 @@ The extension needs to be installed like any other extension of TYPO3 CMS:
 #. Search for `walls_io_proxy`
 
 #. Install extension
+
+#. Set access token in Extension Settings
