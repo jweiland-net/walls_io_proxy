@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Service;
 
+use JWeiland\WallsIoProxy\Client\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
-use JWeiland\WallsIoProxy\Client\WallsIoRequest;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
@@ -46,7 +46,7 @@ class WallsService
     {
         $this->wallId = $wallsId;
         $this->registry = $registry ?? GeneralUtility::makeInstance(Registry::class);
-        $this->client = $client ?? GeneralUtility::makeInstance(WallsIoClient::class, $this);
+        $this->client = $client ?? GeneralUtility::makeInstance(WallsIoClient::class);
     }
 
     public function getWalls(int $entriesToLoad): array
@@ -55,11 +55,11 @@ class WallsService
         $walls = $this->getEntries($entriesToLoad);
 
         // Second: If no data or request has errors, try to get old data from last response stored in sys_registry
-        if (array_key_exists('error', $walls)) {
-            DebuggerUtility::var_dump($walls['error']);
+        if (array_key_exists('error', $walls) || empty($walls['data'])) {
+            DebuggerUtility::var_dump($walls);
             $storedWall = $this->registry->get('WallsIoProxy', 'WallId_' . $this->wallId);
             if ($storedWall !== null) {
-                $walls = $this->getDataFromResult($storedWall);
+                $walls = $storedWall['data'];
             }
         }
 
@@ -68,19 +68,18 @@ class WallsService
 
     protected function getEntries(int $entriesToLoad): array
     {
-        $wallsIoEntryRequest = GeneralUtility::makeInstance(WallsIoRequest::class);
-        $wallsIoEntryRequest->setWallId($this->wallId);
-        $wallsIoEntryRequest->setEntriesToLoad($entriesToLoad);
-        $wallsIoEntryRequest->setIncludeHeader(0);
-        $response = $this->client->processRequest($wallsIoEntryRequest);
+        $wallsIoPostRequest = GeneralUtility::makeInstance(PostsRequest::class);
+        $wallsIoPostRequest->setFields(['id', 'comment', 'type', 'created_timestamp', 'external_image', 'post_image']);
+        $wallsIoPostRequest->setLimit($entriesToLoad);
+        $response = $this->client->processRequest($wallsIoPostRequest);
 
-        if ($response->getBody()) {
-            $data = $this->getDataFromResult($response->getBody());
+        if (!empty($response['data'])) {
+            $data = $response['data'];
             if (!empty($data)) {
                 $this->registry->set(
                     'WallsIoProxy',
                     'WallId_' . $this->wallId,
-                    $response->getBody()
+                    $response
                 );
                 return $data;
             }
@@ -89,42 +88,6 @@ class WallsService
         return [
             'error' => $this->client->getError()
         ];
-    }
-
-    protected function getDataFromResult(string $result): array
-    {
-        $data = json_decode($result, true);
-
-        return is_array($data) ? $data : [];
-    }
-
-    /**
-     * Walls.io works with a special Timestamp format
-     * I have adapted the JS part into PHP
-     *
-     * function r(t) {
-     *   var e = "";
-     *   do e = s[t % a] + e, t = Math.floor(t / a); while (t > 0);
-     *   return e
-     * }
-     *
-     * @param int $timestamp
-     * @return string
-     */
-    public function getFormattedTimestamp(int $timestamp): string
-    {
-        $chars = range(0, 9);
-        array_push($chars, ...range('A', 'Z'));
-        array_push($chars, ...range('a', 'z'));
-        array_push($chars, ...['-', '_']);
-        $amountOfChars = count($chars);
-        $timestamp = $timestamp * 1000; // we need Microseconds
-        $formattedTimestamp = '';
-        do {
-            $formattedTimestamp = $chars[$timestamp % $amountOfChars] . $formattedTimestamp;
-            $timestamp = floor($timestamp / $amountOfChars);
-        } while ($timestamp > 0);
-        return $formattedTimestamp;
     }
 
     public function clearCache(): int

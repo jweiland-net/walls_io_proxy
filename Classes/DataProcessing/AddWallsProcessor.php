@@ -58,13 +58,7 @@ class AddWallsProcessor implements DataProcessorInterface
         $this->targetDirectory = $wallsService->getTargetDirectory();
         $walls = $wallsService->getWalls($entriesToLoad);
 
-        if (
-            array_key_exists('errors', $walls)
-            && $walls['errors']['error'] !== 0
-        ) {
-            DebuggerUtility::var_dump($walls);
-        }
-        $processedData['walls'] = $this->sanitizeData($walls[1] ?? []);
+        $processedData['walls'] = $this->sanitizeData($walls);
 
         return $processedData;
     }
@@ -86,12 +80,10 @@ class AddWallsProcessor implements DataProcessorInterface
     {
         foreach ($walls as $key => &$wall) {
             foreach ($wall as $property => $value) {
-                if ($property === 'post_image_aspect_ratio') {
-                    $walls[$key]['post_image_padding'] = 100 / $value;
+                if ($property === 'created_timestamp') {
+                    $walls[$key]['created_timestamp_as_text'] = $this->getCreationText((int)$value);
                 }
-                if ($property === 'external_created_timestamp') {
-                    $walls[$key]['external_created_timestamp_as_text'] = $this->getCreationText((float)$value);
-                }
+
                 if (
                     in_array($property, ['external_image', 'post_image'], true)
                     && !empty($value)
@@ -102,7 +94,7 @@ class AddWallsProcessor implements DataProcessorInterface
 
                 $matches = [];
                 if (
-                    in_array($property, ['comment', 'html_comment'], true)
+                    $property === 'comment'
                     && !empty($value)
                     && preg_match_all('/<img.*?src=["|\'](?<src>.*?)["|\'].*?>/', $value, $matches)
                 ) {
@@ -147,9 +139,8 @@ class AddWallsProcessor implements DataProcessorInterface
         return PathUtility::getAbsoluteWebPath($filePath);
     }
 
-    protected function getCreationText(float $creationTime): string
+    protected function getCreationText(int $creationTime): string
     {
-        $creationTime = (int)ceil($creationTime / 1000);
         $currentTimestamp = (int)date('U');
         $diffInSeconds = $currentTimestamp - $creationTime;
 

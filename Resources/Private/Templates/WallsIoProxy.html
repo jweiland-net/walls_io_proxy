@@ -36,7 +36,7 @@
 							<div class="checkin-image-wrapper checkin-image-preview-holder">
 								<div class="checkin-image"
 										 data-action="show-detail"
-										 style="background-image:url({wall.post_image}); padding-bottom: {wall.post_image_padding}%">
+										 style="background-image:url({wall.post_image});">
 									<f:if condition="{wall.post_video}">
 										<div class="video-wrapper checkin-video-wrapper video-muted video-playing video-has-played">
 											<video class="checkin-video" playsinline="" loop="" muted="">
@@ -90,7 +90,7 @@
 		</a>
 	</div>
 	<a href="{wall.post_link}" class="checkin-timestamp"
-		 data-timestamp="{wall.external_created_timestamp}" target="_blank" rel="nofollow noopener">{wall.external_created_timestamp_as_text}</a>
+		 data-timestamp="{wall.external_created_timestamp}" target="_blank" rel="nofollow noopener">{wall.created_timestamp_as_text}</a>
 	<div class="checkin-type checkin-type-facebook" title="Facebook" data-action="show-detail"></div>
 </f:section>
 
@@ -106,7 +106,7 @@
 			<span class="checkin-user-name-part checkin-user-name-short">@{wall.external_name}</span>
 		</a>
 	</div>
-	<a href="{wall.post_link}" class="checkin-timestamp" data-timestamp="{wall.external_created_timestamp}" target="_blank" rel="nofollow noopener">{wall.external_created_timestamp_as_text}</a>
+	<a href="{wall.post_link}" class="checkin-timestamp" data-timestamp="{wall.external_created_timestamp}" target="_blank" rel="nofollow noopener">{wall.created_timestamp_as_text}</a>
 	<div class="checkin-type checkin-type-twitter" title="Twitter" data-action="show-detail"></div>
 </f:section>
 
@@ -122,7 +122,7 @@
 			<span class="checkin-user-name-part checkin-user-name-short">@{wall.external_name}</span>
 		</a>
 	</div>
-	<a href="{wall.post_link}" class="checkin-timestamp" data-timestamp="{wall.external_created_timestamp}" target="_blank" rel="nofollow noopener">{wall.external_created_timestamp_as_text}</a>
+	<a href="{wall.post_link}" class="checkin-timestamp" data-timestamp="{wall.external_created_timestamp}" target="_blank" rel="nofollow noopener">{wall.created_timestamp_as_text}</a>
 	<div class="checkin-type checkin-type-instagram" title="Instagram" data-action="show-detail"></div>
 </f:section>
 </html>
