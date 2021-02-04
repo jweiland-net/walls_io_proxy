@@ -109,7 +109,7 @@ abstract class AbstractRequest implements RequestInterface
      * @param string $parameter
      * @return bool
      */
-    public function hasParameter($parameter): bool
+    public function hasParameter(string $parameter): bool
     {
         return array_key_exists($parameter, $this->parameters);
     }
