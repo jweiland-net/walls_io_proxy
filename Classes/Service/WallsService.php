@@ -28,6 +28,22 @@ class WallsService
     protected $targetDirectory = 'typo3temp/assets/walls_io_proxy';
 
     /**
+     * Fields to get from the API
+     *
+     * @var array
+     */
+    protected $fields = [
+        'id',
+        'comment',
+        'type',
+        'created_timestamp',
+        'external_fullname',
+        'external_user_id',
+        'external_image',
+        'post_image'
+    ];
+
+    /**
      * @var int
      */
     protected $wallId = 0;
@@ -55,7 +71,7 @@ class WallsService
         $walls = $this->getEntries($entriesToLoad);
 
         // Second: If no data or request has errors, try to get old data from last response stored in sys_registry
-        if (array_key_exists('error', $walls) || empty($walls['data'])) {
+        if (array_key_exists('error', $walls) || empty($walls)) {
             DebuggerUtility::var_dump($walls);
             $storedWall = $this->registry->get('WallsIoProxy', 'WallId_' . $this->wallId);
             if ($storedWall !== null) {
@@ -69,7 +85,7 @@ class WallsService
     protected function getEntries(int $entriesToLoad): array
     {
         $wallsIoPostRequest = GeneralUtility::makeInstance(PostsRequest::class);
-        $wallsIoPostRequest->setFields(['id', 'comment', 'type', 'created_timestamp', 'external_image', 'post_image']);
+        $wallsIoPostRequest->setFields($this->fields);
         $wallsIoPostRequest->setLimit($entriesToLoad);
         $response = $this->client->processRequest($wallsIoPostRequest);
 
