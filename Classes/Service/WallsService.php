@@ -37,6 +37,7 @@ class WallsService
         'comment',
         'type',
         'created_timestamp',
+        'external_name',
         'external_fullname',
         'external_user_id',
         'external_image',
