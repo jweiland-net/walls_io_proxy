@@ -92,18 +92,15 @@ class AddWallsProcessor implements DataProcessorInterface
                 }
 
                 $matches = [];
-                if (
-                    $property === 'comment'
-                    && !empty($value)
-                    && preg_match_all('/<img.*?src=["|\'](?<src>.*?)["|\'].*?>/', $value, $matches)
-                ) {
+                if ($property === 'comment' && !empty($value)) {
                     if (
-                        array_key_exists('src', $matches)
+                        preg_match_all('/<img.*?src=["|\'](?<src>.*?)["|\'].*?>/', $value, $matches)
+                        && array_key_exists('src', $matches)
                         && is_array($matches['src'])
                     ) {
                         foreach ($matches['src'] as $uri) {
                             if (StringUtility::beginsWith($uri, 'http')) {
-                                $wall[$property] = str_replace(
+                                $value = str_replace(
                                     $matches['src'],
                                     $this->cacheExternalResources($uri),
                                     $value
@@ -111,6 +108,8 @@ class AddWallsProcessor implements DataProcessorInterface
                             }
                         }
                     }
+                    $wall[$property] = $value;
+                    $wall['html_comment'] = nl2br($value);
                 }
             }
         }
