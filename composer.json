@@ -39,6 +39,7 @@
 	},
 	"extra": {
 		"typo3/cms": {
+			"extension-key": "walls_io_proxy",
 			"app-dir": ".build",
 			"web-dir": ".build/public"
 		}
