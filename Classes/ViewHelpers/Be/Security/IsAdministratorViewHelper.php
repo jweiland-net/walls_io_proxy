@@ -24,7 +24,7 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
      * @param array $arguments ViewHelper arguments to evaluate the condition for this ViewHelper, allows for flexiblity in overriding this method.
      * @return bool
      */
-    protected static function evaluateCondition($arguments = null)
+    protected static function evaluateCondition($arguments = null): bool
     {
         return isset($GLOBALS['BE_USER']) && $GLOBALS['BE_USER']->user['uid'] > 0 && $GLOBALS['BE_USER']->isAdmin();
     }
