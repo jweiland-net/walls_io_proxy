@@ -28,7 +28,12 @@ class ExtConf implements SingletonInterface
         // On a fresh installation this value can be null.
         if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['walls_io_proxy'])) {
             // get global configuration
-            $extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['walls_io_proxy']);
+            $extConf = unserialize(
+                $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['walls_io_proxy'],
+                [
+                    'allowed_classes' => false
+                ]
+            );
             if (is_array($extConf)) {
                 // call setter method foreach configuration entry
                 foreach ($extConf as $key => $value) {

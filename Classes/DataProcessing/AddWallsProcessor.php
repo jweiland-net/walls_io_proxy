@@ -41,8 +41,12 @@ class AddWallsProcessor implements DataProcessorInterface
      * @return array the processed data as key/value store
      * @throws \Exception
      */
-    public function process(ContentObjectRenderer $cObj, array $contentObjectConfiguration, array $processorConfiguration, array $processedData)
-    {
+    public function process(
+        ContentObjectRenderer $cObj,
+        array $contentObjectConfiguration,
+        array $processorConfiguration,
+        array $processedData
+    ): array {
         if (isset($processorConfiguration['if.']) && !$cObj->checkIf($processorConfiguration['if.'])) {
             return $processedData;
         }
@@ -84,8 +88,8 @@ class AddWallsProcessor implements DataProcessorInterface
                 }
 
                 if (
-                    in_array($property, ['external_image', 'post_image'], true)
-                    && !empty($value)
+                    !empty($value)
+                    && in_array($property, ['external_image', 'post_image'], true)
                     && StringUtility::beginsWith($value, 'http')
                 ) {
                     $wall[$property] = $this->cacheExternalResources($value);

@@ -51,8 +51,11 @@ class UriBuilderViewHelper extends AbstractViewHelper
      * @param RenderingContextInterface $renderingContext
      * @return string Rendered BE URI
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
-    {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ): string {
         return BackendUtility::getModuleUrl(
             $arguments['moduleName'],
             $arguments['urlParameters']

@@ -126,15 +126,10 @@ abstract class AbstractRequest implements RequestInterface
         return sprintf(
             'https://walls.io%s?%s',
             $this->getPath(),
-            http_build_query($this->getParameters(), '', '&')
+            http_build_query($this->getParameters())
         );
     }
 
-    /**
-     * Check, if current Request is valid
-     *
-     * @return bool
-     */
     public function isValidRequest(): bool
     {
         $isValid = true;

@@ -72,7 +72,7 @@ class WallsService
         $walls = $this->getEntries($entriesToLoad);
 
         // Second: If no data or request has errors, try to get old data from last response stored in sys_registry
-        if (array_key_exists('error', $walls) || empty($walls)) {
+        if (array_key_exists('errors', $walls) || empty($walls)) {
             DebuggerUtility::var_dump($walls);
             $storedWall = $this->registry->get('WallsIoProxy', 'WallId_' . $this->wallId);
             if ($storedWall !== null) {
@@ -103,7 +103,7 @@ class WallsService
         }
 
         return [
-            'error' => $this->client->getError()
+            'errors' => $this->client->getErrors()
         ];
     }
 

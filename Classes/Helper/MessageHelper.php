@@ -63,7 +63,7 @@ class MessageHelper
         return $this->getFlashMessageQueue()->getAllMessages();
     }
 
-    public function hasMessages()
+    public function hasMessages(): bool
     {
         return !empty($this->getAllFlashMessages(false));
     }
@@ -86,7 +86,7 @@ class MessageHelper
         return $this->getFlashMessageQueue()->getAllMessagesAndFlush($severity);
     }
 
-    public function hasErrorMessages()
+    public function hasErrorMessages(): bool
     {
         return !empty($this->getErrorMessages(false));
     }
@@ -99,7 +99,7 @@ class MessageHelper
         return $this->getFlashMessagesBySeverity(FlashMessage::ERROR);
     }
 
-    public function hasWarningMessages()
+    public function hasWarningMessages(): bool
     {
         return !empty($this->getWarningMessages(false));
     }
@@ -112,7 +112,7 @@ class MessageHelper
         return $this->getFlashMessagesBySeverity(FlashMessage::WARNING);
     }
 
-    public function hasOkMessages()
+    public function hasOkMessages(): bool
     {
         return !empty($this->getOkMessages(false));
     }
@@ -125,7 +125,7 @@ class MessageHelper
         return $this->getFlashMessagesBySeverity(FlashMessage::OK);
     }
 
-    public function hasInfoMessages()
+    public function hasInfoMessages(): bool
     {
         return !empty($this->getInfoMessages(false));
     }
@@ -138,7 +138,7 @@ class MessageHelper
         return $this->getFlashMessagesBySeverity(FlashMessage::INFO);
     }
 
-    public function hasNoticeMessages()
+    public function hasNoticeMessages(): bool
     {
         return !empty($this->getNoticeMessages(false));
     }
