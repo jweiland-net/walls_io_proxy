@@ -6,6 +6,21 @@
 ChangeLog
 =========
 
+**Version 4.0.3**
+
+- Add ExtensionKey to composer.json
+- Typo. Change getError() to getErrors().
+- Code CleanUp
+
+**Version 4.0.2**
+
+- Add external name for twitter
+- Remove height from checkin name CSS
+
+**Version 4.0.1**
+
+- Add Author and prepare comment for HTML
+
 **Version 4.0.0**
 
 - Using API access instead of WebSocket
