@@ -86,7 +86,7 @@ class PostsRequest extends AbstractRequest
      *
      * @param array $fields
      */
-    public function setFields(array $fields)
+    public function setFields(array $fields): void
     {
         $this->addParameter(
             'fields',
@@ -99,7 +99,7 @@ class PostsRequest extends AbstractRequest
      *
      * @param int $limit
      */
-    public function setLimit(int $limit)
+    public function setLimit(int $limit): void
     {
         $this->addParameter(
             'limit',
@@ -108,12 +108,31 @@ class PostsRequest extends AbstractRequest
     }
 
     /**
+     * Set "before" to only get posts before this given post ID.
+     * Should be used as offset for pagination.
+     *
+     * We will add this value to request, if it contains numbers only.
+     *
+     * @param string $postId
+     */
+    public function setBefore(string $postId): void
+    {
+        // Do not cast to INT as $postId can be really huge, which may occurs into problems on 32 bit systems.
+        if (preg_match('/\d+/', $postId)) {
+            $this->addParameter(
+                'before',
+                $postId
+            );
+        }
+    }
+
+    /**
      * Per default, only active posts are returned.
      * If you want to receive all posts, regardless of status, set this to true.
      *
      * @param bool $includeInactive
      */
-    public function setIncludeInactive(bool $includeInactive)
+    public function setIncludeInactive(bool $includeInactive): void
     {
         $this->addParameter(
             'include_inactive',
