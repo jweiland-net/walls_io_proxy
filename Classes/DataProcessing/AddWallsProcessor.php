@@ -52,21 +52,20 @@ class AddWallsProcessor implements DataProcessorInterface
         }
 
         $this->updateProcessedData($processedData);
-        $entriesToLoad = (int)$processedData['conf']['entriesToLoad'];
+        $maxPosts = (int)$processedData['conf']['entriesToLoad'];
         $wallsService = GeneralUtility::makeInstance(
             WallsService::class,
             (int)$processedData['conf']['wallId']
         );
 
         $this->targetDirectory = $wallsService->getTargetDirectory();
-        $walls = $wallsService->getWalls($entriesToLoad);
 
-        $processedData['walls'] = $this->sanitizeData($walls);
+        $processedData['walls'] = $wallsService->getWallPosts($maxPosts);
 
         return $processedData;
     }
 
-    protected function updateProcessedData(array &$processedData)
+    protected function updateProcessedData(array &$processedData): void
     {
         if (version_compare(TYPO3_branch, '9.4', '>=')) {
             $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
@@ -77,103 +76,5 @@ class AddWallsProcessor implements DataProcessorInterface
             $processedData['data']['pi_flexform'] ?? []
         );
         $processedData['conf'] = $conf;
-    }
-
-    protected function sanitizeData(array $walls): array
-    {
-        foreach ($walls as $key => &$wall) {
-            foreach ($wall as $property => $value) {
-                if ($property === 'created_timestamp') {
-                    $walls[$key]['created_timestamp_as_text'] = $this->getCreationText((int)$value);
-                }
-
-                if (
-                    !empty($value)
-                    && in_array($property, ['external_image', 'post_image'], true)
-                    && StringUtility::beginsWith($value, 'http')
-                ) {
-                    $wall[$property] = $this->cacheExternalResources($value);
-                }
-
-                $matches = [];
-                if ($property === 'comment' && !empty($value)) {
-                    if (
-                        preg_match_all('/<img.*?src=["|\'](?<src>.*?)["|\'].*?>/', $value, $matches)
-                        && array_key_exists('src', $matches)
-                        && is_array($matches['src'])
-                    ) {
-                        foreach ($matches['src'] as $uri) {
-                            if (StringUtility::beginsWith($uri, 'http')) {
-                                $value = str_replace(
-                                    $matches['src'],
-                                    $this->cacheExternalResources($uri),
-                                    $value
-                                );
-                            }
-                        }
-                    }
-                    $wall[$property] = $value;
-                    $wall['html_comment'] = nl2br($value);
-                }
-            }
-        }
-        return $walls;
-    }
-
-    protected function cacheExternalResources(string $resource): string
-    {
-        if (!is_dir($this->targetDirectory)) {
-            GeneralUtility::mkdir_deep($this->targetDirectory);
-        }
-
-        $pathParts = GeneralUtility::split_fileref(parse_url($resource, PHP_URL_PATH));
-        $filePath = sprintf(
-            '%s%s.%s',
-            $this->targetDirectory,
-            $pathParts['filebody'],
-            $pathParts['fileext']
-        );
-
-        if (!file_exists($filePath)) {
-            GeneralUtility::writeFile($filePath, GeneralUtility::getUrl($resource));
-        }
-
-        return PathUtility::getAbsoluteWebPath($filePath);
-    }
-
-    protected function getCreationText(int $creationTime): string
-    {
-        $currentTimestamp = (int)date('U');
-        $diffInSeconds = $currentTimestamp - $creationTime;
-
-        $creationDate = new \DateTime(date('c', $creationTime));
-        $currentDate = new \DateTime(date('c', $currentTimestamp));
-        $dateInterval = $currentDate->diff($creationDate);
-
-        if ($diffInSeconds <= 60) {
-            return LocalizationUtility::translate(
-                'creationTime.seconds',
-                'walls_io_proxy'
-            );
-        }
-        if ($diffInSeconds > 60 && $diffInSeconds <= 3600) {
-            return LocalizationUtility::translate(
-                'creationTime.minutes',
-                'walls_io_proxy',
-                [$dateInterval->format('%i')]
-            );
-        }
-        if ($diffInSeconds > 3600 && $diffInSeconds <= 86400) {
-            return LocalizationUtility::translate(
-                'creationTime.hours',
-                'walls_io_proxy',
-                [$dateInterval->format('%h')]
-            );
-        }
-        return LocalizationUtility::translate(
-            'creationTime.date',
-            'walls_io_proxy',
-            [$creationDate->format('d.m.Y H:i')]
-        );
     }
 }
