@@ -226,6 +226,48 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function getWallPostsWillNotAddHiddenWallPosts()
+    {
+        $data = $expected = [
+            '324125' => [
+                'id' => '324125',
+                'status' => false
+            ],
+            '534213' => [
+                'id' => '534213',
+                'status' => false
+            ],
+            '243512' => [
+                'id' => '243512',
+                'status' => true
+            ],
+            '132452' => [
+                'id' => '132452',
+                'status' => false
+            ]
+        ];
+
+        unset($expected['243512']);
+
+        $this->wallsIoClientProphecy
+            ->processRequest(Argument::type(PostsRequest::class))
+            ->shouldBeCalled()
+            ->willReturn(
+                [
+                    'status' => 'success',
+                    'data' => $data
+                ]
+            );
+
+        self::assertSame(
+            $expected,
+            $this->subject->getWallPosts(3)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function getWallPostsWillUsePostIdAsArrayKeys()
     {
         $data = [

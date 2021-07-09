@@ -39,6 +39,7 @@ class WallsService
         'comment',
         'type',
         'is_crosspost',
+        'status',
         'created_timestamp',
         'external_name',
         'external_fullname',
@@ -109,8 +110,11 @@ class WallsService
 
             $requestedWall = array_shift($requestedWallPosts);
 
-            // Prevent adding/duplicate wall posts, which are already posted on other social media services
-            if ($requestedWall['is_crosspost'] === true) {
+            // Prevent adding duplicate/hidden wall posts
+            if (
+                $requestedWall['status'] === false
+                || $requestedWall['is_crosspost'] === true
+            ) {
                 continue;
             }
 
