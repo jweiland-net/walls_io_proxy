@@ -6,6 +6,10 @@
 ChangeLog
 =========
 
+**Version 4.1.0**
+
+- Cross posts from other social media plattforms will not be added anymore
+
 **Version 4.0.3**
 
 - Add ExtensionKey to composer.json
