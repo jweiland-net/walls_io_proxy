@@ -231,19 +231,19 @@ class WallsServiceTest extends FunctionalTestCase
         $data = $expected = [
             '324125' => [
                 'id' => '324125',
-                'status' => false
+                'status' => true
             ],
             '534213' => [
                 'id' => '534213',
-                'status' => false
+                'status' => true
             ],
             '243512' => [
                 'id' => '243512',
-                'status' => true
+                'status' => false
             ],
             '132452' => [
                 'id' => '132452',
-                'status' => false
+                'status' => true
             ]
         ];
 
