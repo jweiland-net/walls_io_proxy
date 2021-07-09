@@ -86,7 +86,7 @@ class PostsRequest extends AbstractRequest
      *
      * @param array $fields
      */
-    public function setFields(array $fields): void
+    public function setFields(array $fields)
     {
         $this->addParameter(
             'fields',
@@ -99,7 +99,7 @@ class PostsRequest extends AbstractRequest
      *
      * @param int $limit
      */
-    public function setLimit(int $limit): void
+    public function setLimit(int $limit)
     {
         $this->addParameter(
             'limit',
@@ -115,7 +115,7 @@ class PostsRequest extends AbstractRequest
      *
      * @param string $postId
      */
-    public function setBefore(string $postId): void
+    public function setBefore(string $postId)
     {
         // Do not cast to INT as $postId can be really huge, which may occurs into problems on 32 bit systems.
         if (preg_match('/\d+/', $postId)) {
@@ -132,7 +132,7 @@ class PostsRequest extends AbstractRequest
      *
      * @param bool $includeInactive
      */
-    public function setIncludeInactive(bool $includeInactive): void
+    public function setIncludeInactive(bool $includeInactive)
     {
         $this->addParameter(
             'include_inactive',
