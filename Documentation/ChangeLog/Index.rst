@@ -6,6 +6,10 @@
 ChangeLog
 =========
 
+**Version 4.1.1**
+
+- Do not show deactivated wall posts
+
 **Version 4.1.0**
 
 - Cross posts from other social media plattforms will not be added anymore
