@@ -91,14 +91,17 @@ class WallsService
             if ($requestedWallPosts === []) {
                 $requestedWallPosts = $this->getUncachedPostsFromWallsIO(8, $lastPostId);
 
-                // If no data or request has errors, try to get old data from last response stored in sys_registry
+                // if request has errors, try to get old data from last response stored in sys_registry
                 // Return old wall entries and break current loop on failure
                 if (
-                    array_key_exists('errors', $requestedWallPosts)
-                    || $requestedWallPosts === []
+                    array_key_exists('hasErrors', $requestedWallPosts)
+                    && $requestedWallPosts['hasErrors'] === true
                 ) {
                     $hasError = true;
-                    $storedWallPosts = $this->registry->get('WallsIoProxy', 'WallId_' . $this->wallId);
+                    $storedWallPosts = $this->registry->get(
+                        'WallsIoProxy',
+                        'WallId_' . $this->wallId
+                    );
                     $wallPosts = $storedWallPosts ?? [];
                     break;
                 }
@@ -118,7 +121,7 @@ class WallsService
             }
         }
 
-        if ($hasError === false) {
+        if ($hasError === false && !empty($wallPosts)) {
             $this->registry->set(
                 'WallsIoProxy',
                 'WallId_' . $this->wallId,
@@ -154,10 +157,16 @@ class WallsService
         }
 
         return [
-            'errors' => $this->client->getErrors()
+            'hasErrors' => true
         ];
     }
 
+    /**
+     * Clear cache for a specific wall ID.
+     * Will be called by Clear Cache post hook.
+     *
+     * @return int
+     */
     public function clearCache(): int
     {
         if ($this->wallId) {
@@ -171,11 +180,12 @@ class WallsService
         return 0;
     }
 
-    public function getWallId(): int
-    {
-        return $this->wallId;
-    }
-
+    /**
+     * Get cache directory for related files within the content of the wall posts comments.
+     * Will be called by the AddWallsProcessor (DataProcessor)
+     *
+     * @return string
+     */
     public function getTargetDirectory(): string
     {
         if (version_compare(TYPO3_branch, '9.2', '>=')) {

@@ -80,14 +80,6 @@ class WallsIoClient
     }
 
     /**
-     * @return FlashMessage[]
-     */
-    public function getErrors(): array
-    {
-        return $this->messageHelper->getErrorMessages();
-    }
-
-    /**
      * This method will only check the report of the client and not the result itself.
      *
      * @param ResponseInterface $response
