@@ -91,16 +91,8 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallPostsWithMaxPostsWillReturnCachedArrayOnEmptyResponse()
+    public function getWallPostsWithMaxPostsWillReturnEmptyArrayOnEmptyResponse()
     {
-        $this->registry->set(
-            'WallsIoProxy',
-            'ContentRecordUid_12345',
-            [
-                'foo' => 'far'
-            ]
-        );
-
         $this->wallsIoClientProphecy
             ->processRequest(Argument::type(PostsRequest::class))
             ->shouldBeCalled()
@@ -112,9 +104,7 @@ class WallsServiceTest extends FunctionalTestCase
             );
 
         self::assertSame(
-            [
-                'foo' => 'far'
-            ],
+            [],
             $this->subject->getWallPosts(4)
         );
     }
@@ -203,48 +193,6 @@ class WallsServiceTest extends FunctionalTestCase
             '132452' => [
                 'id' => '132452',
                 'is_crosspost' => false
-            ]
-        ];
-
-        unset($expected['243512']);
-
-        $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
-            ->shouldBeCalled()
-            ->willReturn(
-                [
-                    'status' => 'success',
-                    'data' => $data
-                ]
-            );
-
-        self::assertSame(
-            $expected,
-            $this->subject->getWallPosts(3)
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function getWallPostsWillNotAddHiddenWallPosts()
-    {
-        $data = $expected = [
-            '324125' => [
-                'id' => '324125',
-                'status' => true
-            ],
-            '534213' => [
-                'id' => '534213',
-                'status' => true
-            ],
-            '243512' => [
-                'id' => '243512',
-                'status' => false
-            ],
-            '132452' => [
-                'id' => '132452',
-                'status' => true
             ]
         ];
 
