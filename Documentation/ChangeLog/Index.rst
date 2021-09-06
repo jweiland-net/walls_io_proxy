@@ -6,6 +6,14 @@
 ChangeLog
 =========
 
+**Version 4.2.0**
+
+- Deprecated: Do not configure accessToken in Extension Settings anymore
+- Feature: You can configure accessToken in walls.io plugin directly
+- Removed: There is no need to configure wallId anymore
+- Task: Use content record UID as cache identifier
+- Update translations. New label for Clear Cache button
+
 **Version 4.1.1**
 
 - Do not show deactivated wall posts

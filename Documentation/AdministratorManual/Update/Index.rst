@@ -5,6 +5,19 @@ Updating
 
 If you update EXT:walls_io_proxy to a newer version, please read this section carefully!
 
+Update to Version 4.2.0
+-----------------------
+
+As a `WallId` is not needed anymore, all previously created cache entries are invalid.
+
+If you don't like unused data in database you can remove them with following SQL query:
+
+`DELETE FROM sys_registry WHERE entry_namespace = 'WallsIoProxy';`
+
+Further you can remove all files in here:
+
+`typo3temp/assets/walls_io_proxy`
+
 Update to Version 4.0.0
 -----------------------
 
