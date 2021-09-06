@@ -81,7 +81,7 @@ class PostsRequestTest extends UnitTestCase
         self::assertSame(
             [
                 'fields' => 'id,comment,type',
-                'include_inactive' => 1,
+                'include_inactive' => 0,
                 'limit' => 24
             ],
             $this->subject->getParameters()
@@ -164,7 +164,7 @@ class PostsRequestTest extends UnitTestCase
         self::assertSame(
             [
                 'fields' => 'id,comment,type',
-                'include_inactive' => 1,
+                'include_inactive' => 0,
                 'limit' => 24,
                 'access_token' => '123'
             ],
@@ -182,7 +182,7 @@ class PostsRequestTest extends UnitTestCase
         self::assertSame(
             [
                 'fields' => 'id,comment,type',
-                'include_inactive' => 1,
+                'include_inactive' => 0,
                 'limit' => 24
             ],
             $this->subject->getParameters()
@@ -195,7 +195,7 @@ class PostsRequestTest extends UnitTestCase
     public function buildUriReturnsUriWithEmptyAccessToken()
     {
         self::assertSame(
-            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=1&limit=24&access_token=',
+            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=',
             $this->subject->buildUri()
         );
     }
@@ -210,7 +210,7 @@ class PostsRequestTest extends UnitTestCase
         $this->subject->setAccessToken('ABC123');
 
         self::assertSame(
-            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=1&limit=24&access_token=ABC123',
+            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123',
             $this->subject->buildUri()
         );
     }
@@ -227,7 +227,7 @@ class PostsRequestTest extends UnitTestCase
         $this->subject->addParameter('languages', 'de');
 
         self::assertSame(
-            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=1&limit=24&access_token=ABC123&languages=de',
+            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123&languages=de',
             $this->subject->buildUri()
         );
     }
