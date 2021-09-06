@@ -33,7 +33,7 @@ class DataHandler
         ) {
             $wallsService = GeneralUtility::makeInstance(
                 WallsService::class,
-                (int)GeneralUtility::_GET('wallId')
+                (int)GeneralUtility::_GET('contentRecordUid')
             );
 
             echo $wallsService->clearCache();

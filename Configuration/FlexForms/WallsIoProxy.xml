@@ -10,16 +10,16 @@
 				</TCEforms>
 				<type>array</type>
 				<el>
-					<wallId>
+					<accessToken>
 						<TCEforms>
-							<label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:wallId</label>
+							<label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:accessToken</label>
 							<config>
 								<type>input</type>
-								<size>10</size>
-								<eval>int,required</eval>
+								<size>30</size>
+								<eval>trim,required</eval>
 							</config>
 						</TCEforms>
-					</wallId>
+					</accessToken>
 					<entriesToLoad>
 						<TCEforms>
 							<label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:entriesToLoad</label>

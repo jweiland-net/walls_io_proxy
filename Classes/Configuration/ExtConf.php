@@ -12,9 +12,12 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Configuration;
 
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * This class will streamline the values from extension manager configuration
+ *
+ * @deprecated Will be removed with 5.0.0
  */
 class ExtConf implements SingletonInterface
 {
@@ -48,6 +51,11 @@ class ExtConf implements SingletonInterface
 
     public function getAccessToken(): string
     {
+        if (!empty($this->accessToken)) {
+            GeneralUtility::deprecationLog(
+                'Defining AccessToken in Extension Settings is deprecated and will be removed with version 5.0.0. Define it in FlexForm of content record'
+            );
+        }
         return $this->accessToken;
     }
 

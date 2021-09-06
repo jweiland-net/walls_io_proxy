@@ -82,6 +82,19 @@ class PostsRequest extends AbstractRequest
     ];
 
     /**
+     * The accessToken to allow retrieving the posts from wallsIO
+     *
+     * @param string $accessToken
+     */
+    public function setAccessToken(string $accessToken)
+    {
+        $this->addParameter(
+            'access_token',
+            $accessToken
+        );
+    }
+
+    /**
      * A comma-separated list of fields you would like to receive for each post.
      *
      * @param array $fields

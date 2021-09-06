@@ -6,8 +6,8 @@
 			<trans-unit id="sheetGeneral">
 				<source>General</source>
 			</trans-unit>
-			<trans-unit id="wallId">
-				<source>Wall ID</source>
+			<trans-unit id="accessToken">
+				<source>Please enter the API access token from walls.io</source>
 			</trans-unit>
 			<trans-unit id="entriesToLoad">
 				<source>Amount of entries to load</source>

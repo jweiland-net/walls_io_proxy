@@ -15,6 +15,11 @@
 			<trans-unit id="creationTime.date">
 				<source>on %s</source>
 			</trans-unit>
+
+
+			<trans-unit id="clearCache.posts">
+				<source>Clear cached walls.io posts</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

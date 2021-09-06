@@ -51,7 +51,14 @@ class WallsService
     /**
      * @var int
      */
-    protected $wallId = 0;
+    protected $contentRecordUid = 0;
+
+    /**
+     * Can be empty in case of "Clear->cache"
+     *
+     * @var string
+     */
+    protected $accessToken = '';
 
     /**
      * @var Registry
@@ -63,9 +70,14 @@ class WallsService
      */
     protected $client;
 
-    public function __construct(int $wallsId, Registry $registry = null, WallsIoClient $client = null)
-    {
-        $this->wallId = $wallsId;
+    public function __construct(
+        int $contentRecordUid,
+        string $accessToken = '',
+        Registry $registry = null,
+        WallsIoClient $client = null
+    ) {
+        $this->contentRecordUid = $contentRecordUid;
+        $this->accessToken = $accessToken;
         $this->registry = $registry ?? GeneralUtility::makeInstance(Registry::class);
         $this->client = $client ?? GeneralUtility::makeInstance(WallsIoClient::class);
     }
@@ -101,7 +113,7 @@ class WallsService
                     $hasError = true;
                     $storedWallPosts = $this->registry->get(
                         'WallsIoProxy',
-                        'WallId_' . $this->wallId
+                        'ContentRecordUid_' . $this->contentRecordUid
                     );
                     $wallPosts = $storedWallPosts ?? [];
                     break;
@@ -128,7 +140,7 @@ class WallsService
         if ($hasError === false && !empty($wallPosts)) {
             $this->registry->set(
                 'WallsIoProxy',
-                'WallId_' . $this->wallId,
+                'ContentRecordUid_' . $this->contentRecordUid,
                 $wallPosts
             );
         }
@@ -144,6 +156,7 @@ class WallsService
     protected function getUncachedPostsFromWallsIO(int $entriesToLoad = 8, string $beforePostId = ''): array
     {
         $wallsIoPostRequest = GeneralUtility::makeInstance(PostsRequest::class);
+        $wallsIoPostRequest->setAccessToken($this->accessToken);
         $wallsIoPostRequest->setFields($this->fields);
         $wallsIoPostRequest->setLimit($entriesToLoad);
         $wallsIoPostRequest->setBefore($beforePostId);
@@ -173,9 +186,9 @@ class WallsService
      */
     public function clearCache(): int
     {
-        if ($this->wallId) {
+        if ($this->contentRecordUid) {
             $registry = GeneralUtility::makeInstance(Registry::class);
-            $registry->remove('WallsIoProxy', 'WallId_' . $this->wallId);
+            $registry->remove('WallsIoProxy', 'ContentRecordUid_' . $this->contentRecordUid);
 
             GeneralUtility::flushDirectory($this->getTargetDirectory());
 
@@ -198,7 +211,13 @@ class WallsService
             $publicPath = rtrim(PATH_site, '/');
         }
 
-        return $publicPath . '/' . $this->targetDirectory . '/' . $this->wallId . '/';
+        $targetDirectory = $publicPath . '/' . $this->targetDirectory . '/' . $this->contentRecordUid . '/';
+
+        if (!is_dir($targetDirectory)) {
+            GeneralUtility::mkdir_deep($targetDirectory);
+        }
+
+        return $targetDirectory;
     }
 
     protected function getSanitizedPost(array $post): array
@@ -249,14 +268,10 @@ class WallsService
 
     protected function cacheExternalResources(string $resource): string
     {
-        if (!is_dir($this->targetDirectory)) {
-            GeneralUtility::mkdir_deep($this->targetDirectory);
-        }
-
         $pathParts = GeneralUtility::split_fileref(parse_url($resource, PHP_URL_PATH));
         $filePath = sprintf(
             '%s%s.%s',
-            $this->targetDirectory,
+            $this->getTargetDirectory(),
             $pathParts['filebody'],
             $pathParts['fileext']
         );

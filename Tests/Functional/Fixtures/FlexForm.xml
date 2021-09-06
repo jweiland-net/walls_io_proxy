@@ -3,8 +3,8 @@
 	<data>
 		<sheet index="sDEF">
 			<language index="lDEF">
-				<field index="wallId">
-					<value index="vDEF">12345</value>
+				<field index="accessToken">
+					<value index="vDEF">ABC123</value>
 				</field>
 				<field index="entriesToLoad">
 					<value index="vDEF">24</value>

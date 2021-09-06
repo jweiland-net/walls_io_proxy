@@ -53,6 +53,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         $this->subject = new WallsService(
             12345,
+            'ABC123',
             $this->registry,
             $this->wallsIoClientProphecy->reveal()
         );
@@ -82,7 +83,7 @@ class WallsServiceTest extends FunctionalTestCase
         self::assertNull(
             $this->registry->get(
                 'WallsIoProxy',
-                'WallId_12345'
+                'ContentRecordUid_12345'
             )
         );
     }
@@ -94,7 +95,7 @@ class WallsServiceTest extends FunctionalTestCase
     {
         $this->registry->set(
             'WallsIoProxy',
-            'WallId_12345',
+            'ContentRecordUid_12345',
             [
                 'foo' => 'far'
             ]
@@ -125,7 +126,7 @@ class WallsServiceTest extends FunctionalTestCase
     {
         $this->registry->set(
             'WallsIoProxy',
-            'WallId_12345',
+            'ContentRecordUid_12345',
             [
                 'foo' => 'far'
             ]
