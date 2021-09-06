@@ -15,7 +15,12 @@
 			<trans-unit id="creationTime.date">
 				<source>on %s</source>
 			</trans-unit>
-
+			<trans-unit id="loadPosts">
+				<source>Load further posts</source>
+			</trans-unit>
+			<trans-unit id="noPosts">
+				<source>No posts found. Please activate posts at walls.io</source>
+			</trans-unit>
 
 			<trans-unit id="clearCache.posts">
 				<source>Clear cached walls.io posts</source>

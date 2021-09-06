@@ -104,7 +104,12 @@ class WallsService
             if ($requestedWallPosts === []) {
                 $requestedWallPosts = $this->getUncachedPostsFromWallsIO(8, $lastPostId);
 
-                // if request has errors, try to get old data from last response stored in sys_registry
+                // If request is empty, there are no further posts. Break loop.
+                if ($requestedWallPosts === []) {
+                    break;
+                }
+
+                // If request has errors, try to get old data from last response stored in sys_registry
                 // Return old wall entries and break current loop on failure
                 if (
                     array_key_exists('hasErrors', $requestedWallPosts)
@@ -120,13 +125,11 @@ class WallsService
                 }
             }
 
+            // Extract first wall post and process
             $requestedWall = array_shift($requestedWallPosts);
 
-            // Prevent adding duplicate/hidden wall posts
-            if (
-                $requestedWall['status'] === false
-                || $requestedWall['is_crosspost'] === true
-            ) {
+            // Prevent adding duplicate wall posts
+            if ($requestedWall['is_crosspost'] === true) {
                 continue;
             }
 
@@ -168,7 +171,6 @@ class WallsService
             && $response['status'] === 'success'
             && array_key_exists('data', $response)
             && is_array($response['data'])
-            && !empty($response['data'])
         ) {
             return $response['data'];
         }
