@@ -1,72 +1,77 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-			data-namespace-typo3-fluid="true"
->
+<html lang="en"
+			xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+			data-namespace-typo3-fluid="true">
 
 <f:layout name="Default"/>
 
 <f:section name="Main">
 	<div class="socialwall_container" data-uid="{data.uid}" data-entries-to-show="{conf.entriesToShow}">
-		<div class="masonrygrid">
-			<div class="masonrygrid-sizer"></div>
-			<f:for each="{walls}" as="wall">
-				<div class="checkin-wrapper checkin-wrapper-{wall.id} checkin-wrapper-with-image checkin-wrapper-with-message checkin-wrapper-with-image-and-message is-visible masonrygrid-item"
-						 data-id="{wall.id}"
-						 data-original-id="{wall.id}"
-				>
-					<f:if condition="{wall.post_image}">
-						<f:then>
-							<f:variable name="checkinClass">checkin checkin-{wall.id} checkin-color-1 checkin-with-image checkin-with-message checkin-with-image-and-message</f:variable>
-						</f:then>
-						<f:else>
-							<f:variable name="checkinClass">checkin checkin-{wall.id} checkin-color-1 checkin-with-message checkin-without-image</f:variable>
-						</f:else>
-					</f:if>
-					<div class="{checkinClass}{f:if(condition: wall.post_video, then: ' checkin-with-video')}"
-							 data-id="{wall.id}"
-							 data-original-id="{wall.id}"
-							 data-weight="{wall.weight}"
-							 data-timestamp="{wall.external_created_timestamp}"
-							 data-bonus="0"
-							 data-is-looped=""
-							 data-tags=""
-							 data-type="facebook"
-							 data-user-id="{wall.external_user_id}"
-					>
-						<f:if condition="{wall.post_image}">
-							<div class="checkin-image-wrapper checkin-image-preview-holder">
-								<div class="checkin-image"
-										 data-action="show-detail"
-										 style="background-image:url({wall.post_image});">
-									<f:if condition="{wall.post_video}">
-										<div class="video-wrapper checkin-video-wrapper video-muted video-playing video-has-played">
-											<video class="checkin-video" playsinline="" loop="" muted="">
-												<source src="{wall.post_video}" type="video/mp4">
-											</video>
-											<div class="video-mute-button"></div>
+		<f:if condition="{walls}">
+			<f:then>
+				<div class="masonrygrid">
+					<div class="masonrygrid-sizer"></div>
+					<f:for each="{walls}" as="wall">
+						<div class="checkin-wrapper checkin-wrapper-{wall.id} checkin-wrapper-with-image checkin-wrapper-with-message checkin-wrapper-with-image-and-message is-visible masonrygrid-item"
+								 data-id="{wall.id}"
+								 data-original-id="{wall.id}">
+							<f:if condition="{wall.post_image}">
+								<f:then>
+									<f:variable name="checkinClass">checkin checkin-{wall.id} checkin-color-1 checkin-with-image checkin-with-message checkin-with-image-and-message</f:variable>
+								</f:then>
+								<f:else>
+									<f:variable name="checkinClass">checkin checkin-{wall.id} checkin-color-1 checkin-with-message checkin-without-image</f:variable>
+								</f:else>
+							</f:if>
+							<div class="{checkinClass}{f:if(condition: wall.post_video, then: ' checkin-with-video')}"
+									 data-id="{wall.id}"
+									 data-original-id="{wall.id}"
+									 data-weight="{wall.weight}"
+									 data-timestamp="{wall.external_created_timestamp}"
+									 data-bonus="0"
+									 data-is-looped=""
+									 data-tags=""
+									 data-type="facebook"
+									 data-user-id="{wall.external_user_id}">
+								<f:if condition="{wall.post_image}">
+									<div class="checkin-image-wrapper checkin-image-preview-holder">
+										<div class="checkin-image"
+												 data-action="show-detail"
+												 style="background-image:url({wall.post_image});">
+											<f:if condition="{wall.post_video}">
+												<div class="video-wrapper checkin-video-wrapper video-muted video-playing video-has-played">
+													<video class="checkin-video" playsinline="" loop="" muted="">
+														<source src="{wall.post_video}" type="video/mp4">
+													</video>
+													<div class="video-mute-button"></div>
+												</div>
+											</f:if>
+											<a href="{wall.post_link}" target="_blank"
+												 rel="nofollow noopener" class="checkin-image-link">
+												<f:if condition="{wall.post_video}">
+													<div class="video-play-button"></div>
+												</f:if>
+											</a>
 										</div>
-									</f:if>
-									<a href="{wall.post_link}" target="_blank"
-										 rel="nofollow noopener" class="checkin-image-link">
-										<f:if condition="{wall.post_video}">
-											<div class="video-play-button"></div>
-										</f:if>
-									</a>
+									</div>
+								</f:if>
+								<div class="checkin-message" dir="auto">
+									{wall.html_comment -> f:format.raw()->f:format.crop(maxCharacters: 200, respectWordBoundaries: 1, respectHtml: 1)}
+								</div>
+								<div class="checkin-user clearfix">
+									<f:render section="renderFooter" arguments="{_all}" />
 								</div>
 							</div>
-						</f:if>
-						<div class="checkin-message" dir="auto">
-							{wall.html_comment->f:format.raw()->f:format.crop(maxCharacters: 200, respectWordBoundaries: 1, respectHtml: 1)}
 						</div>
-						<div class="checkin-user clearfix">
-							<f:render section="renderFooter" arguments="{_all}" />
-						</div>
-					</div>
+					</f:for>
 				</div>
-			</f:for>
-		</div>
-		<button type="button" class="wallsio-load-more-button" onclick="showWallIoEntries({data.uid})">
-			Lade weitere Posts
-		</button>
+				<button type="button" class="wallsio-load-more-button" onclick="showWallIoEntries({data.uid})">
+					{f:translate(key: 'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang.xlf:loadPosts')}
+				</button>
+			</f:then>
+			<f:else>
+				<div>{f:translate(key: 'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang.xlf:noPosts')}</div>
+			</f:else>
+		</f:if>
 	</div>
 </f:section>
 

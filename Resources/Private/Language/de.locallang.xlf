@@ -19,6 +19,14 @@
 				<source>on %s</source>
 				<target>am %s</target>
 			</trans-unit>
+			<trans-unit id="loadPosts">
+				<source>Load further posts</source>
+				<target>Lade weitere Posts</target>
+			</trans-unit>
+			<trans-unit id="noPosts">
+				<source>No posts found. Please activate posts at walls.io</source>
+				<target>Keine Posts gefunden. Bitte aktivieren Sie Posts bei walls.io</target>
+			</trans-unit>
 
 			<trans-unit id="clearCache.posts">
 				<source>Clear cached walls.io posts</source>

@@ -25,7 +25,7 @@ class PostsRequest extends AbstractRequest
 
     protected $parameters = [
         'fields' => 'id,comment,type',
-        'include_inactive' => 1,
+        'include_inactive' => 0,
         'limit' => 24
     ];
 
