@@ -227,7 +227,7 @@ class PostsRequestTest extends UnitTestCase
         $this->subject->addParameter('languages', 'de');
 
         self::assertSame(
-            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=1&limit=24&languages=de&access_token=ABC123',
+            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=1&limit=24&access_token=ABC123&languages=de',
             $this->subject->buildUri()
         );
     }
