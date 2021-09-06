@@ -206,11 +206,11 @@ class PostsRequestTest extends UnitTestCase
     public function buildUriReturnsUriWithAccessToken()
     {
         $extConf = new ExtConf();
-        $extConf->setAccessToken('123');
         $this->subject = new PostsRequest($extConf);
+        $this->subject->setAccessToken('ABC123');
 
         self::assertSame(
-            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=1&limit=24&access_token=123',
+            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=1&limit=24&access_token=ABC123',
             $this->subject->buildUri()
         );
     }
@@ -221,13 +221,13 @@ class PostsRequestTest extends UnitTestCase
     public function buildUriWithAdditionalParameterReturnsUriWithAccessToken()
     {
         $extConf = new ExtConf();
-        $extConf->setAccessToken('123');
         $this->subject = new PostsRequest($extConf);
+        $this->subject->setAccessToken('ABC123');
 
         $this->subject->addParameter('languages', 'de');
 
         self::assertSame(
-            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=1&limit=24&languages=de&access_token=123',
+            'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=1&limit=24&languages=de&access_token=ABC123',
             $this->subject->buildUri()
         );
     }
@@ -248,8 +248,8 @@ class PostsRequestTest extends UnitTestCase
     public function isValidRequestWithAccessTokenReturnsTrue()
     {
         $extConf = new ExtConf();
-        $extConf->setAccessToken('123');
         $this->subject = new PostsRequest($extConf);
+        $this->subject->setAccessToken('ABC123');
 
         self::assertTrue(
             $this->subject->isValidRequest()
