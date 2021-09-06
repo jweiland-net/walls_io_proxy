@@ -7,9 +7,9 @@
 				<source>General</source>
 				<target>Allgemein</target>
 			</trans-unit>
-			<trans-unit id="wallId">
-				<source>Wall ID</source>
-				<target>Wall ID</target>
+			<trans-unit id="accessToken">
+				<source>Please enter the API access token from walls.io</source>
+				<target>Tragen Sie bitte den API Access Token von walls.io ein</target>
 			</trans-unit>
 			<trans-unit id="entriesToLoad">
 				<source>Amount of entries to load</source>

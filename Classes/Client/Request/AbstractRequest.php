@@ -39,52 +39,26 @@ abstract class AbstractRequest implements RequestInterface
         $this->extConf = $extConf ?? GeneralUtility::makeInstance(ExtConf::class);
     }
 
-    /**
-     * Returns the path
-     *
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * Sets the path
-     *
-     * @param string $path
-     */
     public function setPath(string $path)
     {
         $this->path = trim($path);
     }
 
-    /**
-     * Returns the parameters
-     *
-     * @return array $parameters
-     */
     public function getParameters(): array
     {
         return $this->parameters;
     }
 
-    /**
-     * Sets the parameters
-     *
-     * @param array $parameters
-     */
     public function setParameters(array $parameters)
     {
         $this->parameters = array_intersect_key($parameters, $this->allowedParameters);
     }
 
-    /**
-     * Adds a parameter
-     *
-     * @param string $parameter
-     * @param mixed $value
-     */
     public function addParameter(string $parameter, $value)
     {
         if (array_key_exists($parameter, $this->allowedParameters)) {
@@ -92,12 +66,6 @@ abstract class AbstractRequest implements RequestInterface
         }
     }
 
-    /**
-     * Gets a parameter
-     *
-     * @param string $parameter
-     * @return mixed
-     */
     public function getParameter(string $parameter)
     {
         return $this->parameters[$parameter];
@@ -121,7 +89,10 @@ abstract class AbstractRequest implements RequestInterface
      */
     public function buildUri(): string
     {
-        $this->addParameter('access_token', $this->extConf->getAccessToken());
+        if (empty($this->getParameter('access_token'))) {
+            // @deprecated
+            $this->addParameter('access_token', $this->extConf->getAccessToken());
+        }
 
         return sprintf(
             'https://walls.io%s?%s',

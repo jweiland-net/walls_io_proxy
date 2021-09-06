@@ -19,6 +19,11 @@
 				<source>on %s</source>
 				<target>am %s</target>
 			</trans-unit>
+
+			<trans-unit id="clearCache.posts">
+				<source>Clear cached walls.io posts</source>
+				<target>Lösche zwischengespeicherte wall.io Beiträge</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

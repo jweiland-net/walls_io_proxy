@@ -52,7 +52,8 @@ class AddWallsProcessor implements DataProcessorInterface
         $maxPosts = (int)$processedData['conf']['entriesToLoad'];
         $wallsService = GeneralUtility::makeInstance(
             WallsService::class,
-            (int)$processedData['conf']['wallId']
+            (int)$processedData['data']['uid'],
+            $processedData['conf']['accessToken']
         );
 
         $this->targetDirectory = $wallsService->getTargetDirectory();

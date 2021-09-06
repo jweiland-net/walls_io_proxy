@@ -3,14 +3,6 @@
 	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
 		<header/>
 		<body>
-			<trans-unit id="wallId.description">
-				<source>Insert the unique Wall Identifier from walls.io</source>
-				<target>Trage hier die eindeutige Wall ID von walls.io ein</target>
-			</trans-unit>
-			<trans-unit id="wallId.details">
-				<source>In customer menu of walls.io you should see a section how to insert a wall to your website. Search for a link like "https://walls.io/abcde?nobackground=1show_header=0initial_posts=8lang=de_DE". Open that link in a new tab and open its HTML Source code. At the very end of this SourceCode you will find the wallId. In most cases it is a 5 or 6 digit number.</source>
-				<target>Im Kundenmenü von walls.io gibt es einen Abschnitt, um eine Wall als iFrame oder Script auf die Webseite einzubinden. Sucht dort nach einer URI wie "https://walls.io/abcde?nobackground=1show_header=0initial_posts=8lang=de_DE". Öffnet diese URI in einem neuen Browser Tab und schaut dort in den HTML Quellcode dieser Seite. Ziemlich am Ende diesen Quellcodes findet ihr die wallId. Meist ein 5-6 stellige Zahl.</target>
-			</trans-unit>
 			<trans-unit id="entriesToLoad.description">
 				<source>Define how many entries should be loaded.</source>
 				<target>Wie viele Einträge sollen geladen werden?</target>
