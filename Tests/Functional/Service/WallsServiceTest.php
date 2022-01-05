@@ -14,14 +14,19 @@ use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Registry;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Walls Service Test
  */
 class WallsServiceTest extends FunctionalTestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var WallsService
      */
@@ -44,9 +49,15 @@ class WallsServiceTest extends FunctionalTestCase
         'typo3conf/ext/walls_io_proxy'
     ];
 
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
+
+        $this->importDataSet('ntf://Database/pages.xml');
+        $this->importDataSet('ntf://Database/tt_content.xml');
+        $this->setUpFrontendRootPage(1);
+
+        $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
 
         $this->registry = new Registry();
         $this->wallsIoClientProphecy = $this->prophesize(WallsIoClient::class);
@@ -59,7 +70,7 @@ class WallsServiceTest extends FunctionalTestCase
         );
     }
 
-    protected function tearDown()
+    public function tearDown(): void
     {
         unset(
             $this->subject,
@@ -196,6 +207,7 @@ class WallsServiceTest extends FunctionalTestCase
             ]
         ];
 
+        $expected = $data;
         unset($expected['243512']);
 
         $this->wallsIoClientProphecy

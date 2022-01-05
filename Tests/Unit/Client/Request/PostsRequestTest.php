@@ -12,23 +12,26 @@ namespace JWeiland\WallsIoProxy\Tests\Unit\Client\Request;
 use JWeiland\WallsIoProxy\Client\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Configuration\ExtConf;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Walls IO Request Test
  */
 class PostsRequestTest extends UnitTestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var PostsRequest
      */
     protected $subject;
 
-    protected function setUp()
+    public function setUp(): void
     {
         $this->subject = new PostsRequest();
     }
 
-    protected function tearDown()
+    public function tearDown(): void
     {
         unset(
             $this->subject
@@ -39,7 +42,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function getPathInitiallyReturnsDefaultPath()
+    public function getPathInitiallyReturnsDefaultPath(): void
     {
         self::assertSame(
             '/api/posts.json',
@@ -50,7 +53,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function setPathSetsPath()
+    public function setPathSetsPath(): void
     {
         $this->subject->setPath('foo bar');
 
@@ -63,7 +66,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function setPathSetsTrimmedPath()
+    public function setPathSetsTrimmedPath(): void
     {
         $this->subject->setPath('   trimmed   ');
 
@@ -76,7 +79,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function getParametersInitiallyReturnsDefaultParameters()
+    public function getParametersInitiallyReturnsDefaultParameters(): void
     {
         self::assertSame(
             [
@@ -91,7 +94,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function getParameterReturnsOneParameter()
+    public function getParameterReturnsOneParameter(): void
     {
         self::assertSame(
             24,
@@ -102,7 +105,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function hasParameterReturnsTrue()
+    public function hasParameterReturnsTrue(): void
     {
         self::assertTrue(
             $this->subject->hasParameter('limit')
@@ -112,7 +115,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function hasParameterReturnsFalse()
+    public function hasParameterReturnsFalse(): void
     {
         self::assertFalse(
             $this->subject->hasParameter('accessToken')
@@ -122,7 +125,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function setParametersSetsParameters()
+    public function setParametersSetsParameters(): void
     {
         $expectedParameters = [
             'access_token' => '123',
@@ -139,7 +142,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function setParametersSetsOnlyAllowedParameters()
+    public function setParametersSetsOnlyAllowedParameters(): void
     {
         $this->subject->setParameters([
             'accessToken' => '123',
@@ -157,7 +160,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function addParameterAddsParameter()
+    public function addParameterAddsParameter(): void
     {
         $this->subject->addParameter('access_token', '123');
 
@@ -175,7 +178,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function addParameterWillNotAddDisallowedParameter()
+    public function addParameterWillNotAddDisallowedParameter(): void
     {
         $this->subject->addParameter('accessToken', '123');
 
@@ -192,7 +195,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function buildUriReturnsUriWithEmptyAccessToken()
+    public function buildUriReturnsUriWithEmptyAccessToken(): void
     {
         self::assertSame(
             'https://walls.io/api/posts.json?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=',
@@ -203,7 +206,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function buildUriReturnsUriWithAccessToken()
+    public function buildUriReturnsUriWithAccessToken(): void
     {
         $extConf = new ExtConf();
         $this->subject = new PostsRequest($extConf);
@@ -218,7 +221,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function buildUriWithAdditionalParameterReturnsUriWithAccessToken()
+    public function buildUriWithAdditionalParameterReturnsUriWithAccessToken(): void
     {
         $extConf = new ExtConf();
         $this->subject = new PostsRequest($extConf);
@@ -235,7 +238,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function isValidRequestWithInvalidAccessTokenReturnsFalse()
+    public function isValidRequestWithInvalidAccessTokenReturnsFalse(): void
     {
         self::assertFalse(
             $this->subject->isValidRequest()
@@ -245,7 +248,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function isValidRequestWithAccessTokenReturnsTrue()
+    public function isValidRequestWithAccessTokenReturnsTrue(): void
     {
         $extConf = new ExtConf();
         $this->subject = new PostsRequest($extConf);
@@ -259,7 +262,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function setFieldsWithValidFieldsSetsFields()
+    public function setFieldsWithValidFieldsSetsFields(): void
     {
         $this->subject->setFields([
             'id',
@@ -276,7 +279,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function setFieldsWithInvalidFieldsSomeFields()
+    public function setFieldsWithInvalidFieldsSomeFields(): void
     {
         $this->subject->setFields([
             'id',
@@ -293,7 +296,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function setLimitSetsLimit()
+    public function setLimitSetsLimit(): void
     {
         $this->subject->setLimit(15);
 
@@ -306,7 +309,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function setIncludeInactiveWithTrueSetsIncludeInactive()
+    public function setIncludeInactiveWithTrueSetsIncludeInactive(): void
     {
         $this->subject->setIncludeInactive(true);
 
@@ -319,7 +322,7 @@ class PostsRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function setIncludeInactiveWithFalseSetsIncludeInactive()
+    public function setIncludeInactiveWithFalseSetsIncludeInactive(): void
     {
         $this->subject->setIncludeInactive(false);
 

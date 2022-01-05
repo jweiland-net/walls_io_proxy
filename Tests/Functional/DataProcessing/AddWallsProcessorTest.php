@@ -13,6 +13,7 @@ use JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -22,6 +23,8 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  */
 class AddWallsProcessorTest extends FunctionalTestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var AddWallsProcessor
      */
@@ -36,13 +39,13 @@ class AddWallsProcessorTest extends FunctionalTestCase
         'typo3conf/ext/walls_io_proxy'
     ];
 
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->subject = new AddWallsProcessor();
     }
 
-    protected function tearDown()
+    public function tearDown(): void
     {
         unset(
             $this->subject
@@ -53,7 +56,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function processAddsWallsToProcessedData()
+    public function processAddsWallsToProcessedData(): void
     {
         $cObj = new ContentObjectRenderer();
         $processedData = [
