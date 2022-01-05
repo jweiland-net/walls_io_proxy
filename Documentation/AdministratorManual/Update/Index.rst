@@ -5,6 +5,11 @@ Updating
 
 If you update EXT:walls_io_proxy to a newer version, please read this section carefully!
 
+Update to Version 5.0.0
+-----------------------
+
+We have removed TYPO3 8 compatibility. No new features added, so no problems while upgrading.
+
 Update to Version 4.2.0
 -----------------------
 
