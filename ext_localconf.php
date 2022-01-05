@@ -4,7 +4,7 @@ if (!defined('TYPO3_MODE')) {
 }
 
 call_user_func(
-    function () {
+    function (): void {
         // Configure frontend plugin
         $pluginContent = trim('
 tt_content.wallsioproxy =< lib.contentElement
