@@ -63,13 +63,9 @@ class AddWallsProcessor implements DataProcessorInterface
         return $processedData;
     }
 
-    protected function updateProcessedData(array &$processedData)
+    protected function updateProcessedData(array &$processedData): void
     {
-        if (version_compare(TYPO3_branch, '9.4', '>=')) {
-            $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
-        } else {
-            $flexFormService = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Service\FlexFormService::class);
-        }
+        $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
         $conf = $flexFormService->convertFlexFormContentToArray(
             $processedData['data']['pi_flexform'] ?? []
         );

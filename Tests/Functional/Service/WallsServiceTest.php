@@ -73,7 +73,7 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallPostsWithEmptyMaxPostsWillReturnEmptyArray()
+    public function getWallPostsWithEmptyMaxPostsWillReturnEmptyArray(): void
     {
         self::assertSame(
             [],
@@ -91,7 +91,7 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallPostsWithMaxPostsWillReturnEmptyArrayOnEmptyResponse()
+    public function getWallPostsWithMaxPostsWillReturnEmptyArrayOnEmptyResponse(): void
     {
         $this->wallsIoClientProphecy
             ->processRequest(Argument::type(PostsRequest::class))
@@ -112,7 +112,7 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallPostsWithMaxPostsWillReturnCachedArrayOnInvalidResponse()
+    public function getWallPostsWithMaxPostsWillReturnCachedArrayOnInvalidResponse(): void
     {
         $this->registry->set(
             'WallsIoProxy',
@@ -142,7 +142,7 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallPostsWillReturnFreshWallPosts()
+    public function getWallPostsWillReturnFreshWallPosts(): void
     {
         $expected = [
             '324125' => [
@@ -175,9 +175,9 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallPostsWillNotAddCrossPosts()
+    public function getWallPostsWillNotAddCrossPosts(): void
     {
-        $data = $expected = [
+        $data = [
             '324125' => [
                 'id' => '324125',
                 'is_crosspost' => false
@@ -217,7 +217,7 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallPostsWillUsePostIdAsArrayKeys()
+    public function getWallPostsWillUsePostIdAsArrayKeys(): void
     {
         $data = [
             0 => [
@@ -256,7 +256,7 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallPostsWillConvertTimestampHumanReadable()
+    public function getWallPostsWillConvertTimestampHumanReadable(): void
     {
         $date = new \DateTime('now');
         $date->modify('-2 hours');
@@ -295,7 +295,7 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallPostsWillConvertNewLinesToBR()
+    public function getWallPostsWillConvertNewLinesToBR(): void
     {
         $data = [
             0 => [

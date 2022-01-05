@@ -10,17 +10,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        typo3: [^8.7, ^9.5]
-        php: ['7.1', '7.2', '7.3']
-        exclude:
-          - typo3: ^8.7
-            php: '7.3'
-          - typo3: ^9.5
-            php: '7.1'
-        include:
-          - php: '7.0'
-            typo3: ^8.7
-            os: ubuntu-16.04
+        typo3: [^9.5, ^10.4]
+        php: ['7.2', '7.3', '7.4']
 
     services:
       mysql:
