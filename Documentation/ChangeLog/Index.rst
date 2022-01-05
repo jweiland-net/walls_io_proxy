@@ -6,6 +6,11 @@
 ChangeLog
 =========
 
+**Version 5.0.0**
+
+- Remove TYPO3 8 compatibility
+- Add TYPO3 10 compatibility
+
 **Version 4.2.0**
 
 - Deprecated: Do not configure accessToken in Extension Settings anymore
