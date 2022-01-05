@@ -13,6 +13,7 @@ use JWeiland\WallsIoProxy\Client\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Helper\MessageHelper;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\Response;
@@ -23,6 +24,8 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
  */
 class WallsIoClientTest extends UnitTestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var WallsIoClient
      */
@@ -38,7 +41,7 @@ class WallsIoClientTest extends UnitTestCase
      */
     protected $messageHelperProphecy;
 
-    protected function setUp()
+    public function setUp(): void
     {
         $this->requestFactoryProphecy = $this->prophesize(RequestFactory::class);
         $this->messageHelperProphecy = $this->prophesize(MessageHelper::class);
@@ -49,7 +52,7 @@ class WallsIoClientTest extends UnitTestCase
         );
     }
 
-    protected function tearDown()
+    public function tearDown(): void
     {
         unset(
             $this->subject,
@@ -62,7 +65,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidRequestAddsFlashMessage()
+    public function processRequestWithInvalidRequestAddsFlashMessage(): void
     {
         /** @var PostsRequest|ObjectProphecy $postsRequest */
         $postsRequest = $this->prophesize(PostsRequest::class);
@@ -92,7 +95,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidClientResponseAddsFlashMessage()
+    public function processRequestWithInvalidClientResponseAddsFlashMessage(): void
     {
         /** @var PostsRequest|ObjectProphecy $postsRequest */
         $postsRequest = $this->prophesize(PostsRequest::class);
@@ -138,7 +141,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidRequestResultsInCatchedException()
+    public function processRequestWithInvalidRequestResultsInCatchedException(): void
     {
         /** @var PostsRequest|ObjectProphecy $postsRequest */
         $postsRequest = $this->prophesize(PostsRequest::class);
@@ -181,7 +184,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidResponseAddsFlashMessage()
+    public function processRequestWithInvalidResponseAddsFlashMessage(): void
     {
         /** @var PostsRequest|ObjectProphecy $postsRequest */
         $postsRequest = $this->prophesize(PostsRequest::class);
@@ -231,7 +234,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidStatusAddsFlashMessage()
+    public function processRequestWithInvalidStatusAddsFlashMessage(): void
     {
         /** @var PostsRequest|ObjectProphecy $postsRequest */
         $postsRequest = $this->prophesize(PostsRequest::class);
@@ -286,7 +289,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestReturnsWalls()
+    public function processRequestReturnsWalls(): void
     {
         /** @var PostsRequest|ObjectProphecy $postsRequest */
         $postsRequest = $this->prophesize(PostsRequest::class);

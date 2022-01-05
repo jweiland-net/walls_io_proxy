@@ -22,8 +22,10 @@
 	},
 	"require-dev": {
 		"roave/security-advisories": "dev-latest",
-		"friendsofphp/php-cs-fixer": "^2.14",
-		"nimut/testing-framework": "^5.1"
+		"friendsofphp/php-cs-fixer": "^3.4",
+		"nimut/testing-framework": "^6.0",
+		"phpunit/phpunit": "^9.5",
+		"phpspec/prophecy-phpunit": "^2.0"
 	},
 	"autoload": {
 		"psr-4": {
