@@ -6,6 +6,10 @@
 ChangeLog
 =========
 
+**Version 5.0.1**
+
+- Fix usage of deprecated method getModuleUrl() in UriBuilderViewHelper
+
 **Version 5.0.0**
 
 - Remove TYPO3 8 compatibility

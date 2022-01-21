@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\ViewHelpers\Be;
 
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
@@ -56,9 +58,7 @@ class UriBuilderViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ): string {
-        return BackendUtility::getModuleUrl(
-            $arguments['moduleName'],
-            $arguments['urlParameters']
-        );
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        return (string)$uriBuilder->buildUriFromRoute($arguments['moduleName'], $arguments['urlParameters']);
     }
 }
