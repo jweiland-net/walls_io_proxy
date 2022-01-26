@@ -6,6 +6,12 @@
 ChangeLog
 =========
 
+**Version 5.1.0**
+
+- Replace PostsRequest with ChangedRequest
+- You can load up to 1000 entries by one call to walls.io
+- Limit the entries to load by a range of x days
+
 **Version 5.0.1**
 
 - Fix usage of deprecated method getModuleUrl() in UriBuilderViewHelper

@@ -50,18 +50,33 @@ ContentElement Settings
 After installation of walls_io_proxy you will find a new ContentElement in newContentElementWizard called
 "Walls.io Proxy". On Tab "Walls.io" you can configure the Output as follows:
 
-Wall ID
-~~~~~~~
+Access Token
+~~~~~~~~~~~~
 
-Please insert the walls.io ID
+Enter the access token. Retrieve one in the customer menu of walls.io
 
 Amount of entries to load
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-How many entries should be loaded with request? Should be a multiple of "Amount of entries to show".
+Default: 24
+Max: 999 (1000 is the max. value allowed by walls.io)
+
+Define the amount of entries to load from walls.io within one request. If you have some conditions implemented
+in Fluid View, you should increase this value a little bit to match your needs.
 
 Amount of entries to show
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This amount of entries will be visible displayed in frontend. With each hit on the load more button this amount
+Default: 8
+
+This amount of entries will be visible displayed in frontend. With each hit on the "load more" button this amount
 of entries will be appended to the current visible entries in frontend.
+
+Show entries of the last x days
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Default: 365 (1 year)
+
+Since walls_io_proxy v5.1.0 we had to switch to another API call. The new API call needs a further mandatory
+value called `since`. `since` is used to load entries from walls.io with a maximum date. Don't be afraid, you still
+will get the most current, updated entries first ;-)
