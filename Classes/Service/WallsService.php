@@ -92,6 +92,14 @@ class WallsService
      */
     public function getWallPosts(int $maxPosts, int $since): array
     {
+        if ($maxPosts === 0) {
+            return [];
+        }
+
+        if ($since === 0) {
+            return [];
+        }
+
         $wallPosts = [];
         $since = time() - (60 * 60 * 24 * $since);
         $hasError = false;
@@ -148,7 +156,6 @@ class WallsService
             && $response['status'] === 'success'
             && array_key_exists('data', $response)
             && is_array($response['data'])
-            && array_key_exists('current_time', $response)
         ) {
             return $response;
         }
