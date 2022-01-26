@@ -7,9 +7,9 @@
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\WallsIoProxy\Tests\Unit\Client\Request;
+namespace JWeiland\WallsIoProxy\Tests\Unit\Client\Request\Posts;
 
-use JWeiland\WallsIoProxy\Client\Request\PostsRequest;
+use JWeiland\WallsIoProxy\Client\Request\Posts\ChangedRequest;
 use JWeiland\WallsIoProxy\Configuration\ExtConf;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -17,18 +17,18 @@ use Prophecy\PhpUnit\ProphecyTrait;
 /**
  * Walls IO Request Test
  */
-class PostsRequestTest extends UnitTestCase
+class ChangedRequestTest extends UnitTestCase
 {
     use ProphecyTrait;
 
     /**
-     * @var PostsRequest
+     * @var ChangedRequest
      */
     protected $subject;
 
     public function setUp(): void
     {
-        $this->subject = new PostsRequest();
+        $this->subject = new ChangedRequest();
     }
 
     public function tearDown(): void
@@ -45,7 +45,7 @@ class PostsRequestTest extends UnitTestCase
     public function getPathInitiallyReturnsDefaultPath(): void
     {
         self::assertSame(
-            '/v1/posts',
+            '/v1/posts/changed',
             $this->subject->getPath()
         );
     }
@@ -198,7 +198,7 @@ class PostsRequestTest extends UnitTestCase
     public function buildUriReturnsUriWithEmptyAccessToken(): void
     {
         self::assertSame(
-            'https://walls.io/v1/posts?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=',
+            'https://walls.io/v1/posts/changed?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=',
             $this->subject->buildUri()
         );
     }
@@ -209,11 +209,11 @@ class PostsRequestTest extends UnitTestCase
     public function buildUriReturnsUriWithAccessToken(): void
     {
         $extConf = new ExtConf();
-        $this->subject = new PostsRequest($extConf);
+        $this->subject = new ChangedRequest($extConf);
         $this->subject->setAccessToken('ABC123');
 
         self::assertSame(
-            'https://walls.io/v1/posts?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123',
+            'https://walls.io/v1/posts/changed?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123',
             $this->subject->buildUri()
         );
     }
@@ -224,13 +224,13 @@ class PostsRequestTest extends UnitTestCase
     public function buildUriWithAdditionalParameterReturnsUriWithAccessToken(): void
     {
         $extConf = new ExtConf();
-        $this->subject = new PostsRequest($extConf);
+        $this->subject = new ChangedRequest($extConf);
         $this->subject->setAccessToken('ABC123');
 
         $this->subject->addParameter('languages', 'de');
 
         self::assertSame(
-            'https://walls.io/v1/posts?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123&languages=de',
+            'https://walls.io/v1/posts/changed?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123&languages=de',
             $this->subject->buildUri()
         );
     }
@@ -251,7 +251,7 @@ class PostsRequestTest extends UnitTestCase
     public function isValidRequestWithAccessTokenReturnsTrue(): void
     {
         $extConf = new ExtConf();
-        $this->subject = new PostsRequest($extConf);
+        $this->subject = new ChangedRequest($extConf);
         $this->subject->setAccessToken('ABC123');
 
         self::assertTrue(
