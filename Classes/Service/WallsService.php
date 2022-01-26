@@ -99,11 +99,8 @@ class WallsService
         $requestedWallPosts = $wallsIoRequest['data'];
 
         if (
-            $requestedWallPosts === []
-            || (
-                array_key_exists('hasErrors', $requestedWallPosts)
-                && $requestedWallPosts['hasErrors'] === true
-            )
+            (array_key_exists('hasErrors', $wallsIoRequest) && $wallsIoRequest['hasErrors'] === true)
+            || $requestedWallPosts === []
         ) {
             $hasError = true;
             $storedWallPosts = $this->registry->get(

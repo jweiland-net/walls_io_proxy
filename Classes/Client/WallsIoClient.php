@@ -65,7 +65,7 @@ class WallsIoClient
             }
         } catch (\Exception $exception) {
             $this->messageHelper->addFlashMessage(
-                $exception->getMessage(),
+                str_replace($request->getParameter('access_token'), 'XXX', $exception->getMessage()),
                 'Error Code: ' . $exception->getCode(),
                 FlashMessage::ERROR
             );

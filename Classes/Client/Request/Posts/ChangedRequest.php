@@ -24,7 +24,7 @@ class ChangedRequest extends AbstractRequest
     /**
      * @var string
      */
-    protected $path = '/api/posts/changed';
+    protected $path = '/v1/posts/changed';
 
     protected $parameters = [
         'fields' => 'id,comment,type',
