@@ -12,6 +12,9 @@
 				<field index="entriesToShow">
 					<value index="vDEF">8</value>
 				</field>
+				<field index="showWallsSince">
+					<value index="vDEF">365</value>
+				</field>
 			</language>
 		</sheet>
 	</data>
