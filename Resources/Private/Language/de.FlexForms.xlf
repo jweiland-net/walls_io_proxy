@@ -15,9 +15,21 @@
 				<source>Amount of entries to load</source>
 				<target>Lade Anzahl Einträge</target>
 			</trans-unit>
+			<trans-unit id="entriesToLoad.description">
+				<source>How many entries should be called from walls.io?</source>
+				<target>Wie viele Einträge sollen von walls.io angerufen werden?</target>
+			</trans-unit>
 			<trans-unit id="entriesToShow">
 				<source>Amount of entries to show</source>
 				<target>Zeige Anzahl Einträge</target>
+			</trans-unit>
+			<trans-unit id="showWallsSince">
+				<source>Show entries of the last x days</source>
+				<target>Zeige Einträge der letzten x Tage</target>
+			</trans-unit>
+			<trans-unit id="showWallsSince.description">
+				<source>Enter the max. days that the entries to be displayed may be old. If you set the value too low, it could happen that fewer entries are output than defined above.</source>
+				<target>Tragen Sie die max. Tage ein, die die anzuzeigenden Einträge alt sein dürfen. Wenn Sie den Wert zu niedrig ansetzen, könnte es passieren, dass weniger Einträge als oben definiert ausgegeben werden.</target>
 			</trans-unit>
 		</body>
 	</file>
