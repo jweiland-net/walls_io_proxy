@@ -186,49 +186,6 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getWallPostsWillNotAddCrossPosts(): void
-    {
-        $data = [
-            '324125' => [
-                'id' => '324125',
-                'is_crosspost' => false
-            ],
-            '534213' => [
-                'id' => '534213',
-                'is_crosspost' => false
-            ],
-            '243512' => [
-                'id' => '243512',
-                'is_crosspost' => true
-            ],
-            '132452' => [
-                'id' => '132452',
-                'is_crosspost' => false
-            ]
-        ];
-
-        $expected = $data;
-        unset($expected['243512']);
-
-        $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(ChangedRequest::class))
-            ->shouldBeCalled()
-            ->willReturn(
-                [
-                    'status' => 'success',
-                    'data' => $data
-                ]
-            );
-
-        self::assertSame(
-            $expected,
-            $this->subject->getWallPosts(3, 365)
-        );
-    }
-
-    /**
-     * @test
-     */
     public function getWallPostsWillUsePostIdAsArrayKeys(): void
     {
         $data = [
