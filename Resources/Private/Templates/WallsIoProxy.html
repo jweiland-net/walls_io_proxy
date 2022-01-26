@@ -5,6 +5,8 @@
 <f:layout name="Default"/>
 
 <f:section name="Main">
+	<f:flashMessages queueIdentifier="core.template.flashMessages" />
+
 	<div class="socialwall_container" data-uid="{data.uid}" data-entries-to-show="{conf.entriesToShow}">
 		<f:if condition="{walls}">
 			<f:then>

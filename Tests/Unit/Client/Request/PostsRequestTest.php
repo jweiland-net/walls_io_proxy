@@ -198,7 +198,7 @@ class PostsRequestTest extends UnitTestCase
     public function buildUriReturnsUriWithEmptyAccessToken(): void
     {
         self::assertSame(
-            'https://walls.io/v1/posts?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=',
+            'https://api.walls.io/v1/posts?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=',
             $this->subject->buildUri()
         );
     }
@@ -213,7 +213,7 @@ class PostsRequestTest extends UnitTestCase
         $this->subject->setAccessToken('ABC123');
 
         self::assertSame(
-            'https://walls.io/v1/posts?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123',
+            'https://api.walls.io/v1/posts?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123',
             $this->subject->buildUri()
         );
     }
@@ -230,7 +230,7 @@ class PostsRequestTest extends UnitTestCase
         $this->subject->addParameter('languages', 'de');
 
         self::assertSame(
-            'https://walls.io/v1/posts?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123&languages=de',
+            'https://api.walls.io/v1/posts?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123&languages=de',
             $this->subject->buildUri()
         );
     }

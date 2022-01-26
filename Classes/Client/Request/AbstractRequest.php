@@ -95,7 +95,7 @@ abstract class AbstractRequest implements RequestInterface
         }
 
         return sprintf(
-            'https://walls.io%s?%s',
+            'https://api.walls.io%s?%s',
             $this->getPath(),
             http_build_query($this->getParameters())
         );
