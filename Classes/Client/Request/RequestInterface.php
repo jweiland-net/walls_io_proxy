@@ -36,14 +36,14 @@ interface RequestInterface
     /**
      * Sets the parameters
      */
-    public function setParameters(array $parameters);
+    public function setParameters(array $parameters): void;
 
     /**
      * Adds a parameter
      *
      * @param mixed $value
      */
-    public function addParameter(string $parameter, $value);
+    public function addParameter(string $parameter, $value): void;
 
     /**
      * Gets a parameter

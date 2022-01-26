@@ -44,7 +44,7 @@ abstract class AbstractRequest implements RequestInterface
         return $this->path;
     }
 
-    public function setPath(string $path)
+    public function setPath(string $path): void
     {
         $this->path = trim($path);
     }
@@ -54,12 +54,12 @@ abstract class AbstractRequest implements RequestInterface
         return $this->parameters;
     }
 
-    public function setParameters(array $parameters)
+    public function setParameters(array $parameters): void
     {
         $this->parameters = array_intersect_key($parameters, $this->allowedParameters);
     }
 
-    public function addParameter(string $parameter, $value)
+    public function addParameter(string $parameter, $value): void
     {
         if (array_key_exists($parameter, $this->allowedParameters)) {
             $this->parameters[$parameter] = $value;

@@ -12,8 +12,17 @@
 			<trans-unit id="entriesToLoad">
 				<source>Amount of entries to load</source>
 			</trans-unit>
+			<trans-unit id="entriesToLoad.description">
+				<source>How many entries should be called from walls.io?</source>
+			</trans-unit>
 			<trans-unit id="entriesToShow">
 				<source>Amount of entries to show</source>
+			</trans-unit>
+			<trans-unit id="showWallsSince">
+				<source>Show entries of the last x days</source>
+			</trans-unit>
+			<trans-unit id="showWallsSince.description">
+				<source>Enter the max. days that the entries to be displayed may be old. If you set the value too low, it could happen that fewer entries are output than defined above.</source>
 			</trans-unit>
 		</body>
 	</file>
