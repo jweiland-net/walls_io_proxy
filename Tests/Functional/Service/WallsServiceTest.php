@@ -9,7 +9,7 @@
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\Service;
 
-use JWeiland\WallsIoProxy\Client\Request\PostsRequest;
+use JWeiland\WallsIoProxy\Client\Request\Posts\ChangedRequest;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
@@ -105,7 +105,7 @@ class WallsServiceTest extends FunctionalTestCase
     public function getWallPostsWithMaxPostsWillReturnEmptyArrayOnEmptyResponse(): void
     {
         $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
+            ->processRequest(Argument::type(ChangedRequest::class))
             ->shouldBeCalled()
             ->willReturn(
                 [
@@ -134,7 +134,7 @@ class WallsServiceTest extends FunctionalTestCase
         );
 
         $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
+            ->processRequest(Argument::type(ChangedRequest::class))
             ->shouldBeCalled()
             ->willReturn(
                 [
@@ -168,7 +168,7 @@ class WallsServiceTest extends FunctionalTestCase
         ];
 
         $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
+            ->processRequest(Argument::type(ChangedRequest::class))
             ->shouldBeCalled()
             ->willReturn(
                 [
@@ -211,7 +211,7 @@ class WallsServiceTest extends FunctionalTestCase
         unset($expected['243512']);
 
         $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
+            ->processRequest(Argument::type(ChangedRequest::class))
             ->shouldBeCalled()
             ->willReturn(
                 [
@@ -250,7 +250,7 @@ class WallsServiceTest extends FunctionalTestCase
         ];
 
         $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
+            ->processRequest(Argument::type(ChangedRequest::class))
             ->shouldBeCalled()
             ->willReturn(
                 [
@@ -289,7 +289,7 @@ class WallsServiceTest extends FunctionalTestCase
         ];
 
         $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
+            ->processRequest(Argument::type(ChangedRequest::class))
             ->shouldBeCalled()
             ->willReturn(
                 [
@@ -325,7 +325,7 @@ class WallsServiceTest extends FunctionalTestCase
         ];
 
         $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
+            ->processRequest(Argument::type(ChangedRequest::class))
             ->shouldBeCalled()
             ->willReturn(
                 [
