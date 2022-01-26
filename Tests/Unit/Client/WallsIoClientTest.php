@@ -141,7 +141,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidRequestResultsInCatchedException(): void
+    public function processRequestWithInvalidRequestResultsInExceptionWithChangedAccessToken(): void
     {
         /** @var PostsRequest|ObjectProphecy $postsRequest */
         $postsRequest = $this->prophesize(PostsRequest::class);
@@ -150,12 +150,16 @@ class WallsIoClientTest extends UnitTestCase
             ->shouldBeCalled()
             ->willReturn('https://www.jweiland.net');
         $postsRequest
+            ->getParameter('access_token')
+            ->shouldBeCalled()
+            ->willReturn('ABC');
+        $postsRequest
             ->isValidRequest()
             ->shouldBeCalled()
             ->willReturn(true);
 
         $exception = new \ErrorException(
-            'Server down',
+            'Server down. Uri: https://api.walls.io?fields=test&access_token=ABC&since=123',
             564,
             1,
             __FILE__,
@@ -169,7 +173,7 @@ class WallsIoClientTest extends UnitTestCase
 
         $this->messageHelperProphecy
             ->addFlashMessage(
-                'Server down',
+                'Server down. Uri: https://api.walls.io?fields=test&access_token=XXX&since=123',
                 'Error Code: 564',
                 FlashMessage::ERROR
             )
