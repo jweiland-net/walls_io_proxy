@@ -71,7 +71,8 @@ class AddWallsProcessorTest extends FunctionalTestCase
         $wallsServiceProphecy = $this->prophesize(WallsService::class);
         $wallsServiceProphecy
             ->getWallPosts(
-                Argument::exact(24)
+                Argument::exact(24),
+                Argument::exact(365)
             )
             ->shouldBeCalled()
             ->willReturn([

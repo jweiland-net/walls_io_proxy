@@ -88,7 +88,7 @@ class WallsServiceTest extends FunctionalTestCase
     {
         self::assertSame(
             [],
-            $this->subject->getWallPosts(0)
+            $this->subject->getWallPosts(0, 365)
         );
 
         self::assertNull(
@@ -116,7 +116,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         self::assertSame(
             [],
-            $this->subject->getWallPosts(4)
+            $this->subject->getWallPosts(4, 365)
         );
     }
 
@@ -146,7 +146,7 @@ class WallsServiceTest extends FunctionalTestCase
             [
                 'foo' => 'far'
             ],
-            $this->subject->getWallPosts(4)
+            $this->subject->getWallPosts(4, 365)
         );
     }
 
@@ -179,7 +179,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         self::assertSame(
             $expected,
-            $this->subject->getWallPosts(3)
+            $this->subject->getWallPosts(3, 365)
         );
     }
 
@@ -222,7 +222,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         self::assertSame(
             $expected,
-            $this->subject->getWallPosts(3)
+            $this->subject->getWallPosts(3, 365)
         );
     }
 
@@ -261,7 +261,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         self::assertSame(
             $expected,
-            $this->subject->getWallPosts(2)
+            $this->subject->getWallPosts(2, 365)
         );
     }
 
@@ -300,7 +300,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         self::assertSame(
             $expected,
-            $this->subject->getWallPosts(1)
+            $this->subject->getWallPosts(1, 365)
         );
     }
 
@@ -336,7 +336,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         self::assertSame(
             $expected,
-            $this->subject->getWallPosts(1)
+            $this->subject->getWallPosts(1, 365)
         );
     }
 }
