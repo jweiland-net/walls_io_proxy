@@ -6,6 +6,12 @@
 ChangeLog
 =========
 
+**Version 4.3.0**
+
+- Replace PostsRequest with ChangedRequest
+- You can load up to 1000 entries by one call to walls.io
+- Limit the entries to load by a range of x days
+
 **Version 4.2.0**
 
 - Deprecated: Do not configure accessToken in Extension Settings anymore

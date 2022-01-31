@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Service;
 
-use JWeiland\WallsIoProxy\Client\Request\PostsRequest;
+use JWeiland\WallsIoProxy\Client\Request\Posts\ChangedRequest;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -89,54 +89,39 @@ class WallsService
      * array. We load 8 records from API again and again until $maxPosts is reached.
      *
      * If any request results in error, we will return cached wall posts immediately.
-     *
-     * @param int $maxPosts
-     * @return array
      */
-    public function getWallPosts(int $maxPosts): array
+    public function getWallPosts(int $maxPosts, int $since): array
     {
+        if ($maxPosts === 0) {
+            return [];
+        }
+
+        if ($since === 0) {
+            return [];
+        }
+
         $wallPosts = [];
-        $requestedWallPosts = [];
-        $lastPostId = '';
+        $since = time() - (60 * 60 * 24 * $since);
         $hasError = false;
+        $wallsIoRequest = $this->getUncachedRequestFromWallsIO($maxPosts, $since);
+        $requestedWallPosts = $wallsIoRequest['data'];
 
-        while (count($wallPosts) < $maxPosts) {
-            if ($requestedWallPosts === []) {
-                $requestedWallPosts = $this->getUncachedPostsFromWallsIO(8, $lastPostId);
-
-                // If request is empty, there are no further posts. Break loop.
-                if ($requestedWallPosts === []) {
-                    break;
+        if (
+            (array_key_exists('hasErrors', $wallsIoRequest) && $wallsIoRequest['hasErrors'] === true)
+            || $requestedWallPosts === []
+        ) {
+            $hasError = true;
+            $storedWallPosts = $this->registry->get(
+                'WallsIoProxy',
+                'ContentRecordUid_' . $this->contentRecordUid
+            );
+            $wallPosts = $storedWallPosts ?? [];
+        } else {
+            foreach ($requestedWallPosts as $requestedWallPost) {
+                if (is_array($requestedWallPost)) {
+                    $sanitizedWallPost = $this->getSanitizedPost($requestedWallPost);
+                    $wallPosts[$sanitizedWallPost['id']] = $sanitizedWallPost;
                 }
-
-                // If request has errors, try to get old data from last response stored in sys_registry
-                // Return old wall entries and break current loop on failure
-                if (
-                    array_key_exists('hasErrors', $requestedWallPosts)
-                    && $requestedWallPosts['hasErrors'] === true
-                ) {
-                    $hasError = true;
-                    $storedWallPosts = $this->registry->get(
-                        'WallsIoProxy',
-                        'ContentRecordUid_' . $this->contentRecordUid
-                    );
-                    $wallPosts = $storedWallPosts ?? [];
-                    break;
-                }
-            }
-
-            // Extract first wall post and process
-            $requestedWall = array_shift($requestedWallPosts);
-
-            // Prevent adding duplicate wall posts
-            if ($requestedWall['is_crosspost'] === true) {
-                continue;
-            }
-
-            if (is_array($requestedWall)) {
-                $sanitizedWallPost = $this->getSanitizedPost($requestedWall);
-                $lastPostId = $sanitizedWallPost['id'];
-                $wallPosts[$sanitizedWallPost['id']] = $sanitizedWallPost;
             }
         }
 
@@ -153,16 +138,16 @@ class WallsService
 
     /**
      * @param int $entriesToLoad
-     * @param string $beforePostId Load posts before this post ID. Could be used as offset for pagination. As it is a very huge int value we use string here to prevent problems on 32bit systems. String is also supported by API
+     * @param int $since // Initially time(). Use it for pagination. Take current_time from last request as new time for $since
      * @return array
      */
-    protected function getUncachedPostsFromWallsIO(int $entriesToLoad = 8, string $beforePostId = ''): array
+    protected function getUncachedRequestFromWallsIO(int $entriesToLoad = 8, int $since = 0): array
     {
-        $wallsIoPostRequest = GeneralUtility::makeInstance(PostsRequest::class);
+        $wallsIoPostRequest = GeneralUtility::makeInstance(ChangedRequest::class);
         $wallsIoPostRequest->setAccessToken($this->accessToken);
+        $wallsIoPostRequest->setSince($since ?: time());
         $wallsIoPostRequest->setFields($this->fields);
         $wallsIoPostRequest->setLimit($entriesToLoad);
-        $wallsIoPostRequest->setBefore($beforePostId);
         $response = $this->client->processRequest($wallsIoPostRequest);
 
         if (
@@ -172,7 +157,7 @@ class WallsService
             && array_key_exists('data', $response)
             && is_array($response['data'])
         ) {
-            return $response['data'];
+            return $response;
         }
 
         return [

@@ -23,10 +23,20 @@
 					<entriesToLoad>
 						<TCEforms>
 							<label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:entriesToLoad</label>
+							<description>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:entriesToLoad.description</description>
 							<config>
 								<type>input</type>
-								<size>4</size>
+								<size>10</size>
 								<default>24</default>
+								<max>3</max>
+								<range>
+									<lower>0</lower>
+									<upper>999</upper>
+								</range>
+								<slider>
+									<step>8</step>
+									<width>300</width>
+								</slider>
 								<eval>int,required</eval>
 							</config>
 						</TCEforms>
@@ -38,10 +48,32 @@
 								<type>input</type>
 								<size>10</size>
 								<default>8</default>
+								<max>3</max>
+								<range>
+									<lower>0</lower>
+									<upper>999</upper>
+								</range>
+								<slider>
+									<step>8</step>
+									<width>300</width>
+								</slider>
 								<eval>int,required</eval>
 							</config>
 						</TCEforms>
 					</entriesToShow>
+					<showWallsSince>
+						<TCEforms>
+							<label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:showWallsSince</label>
+							<description>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:showWallsSince.description</description>
+							<config>
+								<type>input</type>
+								<size>10</size>
+								<default>365</default>
+								<max>5</max>
+								<eval>int,required</eval>
+							</config>
+						</TCEforms>
+					</showWallsSince>
 				</el>
 			</ROOT>
 		</sDEF>
