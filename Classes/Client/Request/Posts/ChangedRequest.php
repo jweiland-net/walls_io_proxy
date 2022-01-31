@@ -9,22 +9,22 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\WallsIoProxy\Client\Request;
+namespace JWeiland\WallsIoProxy\Client\Request\Posts;
+
+use JWeiland\WallsIoProxy\Client\Request\AbstractRequest;
+use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
- * Walls.io Request to retrieve Posts
- * SF: This requests returns the records not in expected order. They will be ordered by the date when they are
- * added/imported to walls.io. So, if you add a new service/collection to walls.io all these records get the same
- * time. It may happen, that you will get hundreds of old records at first. Please use v1/posts/changed instead.
+ * Walls.io Request to retrieve changed posts
  *
- * @link https://github.com/DieSocialisten/Walls.io-API-Docs/blob/master/endpoints/GET_posts.md
+ * @link https://github.com/DieSocialisten/Walls.io-API-Docs/blob/master/endpoints/GET_posts-changed.md
  */
-class PostsRequest extends AbstractRequest
+class ChangedRequest extends AbstractRequest
 {
     /**
      * @var string
      */
-    protected $path = '/v1/posts';
+    protected $path = '/v1/posts/changed';
 
     protected $parameters = [
         'fields' => 'id,comment,type',
@@ -37,9 +37,8 @@ class PostsRequest extends AbstractRequest
      */
     protected $allowedParameters = [
         'access_token' => 1,
+        'since' => 1,
         'limit' => 1,
-        'after' => 1,
-        'before' => 1,
         'fields' => 1,
         'types' => 1,
         'media_types' => 1,
@@ -89,7 +88,7 @@ class PostsRequest extends AbstractRequest
      *
      * @param string $accessToken
      */
-    public function setAccessToken(string $accessToken)
+    public function setAccessToken(string $accessToken): void
     {
         $this->addParameter(
             'access_token',
@@ -98,11 +97,25 @@ class PostsRequest extends AbstractRequest
     }
 
     /**
+     * This property is needed for pagination. Initially filled by current time(). For further records
+     * use current_time property of last fetched records.
+     *
+     * @param int $since
+     */
+    public function setSince(int $since): void
+    {
+        $this->addParameter(
+            'since',
+            $since
+        );
+    }
+
+    /**
      * A comma-separated list of fields you would like to receive for each post.
      *
      * @param array $fields
      */
-    public function setFields(array $fields)
+    public function setFields(array $fields): void
     {
         $this->addParameter(
             'fields',
@@ -111,35 +124,16 @@ class PostsRequest extends AbstractRequest
     }
 
     /**
-     * A comma-separated list of fields you would like to receive for each post.
+     * Set a maximum of records to load. walls.io limits this value to 1000
      *
      * @param int $limit
      */
-    public function setLimit(int $limit)
+    public function setLimit(int $limit): void
     {
         $this->addParameter(
             'limit',
-            $limit
+            MathUtility::forceIntegerInRange($limit, 1, 1000)
         );
-    }
-
-    /**
-     * Set "before" to only get posts before this given post ID.
-     * Should be used as offset for pagination.
-     *
-     * We will add this value to request, if it contains numbers only.
-     *
-     * @param string $postId
-     */
-    public function setBefore(string $postId)
-    {
-        // Do not cast to INT as $postId can be really huge, which may occurs into problems on 32 bit systems.
-        if (preg_match('/\d+/', $postId)) {
-            $this->addParameter(
-                'before',
-                $postId
-            );
-        }
     }
 
     /**
@@ -148,7 +142,7 @@ class PostsRequest extends AbstractRequest
      *
      * @param bool $includeInactive
      */
-    public function setIncludeInactive(bool $includeInactive)
+    public function setIncludeInactive(bool $includeInactive): void
     {
         $this->addParameter(
             'include_inactive',

@@ -32,12 +32,7 @@ class MessageHelper
         $this->flashMessageService = $flashMessageService ?? GeneralUtility::makeInstance(FlashMessageService::class);
     }
 
-    /**
-     * @param string $message
-     * @param string $title
-     * @param int $severity
-     */
-    public function addFlashMessage(string $message, string $title = '', int $severity = FlashMessage::OK)
+    public function addFlashMessage(string $message, string $title = '', int $severity = FlashMessage::OK): void
     {
         // We activate storeInSession, so that messages can be displayed when click on Save&Close button.
         $flashMessage = GeneralUtility::makeInstance(
@@ -52,14 +47,14 @@ class MessageHelper
     }
 
     /**
-     * @param bool $flush
      * @return FlashMessage[]
      */
-    public function getAllFlashMessages($flush = true): array
+    public function getAllFlashMessages(bool $flush = true): array
     {
         if ($flush) {
             return $this->getFlashMessageQueue()->getAllMessagesAndFlush();
         }
+
         return $this->getFlashMessageQueue()->getAllMessages();
     }
 
@@ -91,11 +86,15 @@ class MessageHelper
         return !empty($this->getErrorMessages(false));
     }
 
+    /**
+     * @return \TYPO3\CMS\Core\Messaging\FlashMessage[]
+     */
     public function getErrorMessages(bool $flush = true): array
     {
         if ($flush) {
             return $this->getFlashMessagesBySeverityAndFlush(FlashMessage::ERROR);
         }
+
         return $this->getFlashMessagesBySeverity(FlashMessage::ERROR);
     }
 
@@ -104,11 +103,15 @@ class MessageHelper
         return !empty($this->getWarningMessages(false));
     }
 
+    /**
+     * @return \TYPO3\CMS\Core\Messaging\FlashMessage[]
+     */
     public function getWarningMessages(bool $flush = true): array
     {
         if ($flush) {
             return $this->getFlashMessagesBySeverityAndFlush(FlashMessage::WARNING);
         }
+
         return $this->getFlashMessagesBySeverity(FlashMessage::WARNING);
     }
 
@@ -117,11 +120,15 @@ class MessageHelper
         return !empty($this->getOkMessages(false));
     }
 
+    /**
+     * @return \TYPO3\CMS\Core\Messaging\FlashMessage[]
+     */
     public function getOkMessages(bool $flush = true): array
     {
         if ($flush) {
             return $this->getFlashMessagesBySeverityAndFlush(FlashMessage::OK);
         }
+
         return $this->getFlashMessagesBySeverity(FlashMessage::OK);
     }
 
@@ -130,11 +137,15 @@ class MessageHelper
         return !empty($this->getInfoMessages(false));
     }
 
+    /**
+     * @return \TYPO3\CMS\Core\Messaging\FlashMessage[]
+     */
     public function getInfoMessages(bool $flush = true): array
     {
         if ($flush) {
             return $this->getFlashMessagesBySeverityAndFlush(FlashMessage::INFO);
         }
+
         return $this->getFlashMessagesBySeverity(FlashMessage::INFO);
     }
 
@@ -143,11 +154,15 @@ class MessageHelper
         return !empty($this->getNoticeMessages(false));
     }
 
+    /**
+     * @return \TYPO3\CMS\Core\Messaging\FlashMessage[]
+     */
     public function getNoticeMessages(bool $flush = true): array
     {
         if ($flush) {
             return $this->getFlashMessagesBySeverityAndFlush(FlashMessage::NOTICE);
         }
+
         return $this->getFlashMessagesBySeverity(FlashMessage::NOTICE);
     }
 

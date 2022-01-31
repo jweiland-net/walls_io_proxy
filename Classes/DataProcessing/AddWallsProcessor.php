@@ -50,6 +50,7 @@ class AddWallsProcessor implements DataProcessorInterface
 
         $this->updateProcessedData($processedData);
         $maxPosts = (int)$processedData['conf']['entriesToLoad'];
+        $since = (int)$processedData['conf']['showWallsSince'];
         $wallsService = GeneralUtility::makeInstance(
             WallsService::class,
             (int)$processedData['data']['uid'],
@@ -58,7 +59,7 @@ class AddWallsProcessor implements DataProcessorInterface
 
         $this->targetDirectory = $wallsService->getTargetDirectory();
 
-        $processedData['walls'] = $wallsService->getWallPosts($maxPosts);
+        $processedData['walls'] = $wallsService->getWallPosts($maxPosts, $since);
 
         return $processedData;
     }
