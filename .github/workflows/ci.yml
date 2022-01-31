@@ -17,21 +17,6 @@ jobs:
             php: '7.3'
           - typo3: ^9.5
             php: '7.1'
-        include:
-          - php: '7.0'
-            typo3: ^8.7
-            os: ubuntu-16.04
-
-    services:
-      mysql:
-        image: mysql:5.6
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: false
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: test
-        ports:
-          - 3306/tcp
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout
@@ -42,9 +27,6 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, dom, zip, mysql
-
-      - name: Start mysql service
-        run: sudo /etc/init.d/mysql start
 
       - name: Validate composer.json and composer.lock
         run: composer validate
@@ -70,18 +52,3 @@ jobs:
 
       - name: Lint PHP
         run: composer ci:php:lint
-
-      - name: Unit Tests
-        run: |
-          sudo timedatectl set-timezone Europe/Berlin
-          composer ci:tests:unit
-
-      - name: Functional Tests
-        env:
-          typo3DatabaseName: test
-          typo3DatabaseUsername: root
-          typo3DatabasePassword: password
-          typo3DatabaseHost: 127.0.0.1
-          typo3DatabasePort: ${{ job.services.mysql.ports['3306'] }}
-        run: |
-          composer ci:tests:functional
