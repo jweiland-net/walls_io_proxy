@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/walls-io-proxy.
  *
@@ -41,7 +43,7 @@ class WallsIoClientTest extends UnitTestCase
      */
     protected $messageHelperProphecy;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->requestFactoryProphecy = $this->prophesize(RequestFactory::class);
         $this->messageHelperProphecy = $this->prophesize(MessageHelper::class);
@@ -52,7 +54,7 @@ class WallsIoClientTest extends UnitTestCase
         );
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset(
             $this->subject,

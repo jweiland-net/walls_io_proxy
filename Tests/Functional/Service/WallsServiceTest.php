@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package jweiland/walls-io-proxy.
  *
@@ -49,7 +51,7 @@ class WallsServiceTest extends FunctionalTestCase
         'typo3conf/ext/walls_io_proxy'
     ];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -70,7 +72,7 @@ class WallsServiceTest extends FunctionalTestCase
         );
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset(
             $this->subject,
