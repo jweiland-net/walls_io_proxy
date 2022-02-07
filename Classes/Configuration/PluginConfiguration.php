@@ -50,12 +50,12 @@ class PluginConfiguration
 
     public function __construct(array $processedData)
     {
-        $this->setRecord($processedData['data'] ?? []);
-        $this->setAccessToken($processedData['conf']['accessToken'] ?? '');
-        $this->setRequestType($processedData['conf']['requestType'] ?? '');
-        $this->setEntriesToLoad((int)($processedData['conf']['entriesToLoad'] ?? 24));
-        $this->setEntriesToShow((int)($processedData['conf']['entriesToShow'] ?? 8));
-        $this->setShowWallsSince((int)($processedData['conf']['showWallsSince'] ?? 365));
+        $this->record = $processedData['data'] ?? [];
+        $this->accessToken = $processedData['conf']['accessToken'] ?? '';
+        $this->requestType = $processedData['conf']['requestType'] ?? '';
+        $this->entriesToLoad = (int)($processedData['conf']['entriesToLoad'] ?? 24);
+        $this->entriesToShow = (int)($processedData['conf']['entriesToShow'] ?? 8);
+        $this->showWallsSince = (int)($processedData['conf']['showWallsSince'] ?? 365);
     }
 
     public function getRecord(): array
@@ -63,19 +63,9 @@ class PluginConfiguration
         return $this->record;
     }
 
-    public function setRecord(array $record): void
-    {
-        $this->record = $record;
-    }
-
     public function getAccessToken(): string
     {
         return $this->accessToken;
-    }
-
-    public function setAccessToken(string $accessToken): void
-    {
-        $this->accessToken = $accessToken;
     }
 
     public function getRequestType(): string
@@ -83,19 +73,9 @@ class PluginConfiguration
         return $this->requestType;
     }
 
-    public function setRequestType(string $requestType): void
-    {
-        $this->requestType = $requestType;
-    }
-
     public function getEntriesToLoad(): int
     {
         return $this->entriesToLoad;
-    }
-
-    public function setEntriesToLoad(int $entriesToLoad): void
-    {
-        $this->entriesToLoad = $entriesToLoad;
     }
 
     public function getEntriesToShow(): int
@@ -103,19 +83,9 @@ class PluginConfiguration
         return $this->entriesToShow;
     }
 
-    public function setEntriesToShow(int $entriesToShow): void
-    {
-        $this->entriesToShow = $entriesToShow;
-    }
-
     public function getShowWallsSince(): int
     {
         return $this->showWallsSince;
-    }
-
-    public function setShowWallsSince(int $showWallsSince): void
-    {
-        $this->showWallsSince = $showWallsSince;
     }
 
     public function getRecordUid(): int
