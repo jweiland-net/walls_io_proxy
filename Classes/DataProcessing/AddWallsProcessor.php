@@ -29,6 +29,16 @@ class AddWallsProcessor implements DataProcessorInterface
     protected $targetDirectory = '';
 
     /**
+     * @var FlexFormService
+     */
+    protected $flexFormService;
+
+    public function __construct(FlexFormService $flexFormService)
+    {
+        $this->flexFormService = $flexFormService;
+    }
+
+    /**
      * Process data of a record to resolve File objects to the view
      *
      * @param ContentObjectRenderer $cObj The data of the content element or page
@@ -66,10 +76,8 @@ class AddWallsProcessor implements DataProcessorInterface
 
     protected function updateProcessedData(array &$processedData): void
     {
-        $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
-        $conf = $flexFormService->convertFlexFormContentToArray(
-            $processedData['data']['pi_flexform'] ?? []
+        $processedData['conf'] = $this->flexFormService->convertFlexFormContentToArray(
+            $processedData['data']['pi_flexform'] ?? ''
         );
-        $processedData['conf'] = $conf;
     }
 }
