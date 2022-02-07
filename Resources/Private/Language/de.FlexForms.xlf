@@ -11,6 +11,18 @@
 				<source>Please enter the API access token from walls.io</source>
 				<target>Tragen Sie bitte den API Access Token von walls.io ein</target>
 			</trans-unit>
+			<trans-unit id="requestType">
+				<source>Which posts do you want to retrieve?</source>
+				<target>Welche Beiträge möchten Sie abrufen?</target>
+			</trans-unit>
+			<trans-unit id="requestType.posts">
+				<source>Current postings sorted by date of receipt at walls.io</source>
+				<target>Aktuelle Beiträge sortiert nach dem Eingangsdatum bei walls.io.</target>
+			</trans-unit>
+			<trans-unit id="requestType.changedPosts">
+				<source>Current postings sorted by modification date</source>
+				<target>Aktuelle Beiträge sortiert nach dem Änderungsdatum</target>
+			</trans-unit>
 			<trans-unit id="entriesToLoad">
 				<source>Amount of entries to load</source>
 				<target>Lade Anzahl Einträge</target>

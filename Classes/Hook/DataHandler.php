@@ -22,21 +22,16 @@ class DataHandler
 {
     /**
      * Removes the cache of one specific walls_io_proxy Plugin from sys_registry
-     *
-     * @param array $params
      */
-    public function clearCachePostProc(array $params)
+    public function clearCachePostProc(array $params): void
     {
         if (
             isset($params['cacheCmd'])
             && strtolower($params['cacheCmd']) === 'wallioproxy'
         ) {
-            $wallsService = GeneralUtility::makeInstance(
-                WallsService::class,
-                (int)GeneralUtility::_GET('contentRecordUid')
-            );
+            $wallsService = GeneralUtility::makeInstance(WallsService::class);
 
-            echo $wallsService->clearCache();
+            echo $wallsService->clearCache((int)GeneralUtility::_GET('contentRecordUid'));
         }
     }
 }

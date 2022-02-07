@@ -20,6 +20,25 @@
 							</config>
 						</TCEforms>
 					</accessToken>
+					<requestType>
+						<TCEforms>
+							<label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:requestType</label>
+							<config>
+								<type>select</type>
+								<renderType>selectSingle</renderType>
+								<items>
+									<numIndex index="0">
+										<numIndex index="0">LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:requestType.posts</numIndex>
+										<numIndex index="1">JWeiland\WallsIoProxy\Request\PostsRequest</numIndex>
+									</numIndex>
+									<numIndex index="1">
+										<numIndex index="0">LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:requestType.changedPosts</numIndex>
+										<numIndex index="1">JWeiland\WallsIoProxy\Request\Posts\ChangedRequest</numIndex>
+									</numIndex>
+								</items>
+							</config>
+						</TCEforms>
+					</requestType>
 					<entriesToLoad>
 						<TCEforms>
 							<label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:entriesToLoad</label>

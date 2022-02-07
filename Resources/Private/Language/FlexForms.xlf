@@ -9,6 +9,15 @@
 			<trans-unit id="accessToken">
 				<source>Please enter the API access token from walls.io</source>
 			</trans-unit>
+			<trans-unit id="requestType">
+				<source>Which posts do you want to retrieve?</source>
+			</trans-unit>
+			<trans-unit id="requestType.posts">
+				<source>Current postings sorted by date of receipt at walls.io</source>
+			</trans-unit>
+			<trans-unit id="requestType.changedPosts">
+				<source>Current postings sorted by modification date</source>
+			</trans-unit>
 			<trans-unit id="entriesToLoad">
 				<source>Amount of entries to load</source>
 			</trans-unit>

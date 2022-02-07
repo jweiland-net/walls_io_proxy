@@ -9,52 +9,33 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\WallsIoProxy\Client\Request;
+namespace JWeiland\WallsIoProxy\Request;
+
+use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 
 /**
  * Interface for walls.io requests
  */
 interface RequestInterface
 {
-    /**
-     * Returns the path
-     */
     public function getPath(): string;
 
-    /**
-     * Check, if current Request is valid
-     */
     public function isValidRequest(): bool;
 
-    /**
-     * Returns the parameters
-     *
-     * @return array $parameters
-     */
     public function getParameters(): array;
 
-    /**
-     * Sets the parameters
-     */
     public function setParameters(array $parameters): void;
 
     /**
-     * Adds a parameter
-     *
      * @param mixed $value
      */
     public function addParameter(string $parameter, $value): void;
 
     /**
-     * Gets a parameter
-     *
      * @return mixed
      */
     public function getParameter(string $parameter);
 
-    /**
-     * Check, if parameter exists
-     */
     public function hasParameter(string $parameter): bool;
 
     /**

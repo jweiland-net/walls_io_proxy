@@ -1,2 +1,0 @@
-# cat=basic; type=string; label=LLL:EXT:walls_io_proxy/Resources/Private/Language/ExtConf.xlf:accessToken
-accessToken =
