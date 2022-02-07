@@ -9,8 +9,7 @@
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\Client\Request\Posts;
 
-use JWeiland\WallsIoProxy\Client\Request\Posts\ChangedRequest;
-use JWeiland\WallsIoProxy\Configuration\ExtConf;
+use JWeiland\WallsIoProxy\Request\Posts\ChangedRequest;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 
@@ -208,8 +207,7 @@ class ChangedRequestTest extends UnitTestCase
      */
     public function buildUriReturnsUriWithAccessToken(): void
     {
-        $extConf = new ExtConf();
-        $this->subject = new ChangedRequest($extConf);
+        $this->subject = new ChangedRequest();
         $this->subject->setAccessToken('ABC123');
 
         self::assertSame(
@@ -223,8 +221,7 @@ class ChangedRequestTest extends UnitTestCase
      */
     public function buildUriWithAdditionalParameterReturnsUriWithAccessToken(): void
     {
-        $extConf = new ExtConf();
-        $this->subject = new ChangedRequest($extConf);
+        $this->subject = new ChangedRequest();
         $this->subject->setAccessToken('ABC123');
 
         $this->subject->addParameter('languages', 'de');
@@ -250,8 +247,7 @@ class ChangedRequestTest extends UnitTestCase
      */
     public function isValidRequestWithAccessTokenReturnsTrue(): void
     {
-        $extConf = new ExtConf();
-        $this->subject = new ChangedRequest($extConf);
+        $this->subject = new ChangedRequest();
         $this->subject->setAccessToken('ABC123');
 
         self::assertTrue(

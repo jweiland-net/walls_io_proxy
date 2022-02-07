@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\DataProcessing;
 
+use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -24,17 +25,18 @@ use TYPO3\CMS\Frontend\ContentObject\DataProcessorInterface;
 class AddWallsProcessor implements DataProcessorInterface
 {
     /**
-     * @var string
+     * @var WallsService
      */
-    protected $targetDirectory = '';
+    protected $wallsService;
 
     /**
      * @var FlexFormService
      */
     protected $flexFormService;
 
-    public function __construct(FlexFormService $flexFormService)
+    public function __construct(WallsService $wallsService, FlexFormService $flexFormService)
     {
+        $this->wallsService = $wallsService;
         $this->flexFormService = $flexFormService;
     }
 
@@ -58,26 +60,22 @@ class AddWallsProcessor implements DataProcessorInterface
             return $processedData;
         }
 
-        $this->updateProcessedData($processedData);
-        $maxPosts = (int)$processedData['conf']['entriesToLoad'];
-        $since = (int)$processedData['conf']['showWallsSince'];
-        $wallsService = GeneralUtility::makeInstance(
-            WallsService::class,
-            (int)$processedData['data']['uid'],
-            $processedData['conf']['accessToken']
+        $processedData['conf'] = $this->flexFormService->convertFlexFormContentToArray(
+            $processedData['data']['pi_flexform'] ?? ''
         );
 
-        $this->targetDirectory = $wallsService->getTargetDirectory();
-
-        $processedData['walls'] = $wallsService->getWallPosts($maxPosts, $since);
+        $processedData['walls'] = $this->wallsService->getWallPosts(
+            $this->getPluginConfiguration($processedData)
+        );
 
         return $processedData;
     }
 
-    protected function updateProcessedData(array &$processedData): void
+    protected function getPluginConfiguration(array $processedData): PluginConfiguration
     {
-        $processedData['conf'] = $this->flexFormService->convertFlexFormContentToArray(
-            $processedData['data']['pi_flexform'] ?? ''
+        return GeneralUtility::makeInstance(
+            PluginConfiguration::class,
+            $processedData
         );
     }
 }

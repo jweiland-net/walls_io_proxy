@@ -11,12 +11,11 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Client;
 
-use JWeiland\WallsIoProxy\Client\Request\RequestInterface;
 use JWeiland\WallsIoProxy\Helper\MessageHelper;
+use JWeiland\WallsIoProxy\Request\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 
 /**
  * This is the walls.io client which will send the request to the walls.io server
@@ -33,12 +32,10 @@ class WallsIoClient
      */
     protected $messageHelper;
 
-    public function __construct(
-        RequestFactory $requestFactory = null,
-        MessageHelper $messageHelper = null
-    ) {
-        $this->requestFactory = $requestFactory ?? GeneralUtility::makeInstance(RequestFactory::class);
-        $this->messageHelper = $messageHelper ?? GeneralUtility::makeInstance(MessageHelper::class);
+    public function __construct(RequestFactory $requestFactory, MessageHelper $messageHelper)
+    {
+        $this->requestFactory = $requestFactory;
+        $this->messageHelper = $messageHelper;
     }
 
     public function processRequest(RequestInterface $request): array
@@ -47,8 +44,9 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 'URI is empty or contains invalid chars. URI: ' . $request->buildUri(),
                 'Invalid request URI',
-                FlashMessage::ERROR
+                AbstractMessage::ERROR
             );
+
             return [];
         }
 
@@ -67,7 +65,7 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 str_replace($request->getParameter('access_token'), 'XXX', $exception->getMessage()),
                 'Error Code: ' . $exception->getCode(),
-                FlashMessage::ERROR
+                AbstractMessage::ERROR
             );
         }
 
@@ -81,25 +79,22 @@ class WallsIoClient
 
     /**
      * This method will only check the report of the client and not the result itself.
-     *
-     * @param ResponseInterface $response
      */
-    protected function checkClientResponseForErrors(ResponseInterface $response)
+    protected function checkClientResponseForErrors(ResponseInterface $response): void
     {
         if ($response->getStatusCode() !== 200) {
             $this->messageHelper->addFlashMessage(
                 'Walls.io responses with a status code different from 200',
                 'Status Code: ' . $response->getStatusCode(),
-                FlashMessage::ERROR
+                AbstractMessage::ERROR
             );
         }
     }
 
     /**
-     * Check processed response from Google Maps Server for errors
+     * Check processed response from walls.io for errors
      *
      * @param array|null $response
-     * @return true
      */
     protected function hasResponseErrors(array $response = null): bool
     {
@@ -107,8 +102,9 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 'The response of walls.io was not a valid JSON response.',
                 'Invalid JSON response',
-                FlashMessage::ERROR
+                AbstractMessage::ERROR
             );
+
             return true;
         }
 
@@ -118,8 +114,9 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 implode($response['info']),
                 $response['status'],
-                FlashMessage::ERROR
+                AbstractMessage::ERROR
             );
+
             return true;
         }
 

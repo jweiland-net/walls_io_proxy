@@ -1,0 +1,20 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  JWeiland\WallsIoProxy\:
+    resource: '../Classes/*'
+
+  # Will be called by GeneralUtility::makeInstance in ContentDataProcessor::process()
+  JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor:
+    public: true
+
+  # Will be called by GeneralUtility::makeInstance in AddWallsProcessor
+  JWeiland\WallsIoProxy\Configuration:
+    public: true
+
+  # Will be called by GeneralUtility::makeInstance in WallsService
+  JWeiland\WallsIoProxy\Request:
+    public: true

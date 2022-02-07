@@ -9,7 +9,7 @@
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
-use JWeiland\WallsIoProxy\Client\Request\PostsRequest;
+use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Helper\MessageHelper;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
