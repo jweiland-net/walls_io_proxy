@@ -9,21 +9,13 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\WallsIoProxy\Client\Request;
-
-use JWeiland\WallsIoProxy\Configuration\ExtConf;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+namespace JWeiland\WallsIoProxy\Request;
 
 /**
  * An abstract request with useful methods for extending request objects
  */
 abstract class AbstractRequest implements RequestInterface
 {
-    /**
-     * @var ExtConf
-     */
-    protected $extConf;
-
     /**
      * @var string
      */
@@ -33,11 +25,6 @@ abstract class AbstractRequest implements RequestInterface
      * @var array
      */
     protected $parameters = [];
-
-    public function __construct(ExtConf $extConf = null)
-    {
-        $this->extConf = $extConf ?? GeneralUtility::makeInstance(ExtConf::class);
-    }
 
     public function getPath(): string
     {
@@ -89,11 +76,6 @@ abstract class AbstractRequest implements RequestInterface
      */
     public function buildUri(): string
     {
-        if (empty($this->getParameter('access_token'))) {
-            // @deprecated
-            $this->addParameter('access_token', $this->extConf->getAccessToken());
-        }
-
         return sprintf(
             'https://api.walls.io%s?%s',
             $this->getPath(),

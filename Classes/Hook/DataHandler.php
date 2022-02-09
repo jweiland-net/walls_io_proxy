@@ -21,6 +21,16 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class DataHandler
 {
     /**
+     * @var WallsService
+     */
+    protected $wallsService;
+
+    public function __construct(WallsService $wallsService = null)
+    {
+        $this->wallsService = $wallsService ?? GeneralUtility::makeInstance(WallsService::class);
+    }
+
+    /**
      * Removes the cache of one specific walls_io_proxy Plugin from sys_registry
      *
      * @param array $params
@@ -30,13 +40,10 @@ class DataHandler
         if (
             isset($params['cacheCmd'])
             && strtolower($params['cacheCmd']) === 'wallioproxy'
+            && ($contentRecordUid = (int)GeneralUtility::_GET('contentRecordUid'))
+            && $contentRecordUid > 0
         ) {
-            $wallsService = GeneralUtility::makeInstance(
-                WallsService::class,
-                (int)GeneralUtility::_GET('contentRecordUid')
-            );
-
-            echo $wallsService->clearCache();
+            echo $this->wallsService->clearCache($contentRecordUid);
         }
     }
 }

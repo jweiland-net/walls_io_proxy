@@ -11,8 +11,11 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Service;
 
-use JWeiland\WallsIoProxy\Client\Request\Posts\ChangedRequest;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
+use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
+use JWeiland\WallsIoProxy\Request\Posts\ChangedRequest;
+use JWeiland\WallsIoProxy\Request\PostsRequest;
+use JWeiland\WallsIoProxy\Request\RequestInterface;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -49,18 +52,6 @@ class WallsService
     ];
 
     /**
-     * @var int
-     */
-    protected $contentRecordUid = 0;
-
-    /**
-     * Can be empty in case of "Clear->cache"
-     *
-     * @var string
-     */
-    protected $accessToken = '';
-
-    /**
      * @var Registry
      */
     protected $registry;
@@ -70,85 +61,41 @@ class WallsService
      */
     protected $client;
 
-    public function __construct(
-        int $contentRecordUid,
-        string $accessToken = '',
-        Registry $registry = null,
-        WallsIoClient $client = null
-    ) {
-        $this->contentRecordUid = $contentRecordUid;
-        $this->accessToken = $accessToken;
+    public function __construct(Registry $registry = null, WallsIoClient $client = null)
+    {
         $this->registry = $registry ?? GeneralUtility::makeInstance(Registry::class);
         $this->client = $client ?? GeneralUtility::makeInstance(WallsIoClient::class);
     }
 
-    /**
-     * Get $maxPosts wall posts.
-     *
-     * As there is no filter to get only posts where is_crosspost is false, we have to partly fill the wall posts
-     * array. We load 8 records from API again and again until $maxPosts is reached.
-     *
-     * If any request results in error, we will return cached wall posts immediately.
-     */
-    public function getWallPosts(int $maxPosts, int $since): array
+    public function getWallPosts(PluginConfiguration $pluginConfiguration): array
     {
-        if ($maxPosts === 0) {
+        if (!$this->isValidPluginConfiguration($pluginConfiguration)) {
             return [];
         }
 
-        if ($since === 0) {
-            return [];
-        }
+        $requestedWallPosts = $this->getUncachedRequestFromWallsIO($this->getWallsIoRequest($pluginConfiguration));
 
-        $wallPosts = [];
-        $since = time() - (60 * 60 * 24 * $since);
-        $hasError = false;
-        $wallsIoRequest = $this->getUncachedRequestFromWallsIO($maxPosts, $since);
-        $requestedWallPosts = $wallsIoRequest['data'];
-
-        if (
-            (array_key_exists('hasErrors', $wallsIoRequest) && $wallsIoRequest['hasErrors'] === true)
-            || $requestedWallPosts === []
-        ) {
-            $hasError = true;
-            $storedWallPosts = $this->registry->get(
-                'WallsIoProxy',
-                'ContentRecordUid_' . $this->contentRecordUid
-            );
-            $wallPosts = $storedWallPosts ?? [];
+        if ($requestedWallPosts === []) {
+            $wallPosts = $this->getStoredWallPostsFromRegistry($pluginConfiguration);
+        } elseif ($this->client->hasErrors()) {
+            $wallPosts = $this->getStoredWallPostsFromRegistry($pluginConfiguration);
         } else {
+            $wallPosts = [];
             foreach ($requestedWallPosts as $requestedWallPost) {
                 if (is_array($requestedWallPost)) {
-                    $sanitizedWallPost = $this->getSanitizedPost($requestedWallPost);
+                    $sanitizedWallPost = $this->getSanitizedPost($requestedWallPost, $pluginConfiguration);
                     $wallPosts[$sanitizedWallPost['id']] = $sanitizedWallPost;
                 }
             }
-        }
-
-        if ($hasError === false && !empty($wallPosts)) {
-            $this->registry->set(
-                'WallsIoProxy',
-                'ContentRecordUid_' . $this->contentRecordUid,
-                $wallPosts
-            );
+            $this->setWallPostsToRegistry($wallPosts, $pluginConfiguration);
         }
 
         return $wallPosts;
     }
 
-    /**
-     * @param int $entriesToLoad
-     * @param int $since // Initially time(). Use it for pagination. Take current_time from last request as new time for $since
-     * @return array
-     */
-    protected function getUncachedRequestFromWallsIO(int $entriesToLoad = 8, int $since = 0): array
+    protected function getUncachedRequestFromWallsIO(RequestInterface $wallsIoRequest): array
     {
-        $wallsIoPostRequest = GeneralUtility::makeInstance(ChangedRequest::class);
-        $wallsIoPostRequest->setAccessToken($this->accessToken);
-        $wallsIoPostRequest->setSince($since ?: time());
-        $wallsIoPostRequest->setFields($this->fields);
-        $wallsIoPostRequest->setLimit($entriesToLoad);
-        $response = $this->client->processRequest($wallsIoPostRequest);
+        $response = $this->client->processRequest($wallsIoRequest);
 
         if (
             is_array($response)
@@ -157,48 +104,110 @@ class WallsService
             && array_key_exists('data', $response)
             && is_array($response['data'])
         ) {
-            return $response;
+            return $response['data'];
         }
 
-        return [
-            'hasErrors' => true
-        ];
+        return [];
+    }
+
+    protected function getStoredWallPostsFromRegistry(PluginConfiguration $pluginConfiguration): array
+    {
+        return $this->registry->get(
+            'WallsIoProxy',
+            'ContentRecordUid_' . $pluginConfiguration->getRecordUid(),
+            []
+        );
+    }
+
+    protected function setWallPostsToRegistry(array $wallPosts, PluginConfiguration $pluginConfiguration)
+    {
+        $this->registry->set(
+            'WallsIoProxy',
+            'ContentRecordUid_' . $pluginConfiguration->getRecordUid(),
+            $wallPosts
+        );
+    }
+
+    protected function getWallsIoRequest(PluginConfiguration $pluginConfiguration): RequestInterface
+    {
+        /** @var RequestInterface $wallsIoRequest */
+        $wallsIoRequest = GeneralUtility::makeInstance($pluginConfiguration->getRequestType());
+        $wallsIoRequest->setFields($this->fields);
+        $wallsIoRequest->setAccessToken($pluginConfiguration->getAccessToken());
+        $wallsIoRequest->setLimit($pluginConfiguration->getEntriesToLoad());
+
+        if ($wallsIoRequest instanceof PostsRequest) {
+            $wallsIoRequest->setBefore('');
+        }
+
+        if ($wallsIoRequest instanceof ChangedRequest) {
+            $wallsIoRequest->setSince(time() - (60 * 60 * 24 * $pluginConfiguration->getShowWallsSince()));
+        }
+
+        return $wallsIoRequest;
+    }
+
+    protected function isValidPluginConfiguration(PluginConfiguration $pluginConfiguration): bool
+    {
+        if ($pluginConfiguration->getRecordUid() === 0) {
+            return false;
+        }
+
+        if ($pluginConfiguration->getAccessToken() === '') {
+            return false;
+        }
+
+        if ($pluginConfiguration->getEntriesToLoad() === 0) {
+            return false;
+        }
+
+        if ($pluginConfiguration->getEntriesToShow() === 0) {
+            return false;
+        }
+
+        if ($pluginConfiguration->getRequestType() === '') {
+            return false;
+        }
+
+        if (!class_exists($pluginConfiguration->getRequestType())) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
-     * Clear cache for a specific wall ID.
+     * Clear cache for a specific wall plugin (tt_content record UID).
      * Will be called by Clear Cache post hook.
-     *
-     * @return int
      */
-    public function clearCache(): int
+    public function clearCache(int $contentRecordUid): int
     {
-        if ($this->contentRecordUid) {
+        if ($contentRecordUid !== 0) {
             $registry = GeneralUtility::makeInstance(Registry::class);
-            $registry->remove('WallsIoProxy', 'ContentRecordUid_' . $this->contentRecordUid);
+            $registry->remove('WallsIoProxy', 'ContentRecordUid_' . $contentRecordUid);
 
-            GeneralUtility::flushDirectory($this->getTargetDirectory());
+            GeneralUtility::flushDirectory($this->getTargetDirectory($contentRecordUid));
 
             return 1;
         }
+
         return 0;
     }
 
     /**
      * Get cache directory for related files within the content of the wall posts comments.
      * Will be called by the AddWallsProcessor (DataProcessor)
-     *
-     * @return string
      */
-    public function getTargetDirectory(): string
+    public function getTargetDirectory(int $contentRecordUid): string
     {
-        if (version_compare(TYPO3_branch, '9.2', '>=')) {
-            $publicPath = \TYPO3\CMS\Core\Core\Environment::getPublicPath();
-        } else {
-            $publicPath = rtrim(PATH_site, '/');
-        }
+        $publicPath = rtrim(PATH_site, '/');
 
-        $targetDirectory = $publicPath . '/' . $this->targetDirectory . '/' . $this->contentRecordUid . '/';
+        $targetDirectory = sprintf(
+            '%s/%s/%s/',
+            $publicPath,
+            $this->targetDirectory,
+            $contentRecordUid
+        );
 
         if (!is_dir($targetDirectory)) {
             GeneralUtility::mkdir_deep($targetDirectory);
@@ -207,7 +216,7 @@ class WallsService
         return $targetDirectory;
     }
 
-    protected function getSanitizedPost(array $post): array
+    protected function getSanitizedPost(array $post, PluginConfiguration $pluginConfiguration): array
     {
         if (array_key_exists('created_timestamp', $post)) {
             $post['created_timestamp_as_text'] = $this->getCreationText((int)$post['created_timestamp']);
@@ -217,14 +226,20 @@ class WallsService
             array_key_exists('external_image', $post)
             && StringUtility::beginsWith((string)$post['external_image'], 'http')
         ) {
-            $post['external_image'] = $this->cacheExternalResources($post['external_image']);
+            $post['external_image'] = $this->cacheExternalResources(
+                $post['external_image'],
+                $pluginConfiguration->getRecordUid()
+            );
         }
 
         if (
             array_key_exists('post_image', $post)
             && StringUtility::beginsWith((string)$post['post_image'], 'http')
         ) {
-            $post['post_image'] = $this->cacheExternalResources($post['post_image']);
+            $post['post_image'] = $this->cacheExternalResources(
+                $post['post_image'],
+                $pluginConfiguration->getRecordUid()
+            );
         }
 
         if (
@@ -241,7 +256,7 @@ class WallsService
                     if (StringUtility::beginsWith($uri, 'http')) {
                         $post['comment'] = str_replace(
                             $matches['src'],
-                            $this->cacheExternalResources($uri),
+                            $this->cacheExternalResources($uri, $pluginConfiguration->getRecordUid()),
                             $post['comment']
                         );
                     }
@@ -253,12 +268,12 @@ class WallsService
         return $post;
     }
 
-    protected function cacheExternalResources(string $resource): string
+    protected function cacheExternalResources(string $resource, int $contentRecordUid): string
     {
         $pathParts = GeneralUtility::split_fileref(parse_url($resource, PHP_URL_PATH));
         $filePath = sprintf(
             '%s%s.%s',
-            $this->getTargetDirectory(),
+            $this->getTargetDirectory($contentRecordUid),
             $pathParts['filebody'],
             $pathParts['fileext']
         );
@@ -285,20 +300,23 @@ class WallsService
                 'walls_io_proxy'
             );
         }
-        if ($diffInSeconds > 60 && $diffInSeconds <= 3600) {
+
+        if ($diffInSeconds <= 3600) {
             return LocalizationUtility::translate(
                 'creationTime.minutes',
                 'walls_io_proxy',
                 [$dateInterval->format('%i')]
             );
         }
-        if ($diffInSeconds > 3600 && $diffInSeconds <= 86400) {
+
+        if ($diffInSeconds <= 86400) {
             return LocalizationUtility::translate(
                 'creationTime.hours',
                 'walls_io_proxy',
                 [$dateInterval->format('%h')]
             );
         }
+
         return LocalizationUtility::translate(
             'creationTime.date',
             'walls_io_proxy',
