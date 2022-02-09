@@ -52,12 +52,10 @@ Extension Name
    This documentation is for the TYPO3 extension walls_io_proxy.
 
 
-
 **For Contributors**
 
    You are welcome to help improve this guide. Just click on "Edit me on GitHub"
    on the top right to submit your change request.
-
 
 **Sitemap:**
 
@@ -67,7 +65,6 @@ Extension Name
 .. toctree::
    :maxdepth: 3
    :hidden:
-
 
    Introduction/Index
    Installation/Index
