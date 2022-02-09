@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Service;
 
+use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\Posts\ChangedRequest;
-use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Request\RequestInterface;
 use TYPO3\CMS\Core\Registry;

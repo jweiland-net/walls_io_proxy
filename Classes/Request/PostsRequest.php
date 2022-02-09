@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Request;
 
-use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
-
 /**
  * Walls.io Request to retrieve Posts
  * SF: This requests returns the records not in expected order. They will be ordered by the date when they are

@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\Service;
 
-use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
+use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
@@ -94,7 +94,8 @@ class WallsServiceTest extends FunctionalTestCase
         parent::tearDown();
     }
 
-    public function dataProviderForInvalidPluginConfiguration(): array{
+    public function dataProviderForInvalidPluginConfiguration(): array
+    {
         return [
             'Missing record UID' => [[]],
             'Missing access token' => [['data' => ['uid' => 1]]],

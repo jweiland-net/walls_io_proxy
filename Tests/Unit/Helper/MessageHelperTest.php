@@ -82,7 +82,8 @@ class MessageHelperTest extends UnitTestCase
         parent::tearDown();
     }
 
-    public function dataProviderForAllSeverities(): array{
+    public function dataProviderForAllSeverities(): array
+    {
         return [
             'OK' => [AbstractMessage::OK, 'Ok'],
             'ERROR' => [AbstractMessage::ERROR, 'Error'],
