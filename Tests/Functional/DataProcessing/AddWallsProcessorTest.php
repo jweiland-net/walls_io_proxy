@@ -192,7 +192,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         ];
 
         $this->wallsServiceProphecy
-            ->getWallPosts(Argument::that(static function(PluginConfiguration $pluginConfiguration) {
+            ->getWallPosts(Argument::that(static function (PluginConfiguration $pluginConfiguration) {
                 return $pluginConfiguration->getRecordUid() === 1;
             }))
             ->shouldBeCalled()
@@ -214,7 +214,6 @@ class AddWallsProcessorTest extends FunctionalTestCase
             )
         );
     }
-
 
     /**
      * @test

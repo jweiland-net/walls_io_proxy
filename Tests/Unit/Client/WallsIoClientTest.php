@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
-use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Helper\MessageHelper;
+use JWeiland\WallsIoProxy\Request\PostsRequest;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;

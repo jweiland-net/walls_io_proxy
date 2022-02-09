@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Request;
 
-use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
-
 /**
  * Interface for walls.io requests
  */
