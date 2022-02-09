@@ -3,6 +3,7 @@
 
 .. _introduction:
 
+============
 Introduction
 ============
 
@@ -10,29 +11,30 @@ Introduction
 .. _what-it-does:
 
 What does it do?
-----------------
+================
 
 walls.io is a service to show you entries/posts of a specific topic or hashtag from various social media websites
-like Facebook, Twitter and Instagram on your website. But as long as you don't have a
-Premium Account (500 € each month. Date: 10.01.2020) you can not use their API and you have to accept their cookies
-while using their embedded iframe or JS file implementation. With walls_io_proxy no Cookie of walls.io will be set
-on client-side anymore, as we have moved all XHR/Ajax Requests of their JS file to server-side (PHP).
+like Facebook, Twitter and Instagram on your website. While embedding wall posts with help of iframe or
+JavaScript solution the website visitors will get Cookies and send personnel data like IP address to
+third party companies without their consent.
 
-Our walls_io_proxy is no API and will not use the API of walls.io.
+Our `walls_io_proxy` makes use of the official API of walls.io to retrieve the wall posts and caches containing
+images directly to your server. That way the website visitor do not need consent to show the wall posts. Further no
+cookies will be set and the IP address of website visitor will not be sent to 3rd parties.
 
-As walls_io_proxy gets all data from walls.io now it's up to you to create your own FluidTemplate for your
-social wall. We don't support all their integrated Themes, Styles and Views. You have the data now, do what you want.
+Yes, `walls_io_proxy` is OpenSource and free to use, but you have to register for Premium Account at walls.io (499 €
+each month or 4.800 € (yearly). Date: 09.02.2022) to get API access.
 
 
 .. _screenshots:
 
 Screenshots
------------
+===========
 
-See walls_io_proxy in action.
+See `walls_io_proxy` in action.
 
-Point
-~~~~~
+A wall example output
+---------------------
 
 .. figure:: ../Images/Introduction/walls-io-proxy.png
    :width: 500px

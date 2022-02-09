@@ -14,7 +14,7 @@ namespace JWeiland\WallsIoProxy\ViewHelpers\Be\Security;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
- * Check, if current logged in user is Administrator
+ * Check, if current logged-in user is Administrator
  */
 class IsAdministratorViewHelper extends AbstractConditionViewHelper
 {

@@ -3,8 +3,15 @@
 
 .. _changelog:
 
+=========
 ChangeLog
 =========
+
+**Version 4.4.0**
+
+- FEATURE: You can choose which request should be used to retrieve wall posts
+- BUGFIX: Repair message after clearing caches of wall posts
+- TASK: Introduce new object: PluginConfiguration
 
 **Version 4.3.0**
 
