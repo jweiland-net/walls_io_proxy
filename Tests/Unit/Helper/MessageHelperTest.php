@@ -17,6 +17,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
@@ -39,9 +40,9 @@ class MessageHelperTest extends UnitTestCase
     protected $flashMessageServiceProphecy;
 
     /**
-     * @var FlashMessageQueue
+     * @var FlashMessageQueue|ObjectProphecy
      */
-    protected $flashMessageQueue;
+    protected $flashMessageQueueProphecy;
 
     /**
      * @var BackendUserAuthentication|ObjectProphecy
@@ -56,20 +57,13 @@ class MessageHelperTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->flashMessageServiceProphecy = $this->prophesize(FlashMessageService::class);
-        $this->flashMessageQueue = new FlashMessageQueue($this->queueIdentifier);
+        $this->flashMessageQueueProphecy = $this->prophesize(FlashMessageQueue::class);
         $this->backendUserAuthenticationProphecy = $this->prophesize(BackendUserAuthentication::class);
 
         $this->flashMessageServiceProphecy
             ->getMessageQueueByIdentifier()
             ->shouldBeCalled()
-            ->willReturn($this->flashMessageQueue);
-
-        $this->backendUserAuthenticationProphecy
-            ->getSessionData($this->queueIdentifier)
-            ->shouldBeCalled()
-            ->willReturn([]);
-
-        $GLOBALS['BE_USER'] = $this->backendUserAuthenticationProphecy->reveal();
+            ->willReturn($this->flashMessageQueueProphecy);
 
         $this->subject = new MessageHelper(
             $this->flashMessageServiceProphecy->reveal()
@@ -82,11 +76,20 @@ class MessageHelperTest extends UnitTestCase
             $this->subject,
             $this->flashMessageServiceProphecy,
             $this->flashMessageQueueProphecy,
-            $this->backendUserAuthenticationProphecy,
-            $GLOBALS['BE_USER']
+            $this->backendUserAuthenticationProphecy
         );
 
         parent::tearDown();
+    }
+
+    public function dataProviderForAllSeverities(): array{
+        return [
+            'OK' => [AbstractMessage::OK, 'Ok'],
+            'ERROR' => [AbstractMessage::ERROR, 'Error'],
+            'INFO' => [AbstractMessage::INFO, 'Info'],
+            'NOTICE' => [AbstractMessage::NOTICE, 'Notice'],
+            'WARNING' => [AbstractMessage::WARNING, 'Warning'],
+        ];
     }
 
     /**
@@ -94,22 +97,201 @@ class MessageHelperTest extends UnitTestCase
      */
     public function addFlashMessageWillAddMessageToQueue(): void
     {
+        $this->flashMessageQueueProphecy
+            ->enqueue(Argument::that(static function (FlashMessage $flashMessage) {
+                return $flashMessage->getTitle() === 'header'
+                    && $flashMessage->getMessage() === 'hello'
+                    && $flashMessage->getSeverity() === AbstractMessage::OK
+                    && $flashMessage->isSessionMessage() === true;
+            }))
+            ->shouldBeCalled();
+
         $this->subject->addFlashMessage(
             'hello',
             'header'
         );
+    }
 
-        $this->backendUserAuthenticationProphecy
-            ->setAndSaveSessionData(
-                $this->queueIdentifier,
-                Argument::that(static function ($flashMessages) {
-                    /** @var FlashMessage $flashMessage */
-                    $flashMessage = current($flashMessages);
+    /**
+     * @test
+     */
+    public function getAllFlashMessagesWithoutFlushWillReturnAllFlashMessages(): void
+    {
+        $this->flashMessageQueueProphecy
+            ->getAllMessagesAndFlush()
+            ->shouldNotBeCalled();
 
-                    return $flashMessage->getTitle() === 'header'
-                        && $flashMessage->getMessage() === 'hello';
-                })
-            )
-            ->shouldBeCalled();
+        $this->flashMessageQueueProphecy
+            ->getAllMessages()
+            ->shouldBeCalled()
+            ->willReturn([]);
+
+        $this->subject->getAllFlashMessages(false);
+    }
+
+    /**
+     * @test
+     */
+    public function getAllFlashMessagesWithFlushWillReturnAllFlashMessages(): void
+    {
+        $this->flashMessageQueueProphecy
+            ->getAllMessagesAndFlush()
+            ->shouldBeCalled()
+            ->willReturn([]);
+
+        $this->flashMessageQueueProphecy
+            ->getAllMessages()
+            ->shouldNotBeCalled();
+
+        $this->subject->getAllFlashMessages(true);
+    }
+
+    /**
+     * @test
+     */
+    public function hasMessagesWithMessagesWillReturnTrue(): void
+    {
+        $flashMessage = new FlashMessage(
+            'message',
+            'title',
+            AbstractMessage::OK,
+            true
+        );
+
+        $this->flashMessageQueueProphecy
+            ->getAllMessages()
+            ->shouldBeCalled()
+            ->willReturn([$flashMessage]);
+
+        self::assertTrue(
+            $this->subject->hasMessages()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function hasMessagesWithoutMessagesWillReturnFalse(): void
+    {
+        $this->flashMessageQueueProphecy
+            ->getAllMessages()
+            ->shouldBeCalled()
+            ->willReturn([]);
+
+        self::assertFalse(
+            $this->subject->hasMessages()
+        );
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider dataProviderForAllSeverities
+     */
+    public function getFlashMessagesBySeverityAndFlushWillReturnFlashMessageWithSeverity(int $severity, string $severityName): void
+    {
+        $flashMessage = new FlashMessage(
+            'message',
+            'title',
+            $severity,
+            true
+        );
+
+        $this->flashMessageQueueProphecy
+            ->getAllMessagesAndFlush($severity)
+            ->shouldBeCalled()
+            ->willReturn([$flashMessage]);
+
+        self::assertSame(
+            [$flashMessage],
+            $this->subject->getFlashMessagesBySeverityAndFlush($severity)
+        );
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider dataProviderForAllSeverities
+     */
+    public function hasSeverityMessagesWithMessagesWillReturnTrue(int $severity, string $severityName): void
+    {
+        $flashMessage = new FlashMessage(
+            'message',
+            'title',
+            $severity,
+            true
+        );
+
+        $this->flashMessageQueueProphecy
+            ->getAllMessages($severity)
+            ->shouldBeCalled()
+            ->willReturn([$flashMessage]);
+
+        $methodName = 'has' . $severityName . 'Messages';
+
+        self::assertTrue(
+            $this->subject->$methodName()
+        );
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider dataProviderForAllSeverities
+     */
+    public function hasSeverityMessagesWithoutMessagesWillReturnFalse(int $severity, string $severityName): void
+    {
+        $this->flashMessageQueueProphecy
+            ->getAllMessages($severity)
+            ->shouldBeCalled()
+            ->willReturn([]);
+
+        $methodName = 'has' . $severityName . 'Messages';
+
+        self::assertFalse(
+            $this->subject->$methodName()
+        );
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider dataProviderForAllSeverities
+     */
+    public function getWarningMessagesWithoutFlushWillReturnAllFlashMessages(int $severity, string $severityName): void
+    {
+        $this->flashMessageQueueProphecy
+            ->getAllMessagesAndFlush($severity)
+            ->shouldNotBeCalled();
+
+        $this->flashMessageQueueProphecy
+            ->getAllMessages($severity)
+            ->shouldBeCalled()
+            ->willReturn([]);
+
+        $methodName = 'get' . $severityName . 'Messages';
+
+        $this->subject->$methodName(false);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider dataProviderForAllSeverities
+     */
+    public function getErrorMessagesWithFlushWillReturnAllFlashMessages(int $severity, string $severityName): void
+    {
+        $this->flashMessageQueueProphecy
+            ->getAllMessagesAndFlush($severity)
+            ->shouldBeCalled()
+            ->willReturn([]);
+
+        $this->flashMessageQueueProphecy
+            ->getAllMessages($severity)
+            ->shouldNotBeCalled();
+
+        $methodName = 'get' . $severityName . 'Messages';
+
+        $this->subject->$methodName(true);
     }
 }

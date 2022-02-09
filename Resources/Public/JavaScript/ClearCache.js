@@ -27,12 +27,12 @@ define(['jquery', 'TYPO3/CMS/Backend/Notification'], function($, Notification) {
             if (result === "1") {
                 Notification.success(
                     "Cache cleared",
-                    "Cache of Content Record with UID " + $clearCacheButton.data("wallId") + " successfully cleared"
+                    "Cache of Content Record with UID " + $clearCacheButton.data("contentRecordUid") + " successfully cleared"
                 );
             } else {
                 Notification.error(
                     "Cache clearing failed",
-                    "The Cache of Content Record UID " + $clearCacheButton.data("wallId") + " could not be cleared."
+                    "The Cache of Content Record UID " + $clearCacheButton.data("contentRecordUid") + " could not be cleared."
                 );
             }
         }).fail(function() {

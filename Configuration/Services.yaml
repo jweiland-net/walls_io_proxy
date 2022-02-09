@@ -15,6 +15,10 @@ services:
   JWeiland\WallsIoProxy\Configuration:
     public: true
 
+  # Will be called by GeneralUtility::makeInstance in TYPO3's DataHandler
+  JWeiland\WallsIoProxy\Hook\DataHandler:
+    public: true
+
   # Will be called by GeneralUtility::makeInstance in WallsService
   JWeiland\WallsIoProxy\Request:
     public: true

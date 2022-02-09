@@ -14,7 +14,7 @@ namespace JWeiland\WallsIoProxy\ViewHelpers\Be\Security;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
- * Check, if current logged in user is Administrator
+ * Check, if current logged-in user is Administrator
  */
 class IsAdministratorViewHelper extends AbstractConditionViewHelper
 {
@@ -25,6 +25,8 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
      */
     protected static function evaluateCondition($arguments = null): bool
     {
-        return isset($GLOBALS['BE_USER']) && $GLOBALS['BE_USER']->user['uid'] > 0 && $GLOBALS['BE_USER']->isAdmin();
+        return isset($GLOBALS['BE_USER'])
+            && $GLOBALS['BE_USER']->user['uid'] > 0
+            && $GLOBALS['BE_USER']->isAdmin();
     }
 }

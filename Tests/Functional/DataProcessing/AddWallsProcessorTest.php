@@ -11,12 +11,14 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\DataProcessing;
 
+use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
@@ -33,6 +35,21 @@ class AddWallsProcessorTest extends FunctionalTestCase
     protected $subject;
 
     /**
+     * @var WallsService|ObjectProphecy
+     */
+    protected $wallsServiceProphecy;
+
+    /**
+     * @var FlexFormService
+     */
+    protected $flexFormService;
+
+    /**
+     * @var ContentObjectRenderer|ObjectProphecy
+     */
+    protected $contentObjectRendererProphecy;
+
+    /**
      * Because of using EXT: we have to load our extension before testing
      *
      * @var array
@@ -44,23 +61,92 @@ class AddWallsProcessorTest extends FunctionalTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->subject = new AddWallsProcessor();
+
+        $this->wallsServiceProphecy = $this->prophesize(WallsService::class);
+        $this->flexFormService = new FlexFormService();
+        $this->contentObjectRendererProphecy = $this->prophesize(ContentObjectRenderer::class);
+
+        $this->subject = new AddWallsProcessor(
+            $this->wallsServiceProphecy->reveal(),
+            $this->flexFormService
+        );
     }
 
     protected function tearDown(): void
     {
         unset(
-            $this->subject
+            $this->subject,
+            $this->wallsServiceProphecy,
+            $this->flexFormService
         );
+
         parent::tearDown();
     }
 
     /**
      * @test
      */
-    public function processAddsWallsToProcessedData(): void
+    public function processWithValidTypoScriptConditionWillNotModifyProcessedData(): void
     {
-        $cObj = new ContentObjectRenderer();
+        $processedData = [];
+        $processorConfiguration = [
+            'if.' => [
+                'value' => '1',
+                'equals' => '1'
+            ]
+        ];
+
+        $this->contentObjectRendererProphecy
+            ->checkIf($processorConfiguration['if.'])
+            ->shouldBeCalled()
+            ->willReturn(false);
+
+        $this->wallsServiceProphecy
+            ->getWallPosts(Argument::any())
+            ->shouldNotBeCalled();
+
+        self::assertSame(
+            $processedData,
+            $this->subject->process(
+                $this->contentObjectRendererProphecy->reveal(),
+                [],
+                $processorConfiguration,
+                $processedData
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function processWithNonPiFlexformWillAddEmptyConfVariable(): void
+    {
+        $processedData = [];
+
+        $this->wallsServiceProphecy
+            ->getWallPosts(Argument::any())
+            ->shouldBeCalled()
+            ->willReturn([]);
+
+        self::assertSame(
+            [
+                'conf' => [],
+                'walls' => []
+            ],
+            $this->subject->process(
+                $this->contentObjectRendererProphecy->reveal(),
+                [],
+                [],
+                $processedData
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function processWithValidPiFlexformWillAddConfVariable(): void
+    {
         $processedData = [
             'data' => [
                 'pi_flexform' => file_get_contents(GeneralUtility::getFileAbsFileName(
@@ -69,35 +155,106 @@ class AddWallsProcessorTest extends FunctionalTestCase
             ]
         ];
 
-        /** @var WallsService|ObjectProphecy $wallsServiceProphecy */
-        $wallsServiceProphecy = $this->prophesize(WallsService::class);
-        $wallsServiceProphecy
-            ->getWallPosts(
-                Argument::exact(24),
-                Argument::exact(365)
+        $expectedProcessedData = $processedData;
+        $expectedProcessedData['conf'] = [
+            'accessToken' => 'ABC123',
+            'entriesToLoad' => '24',
+            'entriesToShow' => '8',
+            'showWallsSince' => '365',
+        ];
+        $expectedProcessedData['walls'] = [];
+
+        $this->wallsServiceProphecy
+            ->getWallPosts(Argument::any())
+            ->shouldBeCalled()
+            ->willReturn([]);
+
+        self::assertSame(
+            $expectedProcessedData,
+            $this->subject->process(
+                $this->contentObjectRendererProphecy->reveal(),
+                [],
+                [],
+                $processedData
             )
-            ->shouldBeCalled()
-            ->willReturn([
-                0 => 'Test',
-                1 => [
-                    'key' => 'value'
-                ]
-            ]);
-        $wallsServiceProphecy
-            ->getTargetDirectory()
-            ->shouldBeCalled()
-            ->willReturn('');
-        GeneralUtility::addInstance(WallsService::class, $wallsServiceProphecy->reveal());
-
-        $newProcessedData = $this->subject->process($cObj, [], [], $processedData);
-
-        self::assertArrayHasKey(
-            'conf',
-            $newProcessedData
         );
-        self::assertArrayHasKey(
-            'walls',
-            $newProcessedData
+    }
+
+    /**
+     * @test
+     */
+    public function processWillCallGetWallPostsWithPluginConfiguration(): void
+    {
+        $processedData = [
+            'data' => [
+                'uid' => 1
+            ]
+        ];
+
+        $this->wallsServiceProphecy
+            ->getWallPosts(Argument::that(static function(PluginConfiguration $pluginConfiguration) {
+                return $pluginConfiguration->getRecordUid() === 1;
+            }))
+            ->shouldBeCalled()
+            ->willReturn([]);
+
+        self::assertSame(
+            [
+                'data' => [
+                    'uid' => 1
+                ],
+                'conf' => [],
+                'walls' => []
+            ],
+            $this->subject->process(
+                $this->contentObjectRendererProphecy->reveal(),
+                [],
+                [],
+                $processedData
+            )
+        );
+    }
+
+
+    /**
+     * @test
+     */
+    public function processAddsWallsToProcessedData(): void
+    {
+        $processedData = [
+            'data' => [
+                'uid' => 1,
+                'pi_flexform' => ''
+            ]
+        ];
+
+        $walls = [
+            0 => 'Test',
+            1 => [
+                'key' => 'value'
+            ]
+        ];
+
+        $this->wallsServiceProphecy
+            ->getWallPosts(Argument::any())
+            ->shouldBeCalled()
+            ->willReturn($walls);
+
+        self::assertSame(
+            [
+                'data' => [
+                    'uid' => 1,
+                    'pi_flexform' => '',
+                ],
+                'conf' => [],
+                'walls' => $walls
+            ],
+            $this->subject->process(
+                $this->contentObjectRendererProphecy->reveal(),
+                [],
+                [],
+                $processedData
+            )
         );
     }
 }
