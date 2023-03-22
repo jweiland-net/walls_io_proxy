@@ -55,7 +55,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
      * @var array
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/walls_io_proxy'
+        'typo3conf/ext/walls_io_proxy',
     ];
 
     protected function setUp(): void
@@ -92,8 +92,8 @@ class AddWallsProcessorTest extends FunctionalTestCase
         $processorConfiguration = [
             'if.' => [
                 'value' => '1',
-                'equals' => '1'
-            ]
+                'equals' => '1',
+            ],
         ];
 
         $this->contentObjectRendererProphecy
@@ -131,7 +131,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         self::assertSame(
             [
                 'conf' => [],
-                'walls' => []
+                'walls' => [],
             ],
             $this->subject->process(
                 $this->contentObjectRendererProphecy->reveal(),
@@ -151,8 +151,8 @@ class AddWallsProcessorTest extends FunctionalTestCase
             'data' => [
                 'pi_flexform' => file_get_contents(GeneralUtility::getFileAbsFileName(
                     'EXT:walls_io_proxy/Tests/Functional/Fixtures/FlexForm.xml'
-                ))
-            ]
+                )),
+            ],
         ];
 
         $expectedProcessedData = $processedData;
@@ -187,8 +187,8 @@ class AddWallsProcessorTest extends FunctionalTestCase
     {
         $processedData = [
             'data' => [
-                'uid' => 1
-            ]
+                'uid' => 1,
+            ],
         ];
 
         $this->wallsServiceProphecy
@@ -201,10 +201,10 @@ class AddWallsProcessorTest extends FunctionalTestCase
         self::assertSame(
             [
                 'data' => [
-                    'uid' => 1
+                    'uid' => 1,
                 ],
                 'conf' => [],
-                'walls' => []
+                'walls' => [],
             ],
             $this->subject->process(
                 $this->contentObjectRendererProphecy->reveal(),
@@ -223,15 +223,15 @@ class AddWallsProcessorTest extends FunctionalTestCase
         $processedData = [
             'data' => [
                 'uid' => 1,
-                'pi_flexform' => ''
-            ]
+                'pi_flexform' => '',
+            ],
         ];
 
         $walls = [
             0 => 'Test',
             1 => [
-                'key' => 'value'
-            ]
+                'key' => 'value',
+            ],
         ];
 
         $this->wallsServiceProphecy
@@ -246,7 +246,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
                     'pi_flexform' => '',
                 ],
                 'conf' => [],
-                'walls' => $walls
+                'walls' => $walls,
             ],
             $this->subject->process(
                 $this->contentObjectRendererProphecy->reveal(),

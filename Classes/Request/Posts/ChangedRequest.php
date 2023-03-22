@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package jweiland/walls-io-proxy.
+ * This file is part of the package jweiland/walls-io-prox.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
@@ -29,7 +29,7 @@ class ChangedRequest extends AbstractRequest
     protected $parameters = [
         'fields' => 'id,comment,type',
         'include_inactive' => 0,
-        'limit' => 24
+        'limit' => 24,
     ];
 
     /**
@@ -45,7 +45,7 @@ class ChangedRequest extends AbstractRequest
         'languages' => 1,
         'highlighted_only' => 1,
         'include_inactive' => 1,
-        'include_source' => 1
+        'include_source' => 1,
     ];
 
     /**
@@ -80,7 +80,7 @@ class ChangedRequest extends AbstractRequest
         'userlink',
         'location',
         'latitude',
-        'longitude'
+        'longitude',
     ];
 
     /**

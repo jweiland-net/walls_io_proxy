@@ -28,7 +28,7 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
      * @var array
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/walls_io_proxy'
+        'typo3conf/ext/walls_io_proxy',
     ];
 
     /**
