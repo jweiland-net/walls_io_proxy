@@ -48,7 +48,8 @@ class WallsService
         'external_fullname',
         'external_user_id',
         'external_image',
-        'post_image'
+        'post_image',
+        'post_link',
     ];
 
     /**
