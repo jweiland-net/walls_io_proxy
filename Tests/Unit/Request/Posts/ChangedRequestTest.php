@@ -86,7 +86,7 @@ class ChangedRequestTest extends UnitTestCase
             [
                 'fields' => 'id,comment,type',
                 'include_inactive' => 0,
-                'limit' => 24
+                'limit' => 24,
             ],
             $this->subject->getParameters()
         );
@@ -130,7 +130,7 @@ class ChangedRequestTest extends UnitTestCase
     {
         $expectedParameters = [
             'access_token' => '123',
-            'languages' => 'de'
+            'languages' => 'de',
         ];
         $this->subject->setParameters($expectedParameters);
 
@@ -147,12 +147,12 @@ class ChangedRequestTest extends UnitTestCase
     {
         $this->subject->setParameters([
             'accessToken' => '123',
-            'languages' => 'de'
+            'languages' => 'de',
         ]);
 
         self::assertSame(
             [
-                'languages' => 'de'
+                'languages' => 'de',
             ],
             $this->subject->getParameters()
         );
@@ -170,7 +170,7 @@ class ChangedRequestTest extends UnitTestCase
                 'fields' => 'id,comment,type',
                 'include_inactive' => 0,
                 'limit' => 24,
-                'access_token' => '123'
+                'access_token' => '123',
             ],
             $this->subject->getParameters()
         );
@@ -187,7 +187,7 @@ class ChangedRequestTest extends UnitTestCase
             [
                 'fields' => 'id,comment,type',
                 'include_inactive' => 0,
-                'limit' => 24
+                'limit' => 24,
             ],
             $this->subject->getParameters()
         );
@@ -265,7 +265,7 @@ class ChangedRequestTest extends UnitTestCase
         $this->subject->setFields([
             'id',
             'type',
-            'post_link'
+            'post_link',
         ]);
 
         self::assertSame(
@@ -282,7 +282,7 @@ class ChangedRequestTest extends UnitTestCase
         $this->subject->setFields([
             'id',
             'instagram',
-            'post_link'
+            'post_link',
         ]);
 
         self::assertSame(

@@ -19,7 +19,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\Response;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 
 /**
  * Walls IO Client Test
@@ -84,7 +84,7 @@ class WallsIoClientTest extends UnitTestCase
             ->addFlashMessage(
                 'URI is empty or contains invalid chars. URI: https://www.jweiland.net',
                 'Invalid request URI',
-                FlashMessage::ERROR
+                AbstractMessage::ERROR
             )
             ->shouldBeCalled();
 
@@ -126,7 +126,7 @@ class WallsIoClientTest extends UnitTestCase
             ->addFlashMessage(
                 'Walls.io responses with a status code different from 200',
                 'Status Code: 500',
-                FlashMessage::ERROR
+                AbstractMessage::ERROR
             )
             ->shouldBeCalled();
         $this->messageHelperProphecy
@@ -177,7 +177,7 @@ class WallsIoClientTest extends UnitTestCase
             ->addFlashMessage(
                 'Server down. Uri: https://api.walls.io?fields=test&access_token=XXX&since=123',
                 'Error Code: 564',
-                FlashMessage::ERROR
+                AbstractMessage::ERROR
             )
             ->shouldBeCalled();
 
@@ -223,7 +223,7 @@ class WallsIoClientTest extends UnitTestCase
             ->addFlashMessage(
                 'The response of walls.io was not a valid JSON response.',
                 'Invalid JSON response',
-                FlashMessage::ERROR
+                AbstractMessage::ERROR
             )
             ->shouldBeCalled();
         $this->messageHelperProphecy
@@ -265,8 +265,8 @@ class WallsIoClientTest extends UnitTestCase
             ->willReturn(json_encode([
                 'status' => 'error',
                 'info' => [
-                    0 => 'broken'
-                ]
+                    0 => 'broken',
+                ],
             ]));
 
         $this->requestFactoryProphecy
@@ -278,7 +278,7 @@ class WallsIoClientTest extends UnitTestCase
             ->addFlashMessage(
                 'broken',
                 'error',
-                FlashMessage::ERROR
+                AbstractMessage::ERROR
             )
             ->shouldBeCalled();
         $this->messageHelperProphecy
@@ -318,7 +318,7 @@ class WallsIoClientTest extends UnitTestCase
             ->getBody()
             ->shouldBeCalled()
             ->willReturn(json_encode([
-                'status' => 'success'
+                'status' => 'success',
             ]));
 
         $this->requestFactoryProphecy
@@ -333,7 +333,7 @@ class WallsIoClientTest extends UnitTestCase
 
         self::assertSame(
             [
-                'status' => 'success'
+                'status' => 'success',
             ],
             $this->subject->processRequest($postsRequest->reveal())
         );

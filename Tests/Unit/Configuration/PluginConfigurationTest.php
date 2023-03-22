@@ -46,11 +46,11 @@ class PluginConfigurationTest extends UnitTestCase
     public function getRecordWithRecordWillReturnRecord(): void
     {
         $data = [
-            'uid' => 1
+            'uid' => 1,
         ];
 
         $this->subject = new PluginConfiguration([
-            'data' => $data
+            'data' => $data,
         ]);
 
         self::assertSame(
@@ -80,8 +80,8 @@ class PluginConfigurationTest extends UnitTestCase
         $accessToken = 'ABC123';
         $this->subject = new PluginConfiguration([
             'conf' => [
-                'accessToken' => $accessToken
-            ]
+                'accessToken' => $accessToken,
+            ],
         ]);
 
         self::assertSame(
@@ -112,8 +112,8 @@ class PluginConfigurationTest extends UnitTestCase
 
         $this->subject = new PluginConfiguration([
             'conf' => [
-                'requestType' => $requestType
-            ]
+                'requestType' => $requestType,
+            ],
         ]);
 
         self::assertSame(
@@ -143,8 +143,8 @@ class PluginConfigurationTest extends UnitTestCase
         $entriesToLoad = 34;
         $this->subject = new PluginConfiguration([
             'conf' => [
-                'entriesToLoad' => $entriesToLoad
-            ]
+                'entriesToLoad' => $entriesToLoad,
+            ],
         ]);
 
         self::assertSame(
@@ -174,8 +174,8 @@ class PluginConfigurationTest extends UnitTestCase
         $entriesToShow = 12;
         $this->subject = new PluginConfiguration([
             'conf' => [
-                'entriesToShow' => $entriesToShow
-            ]
+                'entriesToShow' => $entriesToShow,
+            ],
         ]);
 
         self::assertSame(
@@ -205,8 +205,8 @@ class PluginConfigurationTest extends UnitTestCase
         $showWallsSince = 48;
         $this->subject = new PluginConfiguration([
             'conf' => [
-                'showWallsSince' => $showWallsSince
-            ]
+                'showWallsSince' => $showWallsSince,
+            ],
         ]);
 
         self::assertSame(
@@ -236,8 +236,8 @@ class PluginConfigurationTest extends UnitTestCase
         $this->subject = new PluginConfiguration([
             'data' => [
                 'uid' => 4,
-                'pid' => 6
-            ]
+                'pid' => 6,
+            ],
         ]);
 
         self::assertSame(

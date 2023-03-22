@@ -77,7 +77,7 @@ class DataHandlerTest extends UnitTestCase
             ->shouldNotBeCalled();
 
         $this->subject->clearCachePostProc([
-            'cacheCmd' => 'wrong'
+            'cacheCmd' => 'wrong',
         ]);
     }
 
@@ -93,7 +93,7 @@ class DataHandlerTest extends UnitTestCase
             ->shouldNotBeCalled();
 
         $this->subject->clearCachePostProc([
-            'cacheCmd' => 'wallioproxy'
+            'cacheCmd' => 'wallioproxy',
         ]);
     }
 
@@ -109,7 +109,7 @@ class DataHandlerTest extends UnitTestCase
             ->shouldBeCalled();
 
         $this->subject->clearCachePostProc([
-            'cacheCmd' => 'wallioproxy'
+            'cacheCmd' => 'wallioproxy',
         ]);
     }
 }

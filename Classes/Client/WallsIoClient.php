@@ -32,13 +32,9 @@ class WallsIoClient
      */
     protected $messageHelper;
 
-    public function injectRequestFactory(RequestFactory $requestFactory): void
+    public function __construct(RequestFactory $requestFactory, MessageHelper $messageHelper)
     {
         $this->requestFactory = $requestFactory;
-    }
-
-    public function injectMessageHelper(MessageHelper $messageHelper): void
-    {
         $this->messageHelper = $messageHelper;
     }
 
