@@ -3,8 +3,15 @@
 	"type": "typo3-cms-extension",
 	"description": "Cache and Proxy for walls.io, so no Cookie will be set on Client",
 	"license": "GPL-2.0-or-later",
-	"keywords": ["typo3", "TYPO3 CMS", "walls", "walls.io", "cache", "proxy"],
-	"homepage": "http://www.jweiland.net",
+	"keywords": [
+		"typo3",
+		"TYPO3 CMS",
+		"walls",
+		"walls.io",
+		"cache",
+		"proxy"
+	],
+	"homepage": "https://www.jweiland.net",
 	"authors": [
 		{
 			"name": "Stefan Froemken",
@@ -18,7 +25,7 @@
 		"source": "https://github.com/jweiland-net/walls_io_proxy"
 	},
 	"require": {
-		"typo3/cms-core": "^9.5.29 || ^10.4.19"
+		"typo3/cms-core": "^9.5.29 || ^10.4.36"
 	},
 	"require-dev": {
 		"roave/security-advisories": "dev-latest",
@@ -52,9 +59,9 @@
 		}
 	},
 	"scripts": {
-		"php:fix": ".build/vendor/bin/php-cs-fixer --config=Build/.php_cs.php fix Classes Tests",
+		"php:fix": ".build/vendor/bin/php-cs-fixer --config=Build/php-cs-fixer/config.php fix Classes Tests",
 		"ci:php:lint": "find *.php Classes Configuration Tests -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l",
-		"ci:php:fixer": ".build/vendor/bin/php-cs-fixer --config=Build/.php_cs.php fix --dry-run -v --show-progress=dots --diff Classes Tests",
+		"ci:php:fixer": ".build/vendor/bin/php-cs-fixer --config=Build/php-cs-fixer/config.php fix --dry-run -v --show-progress=dots --diff Classes Tests",
 		"ci:tests:unit": ".build/vendor/bin/phpunit -c .build/vendor/nimut/testing-framework/res/Configuration/UnitTests.xml Tests/Unit",
 		"ci:tests:functional": "find 'Tests/Functional' -wholename '*Test.php' | parallel --gnu 'echo; echo \"Running functional test suite {}\"; .build/vendor/bin/phpunit -c .build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml {}';",
 		"link-extension": [
