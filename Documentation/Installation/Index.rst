@@ -1,7 +1,7 @@
-.. include:: ../Includes.txt
+..  include:: /Includes.rst.txt
 
 
-.. _installation:
+..  _installation:
 
 ============
 Installation
@@ -11,12 +11,12 @@ Target group: **Administrators**
 
 The extension needs to be installed like any other extension of TYPO3 CMS:
 
-#. Visit ExtensionManager
+#.  Visit ExtensionManager
 
-#. Switch over to `Get Extensions`
+#.  Switch over to `Get Extensions`
 
-#. Search for `walls_io_proxy`
+#.  Search for `walls_io_proxy`
 
-#. Install extension
+#.  Install extension
 
-#. Set access token in Extension Settings
+#.  Set access token in Extension Settings

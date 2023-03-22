@@ -33,7 +33,7 @@ $GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['showitem'] = '
     [
         'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang_db.xlf:plugin.walls_io_proxy.title',
         'wallsioproxy',
-        null
+        null,
     ],
     'CType',
     'walls_io_proxy'

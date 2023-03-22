@@ -1,7 +1,7 @@
-.. include:: ../Includes.txt
+..  include:: /Includes.rst.txt
 
 
-.. _configuration:
+..  _configuration:
 
 =============
 Configuration
@@ -13,19 +13,19 @@ Target group: **Developers, Integrators**
 Minimal Example
 ===============
 
-- It is necessary to include static template `Walls.io Proxy (walls_io_proxy)`
+*   It is necessary to include static template `Walls.io Proxy (walls_io_proxy)`
 
 This will set the path to our Main Template file, which can can change of cause:
 
-.. code-block:: typoscript
+..  code-block:: typoscript
 
-   tt_content.wallsioproxy {
+    tt_content.wallsioproxy {
       # Override our template, if you want
       templateRootPaths.10 = EXT:your_ext/Resources/Private/Templates/
-   }
+    }
 
 
-.. _configuration-typoscript:
+..  _configuration-typoscript:
 
 TypoScript Setup Reference
 ==========================
@@ -34,16 +34,16 @@ You can change the templateRootPaths. See above.
 
 Further you can change walls.io CSS file and our JS:
 
-.. code-block:: typoscript
+..  code-block:: typoscript
 
-   # Change CSS file
-   page.includeCSS.wall-fluid = EXT:your_ext/Resources/Public/Css/WhatEver.css
+    # Change CSS file
+    page.includeCSS.wall-fluid = EXT:your_ext/Resources/Public/Css/WhatEver.css
 
-   # Change our JS file
-   page.includeJSFooterlibs.wall-fluid = EXT:your_ext/Resources/Public/JavaScript/Wall.js
+    # Change our JS file
+    page.includeJSFooterlibs.wall-fluid = EXT:your_ext/Resources/Public/JavaScript/Wall.js
 
 
-.. _configuration-wallsioproxy:
+..  _configuration-wallsioproxy:
 
 ContentElement Settings
 =======================

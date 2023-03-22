@@ -1,14 +1,14 @@
-.. include:: ../Includes.txt
+..  include:: /Includes.rst.txt
 
 
-.. _introduction:
+..  _introduction:
 
 ============
 Introduction
 ============
 
 
-.. _what-it-does:
+..  _what-it-does:
 
 What does it do?
 ================
@@ -26,7 +26,7 @@ Yes, `walls_io_proxy` is OpenSource and free to use, but you have to register fo
 each month or 4.800 € (yearly). Date: 09.02.2022) to get API access.
 
 
-.. _screenshots:
+..  _screenshots:
 
 Screenshots
 ===========
@@ -36,6 +36,6 @@ See `walls_io_proxy` in action.
 A wall example output
 ---------------------
 
-.. figure:: ../Images/Introduction/walls-io-proxy.png
-   :width: 500px
-   :alt: Walls.io Proxy in action
+..  figure:: ../Images/Introduction/walls-io-proxy.png
+    :width: 500px
+    :alt: Walls.io Proxy in action

@@ -1,21 +1,14 @@
 <?php
-/**
- * This file represents the configuration for Code Sniffing PSR-2-related
- * automatic checks of coding guidelines
- * Install @fabpot's great php-cs-fixer tool via
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the package jweiland/walls-io-proxy.
  *
- *  $ composer global require friendsofphp/php-cs-fixer
- *
- * And then simply run
- *
- *  $ ./bin/php-cs-fixer fix --config ./Build/.php_cs
- *
- * inside the TYPO3 directory. Warning: This may take up to 10 minutes.
- *
- * For more information read:
- * 	 https://www.php-fig.org/psr/psr-2/
- * 	 https://cs.sensiolabs.org
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
  */
+
 if (PHP_SAPI !== 'cli') {
     die('This script supports command line usage only. Please check your command.');
 }
@@ -30,18 +23,14 @@ COMMENT;
 $finder = PhpCsFixer\Finder::create()
     ->name('*.php')
     ->exclude('.build')
-    ->exclude('var')
     ->in(__DIR__);
 
-$config = new PhpCsFixer\Config();
-return $config
+return (new \PhpCsFixer\Config())
+    ->setFinder($finder)
     ->setRiskyAllowed(true)
     ->setRules([
         '@DoctrineAnnotation' => true,
         '@PSR2' => true,
-        'header_comment' => [
-            'header' => $headerComment
-        ],
         'array_syntax' => ['syntax' => 'short'],
         'blank_line_after_opening_tag' => true,
         'braces' => ['allow_single_line_closure' => true],
@@ -50,9 +39,11 @@ return $config
         'concat_space' => ['spacing' => 'one'],
         'declare_equal_normalize' => ['space' => 'none'],
         'dir_constant' => true,
+        'function_to_constant' => ['functions' => ['get_called_class', 'get_class', 'get_class_this', 'php_sapi_name', 'phpversion', 'pi']],
         'function_typehint_space' => true,
         'lowercase_cast' => true,
         'method_argument_space' => ['on_multiline' => 'ensure_fully_multiline'],
+        'modernize_strpos' => true,
         'modernize_types_casting' => true,
         'native_function_casing' => true,
         'new_with_braces' => true,
@@ -73,7 +64,7 @@ return $config
         'no_useless_else' => true,
         'no_whitespace_in_blank_line' => true,
         'ordered_imports' => true,
-        'php_unit_construct' => true,
+        'php_unit_construct' => ['assertions' => ['assertEquals', 'assertSame', 'assertNotEquals', 'assertNotSame']],
         'php_unit_mock_short_will_return' => true,
         'php_unit_test_case_static_method_calls' => ['call_type' => 'self'],
         'phpdoc_no_access' => true,
@@ -84,9 +75,10 @@ return $config
         'phpdoc_types' => true,
         'phpdoc_types_order' => ['null_adjustment' => 'always_last', 'sort_algorithm' => 'none'],
         'return_type_declaration' => ['space_before' => 'none'],
-        'single_line_comment_style' => false,
         'single_quote' => true,
+        'single_line_comment_style' => ['comment_types' => ['hash']],
         'single_trait_insert_per_statement' => true,
-        'whitespace_after_comma_in_array' => true
-    ])
-    ->setFinder($finder);
+        'trailing_comma_in_multiline' => ['elements' => ['arrays']],
+        'whitespace_after_comma_in_array' => true,
+        'yoda_style' => ['equal' => false, 'identical' => false, 'less_and_greater' => false],
+    ]);

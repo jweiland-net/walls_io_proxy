@@ -47,21 +47,21 @@ class WallsServiceTest extends FunctionalTestCase
 
     protected $processedDataForPostsRequest = [
         'data' => [
-            'uid' => '12345'
+            'uid' => '12345',
         ],
         'conf' => [
             'accessToken' => 'ABC123',
             'entriesToLoad' => 24,
             'entriesToShow' => 8,
-            'requestType' => PostsRequest::class
-        ]
+            'requestType' => PostsRequest::class,
+        ],
     ];
 
     /**
      * @var array
      */
     protected $testExtensionsToLoad = [
-        'typo3conf/ext/walls_io_proxy'
+        'typo3conf/ext/walls_io_proxy',
     ];
 
     protected function setUp(): void
@@ -132,7 +132,7 @@ class WallsServiceTest extends FunctionalTestCase
             ->willReturn(
                 [
                     'status' => 'success',
-                    'data' => []
+                    'data' => [],
                 ]
             );
 
@@ -153,7 +153,7 @@ class WallsServiceTest extends FunctionalTestCase
             'WallsIoProxy',
             'ContentRecordUid_12345',
             [
-                'foo' => 'far'
+                'foo' => 'far',
             ]
         );
 
@@ -164,7 +164,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         self::assertSame(
             [
-                'foo' => 'far'
+                'foo' => 'far',
             ],
             $this->subject->getWallPosts(
                 new PluginConfiguration($this->processedDataForPostsRequest)
@@ -179,14 +179,14 @@ class WallsServiceTest extends FunctionalTestCase
     {
         $expected = [
             '324125' => [
-                'id' => '324125'
+                'id' => '324125',
             ],
             '534213' => [
-                'id' => '534213'
+                'id' => '534213',
             ],
             '132452' => [
-                'id' => '132452'
-            ]
+                'id' => '132452',
+            ],
         ];
 
         $this->wallsIoClientProphecy
@@ -195,7 +195,7 @@ class WallsServiceTest extends FunctionalTestCase
             ->willReturn(
                 [
                     'status' => 'success',
-                    'data' => $expected
+                    'data' => $expected,
                 ]
             );
         $this->wallsIoClientProphecy
@@ -222,7 +222,7 @@ class WallsServiceTest extends FunctionalTestCase
         $data = [
             0 => [
                 'id' => '324125',
-                'created_timestamp' => $date->format('U')
+                'created_timestamp' => $date->format('U'),
             ],
         ];
 
@@ -230,7 +230,7 @@ class WallsServiceTest extends FunctionalTestCase
             '324125' => [
                 'id' => '324125',
                 'created_timestamp' => $date->format('U'),
-                'created_timestamp_as_text' => '2 hours ago'
+                'created_timestamp_as_text' => '2 hours ago',
             ],
         ];
 
@@ -240,7 +240,7 @@ class WallsServiceTest extends FunctionalTestCase
             ->willReturn(
                 [
                     'status' => 'success',
-                    'data' => $data
+                    'data' => $data,
                 ]
             );
         $this->wallsIoClientProphecy
@@ -264,7 +264,7 @@ class WallsServiceTest extends FunctionalTestCase
         $data = [
             0 => [
                 'id' => '324125',
-                'comment' => 'Line1' . chr(10) . 'Line 2'
+                'comment' => 'Line1' . chr(10) . 'Line 2',
             ],
         ];
 
@@ -272,7 +272,7 @@ class WallsServiceTest extends FunctionalTestCase
             '324125' => [
                 'id' => '324125',
                 'comment' => 'Line1' . chr(10) . 'Line 2',
-                'html_comment' => 'Line1<br />' . chr(10) . 'Line 2'
+                'html_comment' => 'Line1<br />' . chr(10) . 'Line 2',
             ],
         ];
 
@@ -282,7 +282,7 @@ class WallsServiceTest extends FunctionalTestCase
             ->willReturn(
                 [
                     'status' => 'success',
-                    'data' => $data
+                    'data' => $data,
                 ]
             );
         $this->wallsIoClientProphecy

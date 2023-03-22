@@ -1,6 +1,7 @@
-.. include:: ../Includes.txt
+..  include:: /Includes.rst.txt
 
-.. _admin-manual:
+
+..  _admin-manual:
 
 ====================
 Administrator manual
@@ -18,8 +19,8 @@ As an administrator you can use the `Clear Cache` button (visible on the plugin 
 cached wall posts and images.
 
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
+..  toctree::
+    :maxdepth: 2
+    :titlesonly:
 
-   Update/Index
+    Upgrade/Index

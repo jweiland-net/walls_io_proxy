@@ -29,7 +29,7 @@ class PostsRequest extends AbstractRequest
     protected $parameters = [
         'fields' => 'id,comment,type',
         'include_inactive' => 0,
-        'limit' => 24
+        'limit' => 24,
     ];
 
     /**
@@ -46,7 +46,7 @@ class PostsRequest extends AbstractRequest
         'languages' => 1,
         'highlighted_only' => 1,
         'include_inactive' => 1,
-        'include_source' => 1
+        'include_source' => 1,
     ];
 
     /**
@@ -81,7 +81,7 @@ class PostsRequest extends AbstractRequest
         'userlink',
         'location',
         'latitude',
-        'longitude'
+        'longitude',
     ];
 
     /**
