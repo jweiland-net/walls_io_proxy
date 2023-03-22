@@ -7,6 +7,13 @@
 ChangeLog
 =========
 
+Version 5.2.1
+=============
+
+*   BUGFIX: Add post_link to requested fields
+*   DOCS: Set indents to 4 spaces
+*   TASK: Update format to new config of php-cs-fixer
+
 Version 5.2.0
 =============
 
