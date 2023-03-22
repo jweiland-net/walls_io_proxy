@@ -1,7 +1,7 @@
-.. include:: ../Includes.txt
+..  include:: /Includes.rst.txt
 
 
-.. _known-problems:
+..  _known-problems:
 
 ==============
 Known Problems
