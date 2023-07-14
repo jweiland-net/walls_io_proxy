@@ -36,7 +36,7 @@ templateName = WallsIoProxy
 
     // add walls_io_proxy plugin to new element wizard
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
-        '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.txt">'
+        '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.tsconfig">'
     );
 
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache'] =
