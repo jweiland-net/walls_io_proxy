@@ -16,6 +16,7 @@ use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\Posts\ChangedRequest;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Request\RequestInterface;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -200,15 +201,9 @@ class WallsService
      */
     public function getTargetDirectory(int $contentRecordUid): string
     {
-        if (version_compare(TYPO3_branch, '9.2', '>=')) {
-            $publicPath = \TYPO3\CMS\Core\Core\Environment::getPublicPath();
-        } else {
-            $publicPath = rtrim(PATH_site, '/');
-        }
-
         $targetDirectory = sprintf(
             '%s/%s/%s/',
-            $publicPath,
+            Environment::getPublicPath(),
             $this->targetDirectory,
             $contentRecordUid
         );
