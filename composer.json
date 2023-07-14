@@ -11,7 +11,7 @@
 		"cache",
 		"proxy"
 	],
-	"homepage": "https://www.jweiland.net",
+	"homepage": "https://jweiland.net",
 	"authors": [
 		{
 			"name": "Stefan Froemken",
@@ -25,7 +25,7 @@
 		"source": "https://github.com/jweiland-net/walls_io_proxy"
 	},
 	"require": {
-		"typo3/cms-core": "^9.5.29 || ^10.4.36"
+		"typo3/cms-core": "^10.4.36 || ^11.5.23"
 	},
 	"require-dev": {
 		"friendsofphp/php-cs-fixer": "^3.4",
