@@ -7,6 +7,12 @@
 ChangeLog
 =========
 
+Version 6.0.0
+=============
+
+*   TASK: Add TYPO3 11 compatibility
+*   TASK: Remove TYPO3 9 compatibility
+
 Version 5.2.1
 =============
 

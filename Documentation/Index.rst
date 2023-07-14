@@ -46,7 +46,6 @@ Cache and Proxy for walls.io, so no Cookie will be set on Client
     Installation/Index
     Configuration/Index
     Administrator/Index
-    Contribute/Index
     KnownProblems/Index
     ChangeLog/Index
 
