@@ -99,8 +99,7 @@ class WallsService
         $response = $this->client->processRequest($wallsIoRequest);
 
         if (
-            is_array($response)
-            && array_key_exists('status', $response)
+            array_key_exists('status', $response)
             && $response['status'] === 'success'
             && array_key_exists('data', $response)
             && is_array($response['data'])
@@ -187,7 +186,7 @@ class WallsService
             $registry = GeneralUtility::makeInstance(Registry::class);
             $registry->remove('WallsIoProxy', 'ContentRecordUid_' . $contentRecordUid);
 
-            GeneralUtility::flushDirectory($this->getTargetDirectory($contentRecordUid));
+            GeneralUtility::rmdir($this->getTargetDirectory($contentRecordUid));
 
             return 1;
         }
