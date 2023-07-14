@@ -11,7 +11,7 @@ section carefully!
 Update to Version 6.0.0
 =======================
 
-We have migrated the *.ts files files to *.typoscript. Please update
+We have migrated the file ending `ts` to `typoscript`. Please update
 your references, if you make use of the old file endings.
 
 Update to Version 5.2.0
