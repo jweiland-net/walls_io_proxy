@@ -1,14 +1,2 @@
-tt_content.wallsioproxy {
-  templateRootPaths.0 = EXT:walls_io_proxy/Resources/Private/Templates/
-  dataProcessing {
-    1 = JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor
-  }
-}
-
-page.includeCSS {
-  wall-fluid = EXT:walls_io_proxy/Resources/Public/Css/WallFluid.css
-}
-
-page.includeJSFooterlibs {
-  wall-fluid = EXT:walls_io_proxy/Resources/Public/JavaScript/Wall.js
-}
+# Important: This file is deprecated and will be removed with next major version of EXT:walls_io_proxy
+@import 'EXT:walls_io_proxy/Configuration/TypoScript/Gallery/setup.typoscript'
