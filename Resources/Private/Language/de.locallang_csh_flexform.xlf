@@ -1,24 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <xliff version="1.0">
-	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
-		<header/>
-		<body>
-			<trans-unit id="entriesToLoad.description">
-				<source>Define how many entries should be loaded.</source>
-				<target>Wie viele Einträge sollen geladen werden?</target>
-			</trans-unit>
-			<trans-unit id="entriesToLoad.details">
-				<source>This is only the amount of entries/postings to load. This value should be a multiple of "Entries to show". Why? See this example: If you configure entriesToLoad to 24 and entriesToShow to 8 you can click the button "Load more" 2 times (not 3, as the first 8 entries are already shown) before it hides.</source>
-				<target>Dies ist nur eine Angabe dafür wie viele Einträge von walls.io in Summe abgeholt werden sollen. Dieser Wert sollte ein Mehrfaches von "Zeige Anzahl Einträge" sein. Warum? Ein Beispiel: Wenn die zu ladenden Einträge 24 und die anzuzeigenden Einträge 8 ist, dann kann der Butten "Weitere Einträge" nur noch 2 mal (nicht 3 mal, da die ersten 8 Einträge ja bereits angezeigt wurden) angeklickt werden, bevor dieser verschwindet.</target>
-			</trans-unit>
-			<trans-unit id="entriesToShow.description">
-				<source>Define how many entries should initially be shown.</source>
-				<target>Wie viele Einträge sollen bei Erstaufruf angezeigt werden?</target>
-			</trans-unit>
-			<trans-unit id="entriesToShow.details">
-				<source>This value gets the first x entries of "Entries to load" and shows them in frontend. With each click on button "Load more" this amount of entries will be dynamically added to the other shown entries.</source>
-				<target>Mit diesem Wert werden die ersten x Einträge von "Lade Anzahl Einträge" geholt und im Frontend angezeigt. Mit jedem Klick auf den Button "Weitere Einträge" wird die hier angegebene Anzahl Einträge der Liste der bereits angezeigten Einträge dynamisch hinzugefügt.</target>
-			</trans-unit>
-		</body>
-	</file>
+  <file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
+    <header/>
+    <body>
+      <trans-unit id="entriesToLoad.description">
+        <source>Define how many entries should be loaded.</source>
+        <target state="translated">Wie viele Einträge sollen geladen werden?</target>
+      </trans-unit>
+      <trans-unit id="entriesToLoad.details">
+        <source>This is only the amount of entries/postings to load. This value should be a multiple of "Entries to show". Why? See this example: If you configure entriesToLoad to 24 and entriesToShow to 8 you can click the button "Load more" 2 times (not 3, as the first 8 entries are already shown) before it hides.</source>
+        <target state="translated">Dies ist nur eine Angabe dafür wie viele Einträge von walls.io in Summe abgeholt werden sollen. Dieser Wert sollte ein Mehrfaches von "Zeige Anzahl Einträge" sein. Warum? Ein Beispiel: Wenn die zu ladenden Einträge 24 und die anzuzeigenden Einträge 8 ist, dann kann der Butten "Weitere Einträge" nur noch 2 mal (nicht 3 mal, da die ersten 8 Einträge ja bereits angezeigt wurden) angeklickt werden, bevor dieser verschwindet.</target>
+      </trans-unit>
+      <trans-unit id="entriesToShow.description">
+        <source>Define how many entries should initially be shown.</source>
+        <target state="translated">Wie viele Einträge sollen bei Erstaufruf angezeigt werden?</target>
+      </trans-unit>
+      <trans-unit id="entriesToShow.details">
+        <source>This value gets the first x entries of "Entries to load" and shows them in frontend. With each click on button "Load more" this amount of entries will be dynamically added to the other shown entries.</source>
+        <target state="translated">Mit diesem Wert werden die ersten x Einträge von "Lade Anzahl Einträge" geholt und im Frontend angezeigt. Mit jedem Klick auf den Button "Weitere Einträge" wird die hier angegebene Anzahl Einträge der Liste der bereits angezeigten Einträge dynamisch hinzugefügt.</target>
+      </trans-unit>
+    </body>
+  </file>
 </xliff>
