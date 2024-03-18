@@ -3,17 +3,17 @@
   <file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
     <header/>
     <body>
-      <trans-unit id="plugin.walls_io_proxy.title">
+      <trans-unit id="plugin.walls_io_proxy.title" approved="yes">
         <source>Walls.io Proxy</source>
-        <target state="needs-translation">Walls.io Proxy</target>
+        <target state="final">Walls.io Proxy</target>
       </trans-unit>
-      <trans-unit id="plugin.walls_io_proxy.description">
+      <trans-unit id="plugin.walls_io_proxy.description" approved="yes">
         <source>Shows new posts of Facebook, Twitter and Instagram through the walls.io service</source>
-        <target state="translated">Zeigt neue Einträge von Facebook, Twitter und Instagram unter Verwendung der Dienstleistungen von walls.io</target>
+        <target state="final">Zeigt neue Einträge von Facebook, Twitter und Instagram unter Verwendung der Dienstleistungen von walls.io</target>
       </trans-unit>
-      <trans-unit id="tabs.configuration">
+      <trans-unit id="tabs.configuration" approved="yes">
         <source>Walls.io</source>
-        <target state="needs-translation">Walls.io</target>
+        <target state="final">Walls.io</target>
       </trans-unit>
     </body>
   </file>
