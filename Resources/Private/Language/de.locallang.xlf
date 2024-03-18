@@ -3,33 +3,33 @@
   <file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
     <header/>
     <body>
-      <trans-unit id="creationTime.seconds">
+      <trans-unit id="creationTime.seconds" approved="yes">
         <source>1 minute ago</source>
-        <target state="translated">vor %s Minuten</target>
+        <target state="final">vor %s Minuten</target>
       </trans-unit>
-      <trans-unit id="creationTime.minutes">
+      <trans-unit id="creationTime.minutes" approved="yes">
         <source>%s minutes ago</source>
-        <target state="translated">vor %s Minuten</target>
+        <target state="final">vor %s Minuten</target>
       </trans-unit>
-      <trans-unit id="creationTime.hours">
+      <trans-unit id="creationTime.hours" approved="yes">
         <source>%s hours ago</source>
-        <target state="translated">vor %s Stunden</target>
+        <target state="final">vor %s Stunden</target>
       </trans-unit>
-      <trans-unit id="creationTime.date">
+      <trans-unit id="creationTime.date" approved="yes">
         <source>on %s</source>
-        <target state="translated">am %s</target>
+        <target state="final">am %s</target>
       </trans-unit>
-      <trans-unit id="loadPosts">
+      <trans-unit id="loadPosts" approved="yes">
         <source>Load further posts</source>
-        <target state="translated">Lade weitere Posts</target>
+        <target state="final">Lade weitere Posts</target>
       </trans-unit>
-      <trans-unit id="noPosts">
+      <trans-unit id="noPosts" approved="yes">
         <source>No posts found. Please activate posts at walls.io</source>
-        <target state="translated">Keine Posts gefunden. Bitte aktivieren Sie Posts bei walls.io</target>
+        <target state="final">Keine Posts gefunden. Bitte aktivieren Sie Posts bei walls.io</target>
       </trans-unit>
-      <trans-unit id="clearCache.posts">
+      <trans-unit id="clearCache.posts" approved="yes">
         <source>Clear cached walls.io posts</source>
-        <target state="translated">Lösche zwischengespeicherte wall.io Beiträge</target>
+        <target state="final">Lösche zwischengespeicherte wall.io Beiträge</target>
       </trans-unit>
     </body>
   </file>
