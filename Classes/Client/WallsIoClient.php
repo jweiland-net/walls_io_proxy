@@ -16,6 +16,7 @@ use JWeiland\WallsIoProxy\Request\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 
 /**
  * This is the walls.io client which will send the request to the walls.io server
@@ -44,7 +45,7 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 'URI is empty or contains invalid chars. URI: ' . $request->buildUri(),
                 'Invalid request URI',
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             );
 
             return [];
@@ -65,7 +66,7 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 str_replace($request->getParameter('access_token'), 'XXX', $exception->getMessage()),
                 'Error Code: ' . $exception->getCode(),
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             );
         }
 
@@ -86,7 +87,7 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 'Walls.io responses with a status code different from 200',
                 'Status Code: ' . $response->getStatusCode(),
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             );
         }
     }
@@ -102,7 +103,7 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 'The response of walls.io was not a valid JSON response.',
                 'Invalid JSON response',
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             );
 
             return true;
@@ -114,7 +115,7 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 implode($response['info']),
                 $response['status'],
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             );
 
             return true;

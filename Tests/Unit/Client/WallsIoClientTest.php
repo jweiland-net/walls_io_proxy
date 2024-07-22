@@ -20,6 +20,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 
 /**
  * Walls IO Client Test
@@ -84,7 +85,7 @@ class WallsIoClientTest extends UnitTestCase
             ->addFlashMessage(
                 'URI is empty or contains invalid chars. URI: https://www.jweiland.net',
                 'Invalid request URI',
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             )
             ->shouldBeCalled();
 
@@ -126,7 +127,7 @@ class WallsIoClientTest extends UnitTestCase
             ->addFlashMessage(
                 'Walls.io responses with a status code different from 200',
                 'Status Code: 500',
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             )
             ->shouldBeCalled();
         $this->messageHelperProphecy
@@ -177,7 +178,7 @@ class WallsIoClientTest extends UnitTestCase
             ->addFlashMessage(
                 'Server down. Uri: https://api.walls.io?fields=test&access_token=XXX&since=123',
                 'Error Code: 564',
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             )
             ->shouldBeCalled();
 
@@ -223,7 +224,7 @@ class WallsIoClientTest extends UnitTestCase
             ->addFlashMessage(
                 'The response of walls.io was not a valid JSON response.',
                 'Invalid JSON response',
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             )
             ->shouldBeCalled();
         $this->messageHelperProphecy
@@ -278,7 +279,7 @@ class WallsIoClientTest extends UnitTestCase
             ->addFlashMessage(
                 'broken',
                 'error',
-                AbstractMessage::ERROR
+                ContextualFeedbackSeverity::ERROR
             )
             ->shouldBeCalled();
         $this->messageHelperProphecy

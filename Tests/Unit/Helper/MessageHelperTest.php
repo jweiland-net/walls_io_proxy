@@ -21,6 +21,7 @@ use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 
 /**
  * Test MessageHelper
@@ -85,11 +86,11 @@ class MessageHelperTest extends UnitTestCase
     public function dataProviderForAllSeverities(): array
     {
         return [
-            'OK' => [AbstractMessage::OK, 'Ok'],
-            'ERROR' => [AbstractMessage::ERROR, 'Error'],
-            'INFO' => [AbstractMessage::INFO, 'Info'],
-            'NOTICE' => [AbstractMessage::NOTICE, 'Notice'],
-            'WARNING' => [AbstractMessage::WARNING, 'Warning'],
+            'OK' => [ContextualFeedbackSeverity::OK, 'Ok'],
+            'ERROR' => [ContextualFeedbackSeverity::ERROR, 'Error'],
+            'INFO' => [ContextualFeedbackSeverity::INFO, 'Info'],
+            'NOTICE' => [ContextualFeedbackSeverity::NOTICE, 'Notice'],
+            'WARNING' => [ContextualFeedbackSeverity::WARNING, 'Warning'],
         ];
     }
 
@@ -102,7 +103,7 @@ class MessageHelperTest extends UnitTestCase
             ->enqueue(Argument::that(static function (FlashMessage $flashMessage) {
                 return $flashMessage->getTitle() === 'header'
                     && $flashMessage->getMessage() === 'hello'
-                    && $flashMessage->getSeverity() === AbstractMessage::OK
+                    && $flashMessage->getSeverity() === ContextualFeedbackSeverity::OK
                     && $flashMessage->isSessionMessage() === true;
             }))
             ->shouldBeCalled();
@@ -155,7 +156,7 @@ class MessageHelperTest extends UnitTestCase
         $flashMessage = new FlashMessage(
             'message',
             'title',
-            AbstractMessage::OK,
+            ContextualFeedbackSeverity::OK,
             true
         );
 
