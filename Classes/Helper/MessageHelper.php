@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Helper;
 
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
@@ -24,17 +23,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class MessageHelper
 {
-    /**
-     * @var FlashMessageService
-     */
-    protected $flashMessageService;
+    protected FlashMessageService $flashMessageService;
 
     public function __construct(FlashMessageService $flashMessageService)
     {
         $this->flashMessageService = $flashMessageService;
     }
 
-    public function addFlashMessage(string $message, string $title = '', int $severity = ContextualFeedbackSeverity::OK): void
+    public function addFlashMessage(string $message, string $title = '', ContextualFeedbackSeverity $severity = ContextualFeedbackSeverity::OK): void
     {
         // We activate storeInSession, so that messages can be displayed when click on Save&Close button.
         $flashMessage = GeneralUtility::makeInstance(
@@ -66,19 +62,19 @@ class MessageHelper
     }
 
     /**
-     * @param int $severity Must be one of the constants in AbstractMessage class
+     * @param ContextualFeedbackSeverity $severity Must be one of the constants in AbstractMessage class
      * @return FlashMessage[]
      */
-    protected function getFlashMessagesBySeverity(int $severity): array
+    protected function getFlashMessagesBySeverity(ContextualFeedbackSeverity $severity): array
     {
         return $this->getFlashMessageQueue()->getAllMessages($severity);
     }
 
     /**
-     * @param int $severity Must be one of the constants in AbstractMessage class
+     * @param ContextualFeedbackSeverity $severity Must be one of the constants in AbstractMessage class
      * @return FlashMessage[]
      */
-    public function getFlashMessagesBySeverityAndFlush(int $severity): array
+    public function getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity $severity): array
     {
         return $this->getFlashMessageQueue()->getAllMessagesAndFlush($severity);
     }
