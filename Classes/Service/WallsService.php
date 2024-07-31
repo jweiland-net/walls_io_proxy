@@ -23,7 +23,6 @@ use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
-use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
@@ -33,6 +32,9 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 class WallsService
 {
     protected string $targetDirectory = 'typo3temp/assets/walls_io_proxy';
+    protected Registry $registry;
+    protected WallsIoClient $client;
+    protected ServerRequest $request;
 
     /**
      * Fields to get from the API
@@ -52,12 +54,6 @@ class WallsService
         'post_image',
         'post_link',
     ];
-
-    protected Registry $registry;
-
-    protected WallsIoClient $client;
-
-    protected ServerRequest $request;
 
     public function __construct(Registry $registry, WallsIoClient $client, ServerRequest $request)
     {
@@ -249,7 +245,7 @@ class WallsService
 
         if (
             array_key_exists('external_image', $post)
-            && StringUtility::beginsWith((string)$post['external_image'], 'http')
+            && str_starts_with((string)$post['external_image'], 'http')
         ) {
             $post['external_image'] = $this->cacheExternalResources(
                 $post['external_image'],
@@ -259,7 +255,7 @@ class WallsService
 
         if (
             array_key_exists('post_image', $post)
-            && StringUtility::beginsWith((string)$post['post_image'], 'http')
+            && str_starts_with((string)$post['post_image'], 'http')
         ) {
             $post['post_image'] = $this->cacheExternalResources(
                 $post['post_image'],
@@ -278,7 +274,7 @@ class WallsService
                 && is_array($matches['src'])
             ) {
                 foreach ($matches['src'] as $uri) {
-                    if (StringUtility::beginsWith($uri, 'http')) {
+                    if (str_starts_with($uri, 'http')) {
                         $post['comment'] = str_replace(
                             $matches['src'],
                             $this->cacheExternalResources($uri, $pluginConfiguration->getRecordUid()),
@@ -296,6 +292,7 @@ class WallsService
     protected function cacheExternalResources(string $resource, int $contentRecordUid): string
     {
         $pathParts = GeneralUtility::split_fileref(parse_url($resource, PHP_URL_PATH));
+
         $filePath = sprintf(
             '%s%s.%s',
             $this->getTargetDirectory($contentRecordUid),
@@ -303,7 +300,7 @@ class WallsService
             $pathParts['fileext']
         );
 
-        if (!file_exists($filePath)) {
+        if (!file_exists($filePath) && GeneralUtility::getUrl($resource)) {
             GeneralUtility::writeFile($filePath, GeneralUtility::getUrl($resource));
         }
 
