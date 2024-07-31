@@ -19,21 +19,6 @@ templateName = WallsIoProxy
         'defaultContentRendering'
     );
 
-    // Register SVG Icon Identifier
-    $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Core\Imaging\IconRegistry::class
-    );
-    $svgIcons = [
-        'ext-wallsioproxy-wizard-icon' => 'Extension.svg',
-    ];
-    foreach ($svgIcons as $identifier => $fileName) {
-        $iconRegistry->registerIcon(
-            $identifier,
-            \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-            ['source' => 'EXT:walls_io_proxy/Resources/Public/Icons/' . $fileName]
-        );
-    }
-
     // add walls_io_proxy plugin to new element wizard
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
         '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.tsconfig">'
