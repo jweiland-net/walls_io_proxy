@@ -30,7 +30,7 @@
 		"source": "https://github.com/jweiland-net/walls_io_proxy"
 	},
 	"require": {
-		"typo3/cms-core": "^12.4.8"
+		"typo3/cms-core": "^12.4.17"
 	},
 	"require-dev": {
 		"friendsofphp/php-cs-fixer": "^3.14",
@@ -68,8 +68,8 @@
 		}
 	},
 	"scripts": {
-		"php:fix": ".build/vendor/bin/php-cs-fixer --config=Build/php-cs-fixer/config.php fix Classes Tests",
+		"php:fix": ".Build/vendor/bin/php-cs-fixer --config=Build/php-cs-fixer/config.php fix Classes Tests",
 		"ci:php:lint": "find *.php Classes Configuration Tests -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l",
-		"ci:php:fixer": ".build/vendor/bin/php-cs-fixer --config=Build/php-cs-fixer/config.php fix --dry-run -v --show-progress=dots --diff Classes Tests"
+		"ci:php:fixer": ".Build/vendor/bin/php-cs-fixer --config=Build/php-cs-fixer/config.php fix --dry-run -v --show-progress=dots --diff Classes Tests"
 	}
 }
