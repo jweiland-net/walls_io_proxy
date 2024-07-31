@@ -13,8 +13,8 @@ namespace JWeiland\WallsIoProxy\Client;
 
 use JWeiland\WallsIoProxy\Request\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
-use TYPO3\CMS\Core\Log\Logger;
 
 /**
  * This is the walls.io client which will send the request to the walls.io server
@@ -23,11 +23,11 @@ class WallsIoClient
 {
     protected RequestFactory $requestFactory;
 
-    protected Logger $logger;
+    protected LoggerInterface $logger;
 
     public function __construct(
         RequestFactory $requestFactory,
-        Logger $logger
+        LoggerInterface $logger
     ) {
         $this->requestFactory = $requestFactory;
         $this->logger = $logger;

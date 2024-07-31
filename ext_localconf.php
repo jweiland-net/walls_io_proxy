@@ -34,6 +34,9 @@ templateName = WallsIoProxy
         ];
     }
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache'] =
-        \JWeiland\WallsIoProxy\Hook\DataHandler::class . '->clearCachePostProc';
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['walls_io_proxy']
+        = \JWeiland\WallsIoProxy\Hook\PageLayoutViewHook::class;
+
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache']
+        = \JWeiland\WallsIoProxy\Hook\DataHandler::class . '->clearCachePostProc';
 });

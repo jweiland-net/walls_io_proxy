@@ -1,34 +1,57 @@
 <html lang="en"
-			xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-			xmlns:w="http://typo3.org/ns/JWeiland/WallsIoProxy/ViewHelpers"
-			data-namespace-typo3-fluid="true">
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:w="http://typo3.org/ns/JWeiland/WallsIoProxy/ViewHelpers"
+      data-namespace-typo3-fluid="true">
 
-<f:be.pageRenderer includeRequireJsModules="{0: 'TYPO3/CMS/WallsIoProxy/ClearCache'}" />
+<f:be.pageRenderer includeRequireJsModules="{0: 'TYPO3/CMS/WallsIoProxy/ClearCache'}"/>
 
 <table class="table">
-	<thead>
-	<tr>
-		<th>Config</th>
-		<th>Value</th>
-	</tr>
-	</thead>
-	<tbody>
-	<tr>
-		<td><strong>Load</strong></td>
-		<td>{pi_flexform_transformed.entriesToLoad}</td>
-	</tr>
-	<tr>
-		<td><strong>Show</strong></td>
-		<td>{pi_flexform_transformed.entriesToShow}</td>
-	</tr>
-	</tbody>
+    <thead>
+    <tr>
+        <th>Config</th>
+        <th>Value</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><strong>Load</strong></td>
+        <td>{pi_flexform_transformed.entriesToLoad}</td>
+    </tr>
+    <tr>
+        <td><strong>Show</strong></td>
+        <td>{pi_flexform_transformed.entriesToShow}</td>
+    </tr>
+    </tbody>
 </table>
 
 <w:be.security.isAdministrator>
-	<div class="btn btn-default wallsIoProxyClearCache"
-			 data-content-record-uid="{uid}"
-			 data-clear-cache-uri="{f:be.uri(route: 'tce_db', parameters: {cacheCmd: 'WallIoProxy', contentRecordUid: uid})}">
-		{f:translate(key: 'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang.xlf:clearCache.posts')}
-	</div>
+    <p>
+        The wall posts will be cached in TYPO3 <em>pages</em> cache.
+        If that cache expires, new wall posts will be retrieved from walls.io API.
+        <f:if condition="{pageCacheExpireTime}">
+            <f:then>
+                The TYPO3 <em>pages</em> cache expires next at
+                <strong>{f:format.date(date: pageCacheExpireTime, format: 'd.m.Y H:i:s')}</strong>.
+                The next request after that expire date will fetch fresh wall posts.
+            </f:then>
+            <f:else>
+                <strong>Currently, no expire time can be determined.</strong>
+                Please clear TYPO3 frontend cache and reload this page in frontend.
+            </f:else>
+        </f:if>
+    </p>
+    <p>
+        All retrieved wall posts will additionally be stored in TYPO3 internal registry system.
+        If walls.io API does not react or does not return any posts, this plugin will show the
+        stored wall posts from earlier request instead.
+    </p>
+    <p>
+        Press following button to clear the internally stored wall posts from TYPO3 registry.
+    </p>
+    <div class="btn btn-default wallsIoProxyClearCache"
+         data-content-record-uid="{uid}"
+         data-clear-cache-uri="{f:be.uri(route: 'tce_db', parameters: {cacheCmd: 'WallIoProxy', contentRecordUid: uid})}">
+        {f:translate(key: 'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang.xlf:clearCache.posts')}
+    </div>
 </w:be.security.isAdministrator>
 </html>
