@@ -1,6 +1,13 @@
 <?php
 
-if (!defined('TYPO3_MODE')) {
+/*
+ * This file is part of the package jweiland/walls-io-proxy.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
+if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
@@ -12,13 +19,12 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 call_user_func(static function (): void {
     // Configure frontend plugin
-    $pluginContent = trim(
-        '
+    $pluginContent = trim('
     tt_content.wallsioproxy =< lib.contentElement
     tt_content.wallsioproxy {
         templateName = WallsIoProxy
-    }'
-    );
+    }');
+
     ExtensionManagementUtility::addTypoScript(
         'walls_io_proxy',
         'setup',
@@ -30,7 +36,7 @@ call_user_func(static function (): void {
 
     // add walls_io_proxy plugin to new element wizard
     ExtensionManagementUtility::addPageTSConfig(
-        '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.tsconfig">'
+        ' < INCLUDE_TYPOSCRIPT: source = "FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.tsconfig" > '
     );
 
     if (!isset($GLOBALS['TYPO3_CONF_VARS']['LOG']['JWeiland']['WallsIoProxy']['writerConfiguration'])) {
@@ -43,9 +49,9 @@ call_user_func(static function (): void {
         ];
     }
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['walls_io_proxy']
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms / layout /class.tx_cms_layout . php']['tt_content_drawItem']['walls_io_proxy']
         = PageLayoutViewHook::class;
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache']
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib /class.t3lib_tcemain . php']['clearCachePostProc']['wallsioproxy_clearcache']
         = DataHandler::class . '->clearCachePostProc';
 });
