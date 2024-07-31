@@ -18,20 +18,9 @@ use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
  */
 abstract class AbstractRequest implements RequestInterface
 {
-    /**
-     * @var PluginConfiguration
-     */
-    protected $pluginConfiguration;
-
-    /**
-     * @var string
-     */
-    protected $path = '';
-
-    /**
-     * @var array
-     */
-    protected $parameters = [];
+    protected PluginConfiguration $pluginConfiguration;
+    protected string $path = '';
+    protected array $parameters = [];
 
     public function getPath(): string
     {
