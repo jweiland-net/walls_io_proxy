@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\ViewHelpers\Be\Security;
 
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
+use TYPO3\CMS\Core\Context\UserAspect;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
@@ -19,14 +23,32 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 class IsAdministratorViewHelper extends AbstractConditionViewHelper
 {
     /**
-     * This method decides if the current loged in user is Administrator
-     *
-     * @param array $arguments ViewHelper arguments to evaluate the condition for this ViewHelper, allows for flexiblity in overriding this method.
+     * This method decides, if the current logged-in user is an administrator
      */
     protected static function evaluateCondition($arguments = null): bool
     {
-        return isset($GLOBALS['BE_USER'])
-            && $GLOBALS['BE_USER']->user['uid'] > 0
-            && $GLOBALS['BE_USER']->isAdmin();
+        return self::isBeUserAdmin();
+    }
+
+    private static function isBeUserAdmin(): bool
+    {
+        try {
+            if (
+                ($context = self::getContext())
+                && $context->hasAspect('backend.user')
+                && ($userAspect = $context->getAspect('backend.user'))
+                && $userAspect instanceof UserAspect
+            ) {
+                return $userAspect->isAdmin();
+            }
+        } catch (AspectNotFoundException $e) {
+        }
+
+        return false;
+    }
+
+    private static function getContext(): Context
+    {
+        return GeneralUtility::makeInstance(Context::class);
     }
 }

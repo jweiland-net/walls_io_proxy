@@ -23,10 +23,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class MessageHelper
 {
-    /**
-     * @var FlashMessageService
-     */
-    protected $flashMessageService;
+    protected FlashMessageService $flashMessageService;
 
     public function __construct(FlashMessageService $flashMessageService)
     {

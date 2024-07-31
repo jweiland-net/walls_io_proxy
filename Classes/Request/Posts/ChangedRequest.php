@@ -21,21 +21,15 @@ use TYPO3\CMS\Core\Utility\MathUtility;
  */
 class ChangedRequest extends AbstractRequest
 {
-    /**
-     * @var string
-     */
-    protected $path = '/v1/posts/changed';
+    protected string $path = '/v1/posts/changed';
 
-    protected $parameters = [
+    protected array $parameters = [
         'fields' => 'id,comment,type',
         'include_inactive' => 0,
         'limit' => 24,
     ];
 
-    /**
-     * @var array
-     */
-    protected $allowedParameters = [
+    protected array $allowedParameters = [
         'access_token' => 1,
         'since' => 1,
         'limit' => 1,
@@ -48,10 +42,7 @@ class ChangedRequest extends AbstractRequest
         'include_source' => 1,
     ];
 
-    /**
-     * @var array
-     */
-    protected $allowedFields = [
+    protected array $allowedFields = [
         'id',
         'comment',
         'cta',
@@ -85,8 +76,6 @@ class ChangedRequest extends AbstractRequest
 
     /**
      * The accessToken to allow retrieving the posts from wallsIO
-     *
-     * @param string $accessToken
      */
     public function setAccessToken(string $accessToken): void
     {
@@ -99,8 +88,6 @@ class ChangedRequest extends AbstractRequest
     /**
      * This property is needed for pagination. Initially filled by current time(). For further records
      * use current_time property of last fetched records.
-     *
-     * @param int $since
      */
     public function setSince(int $since): void
     {
@@ -112,8 +99,6 @@ class ChangedRequest extends AbstractRequest
 
     /**
      * A comma-separated list of fields you would like to receive for each post.
-     *
-     * @param array $fields
      */
     public function setFields(array $fields): void
     {
@@ -125,8 +110,6 @@ class ChangedRequest extends AbstractRequest
 
     /**
      * Set a maximum of records to load. walls.io limits this value to 1000
-     *
-     * @param int $limit
      */
     public function setLimit(int $limit): void
     {
@@ -139,8 +122,6 @@ class ChangedRequest extends AbstractRequest
     /**
      * Per default, only active posts are returned.
      * If you want to receive all posts, regardless of status, set this to true.
-     *
-     * @param bool $includeInactive
      */
     public function setIncludeInactive(bool $includeInactive): void
     {

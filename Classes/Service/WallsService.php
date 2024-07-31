@@ -28,17 +28,12 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  */
 class WallsService
 {
-    /**
-     * @var string
-     */
-    protected $targetDirectory = 'typo3temp/assets/walls_io_proxy';
+    protected string $targetDirectory = 'typo3temp/assets/walls_io_proxy';
 
     /**
      * Fields to get from the API
-     *
-     * @var array
      */
-    protected $fields = [
+    protected array $fields = [
         'id',
         'comment',
         'type',
@@ -53,15 +48,9 @@ class WallsService
         'post_link',
     ];
 
-    /**
-     * @var Registry
-     */
-    protected $registry;
+    protected Registry $registry;
 
-    /**
-     * @var WallsIoClient
-     */
-    protected $client;
+    protected WallsIoClient $client;
 
     public function __construct(Registry $registry, WallsIoClient $client)
     {

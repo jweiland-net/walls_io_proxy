@@ -22,15 +22,9 @@ use TYPO3\CMS\Core\Messaging\AbstractMessage;
  */
 class WallsIoClient
 {
-    /**
-     * @var RequestFactory
-     */
-    protected $requestFactory;
+    protected RequestFactory $requestFactory;
 
-    /**
-     * @var MessageHelper
-     */
-    protected $messageHelper;
+    protected MessageHelper $messageHelper;
 
     public function __construct(RequestFactory $requestFactory, MessageHelper $messageHelper)
     {

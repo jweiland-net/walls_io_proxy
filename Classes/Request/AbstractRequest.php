@@ -18,20 +18,11 @@ use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
  */
 abstract class AbstractRequest implements RequestInterface
 {
-    /**
-     * @var PluginConfiguration
-     */
-    protected $pluginConfiguration;
+    protected PluginConfiguration $pluginConfiguration;
 
-    /**
-     * @var string
-     */
-    protected $path = '';
+    protected string $path = '';
 
-    /**
-     * @var array
-     */
-    protected $parameters = [];
+    protected array $parameters = [];
 
     public function getPath(): string
     {
@@ -67,9 +58,6 @@ abstract class AbstractRequest implements RequestInterface
 
     /**
      * Check, if parameter exists
-     *
-     * @param string $parameter
-     * @return bool
      */
     public function hasParameter(string $parameter): bool
     {
@@ -78,8 +66,6 @@ abstract class AbstractRequest implements RequestInterface
 
     /**
      * Merge all parameters to build an URI
-     *
-     * @return string
      */
     public function buildUri(): string
     {
