@@ -36,7 +36,7 @@ call_user_func(static function (): void {
 
     // add walls_io_proxy plugin to new element wizard
     ExtensionManagementUtility::addPageTSConfig(
-        ' < INCLUDE_TYPOSCRIPT: source = "FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.tsconfig" > '
+        '< INCLUDE_TYPOSCRIPT: source = "FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.tsconfig" > '
     );
 
     if (!isset($GLOBALS['TYPO3_CONF_VARS']['LOG']['JWeiland']['WallsIoProxy']['writerConfiguration'])) {
@@ -49,9 +49,9 @@ call_user_func(static function (): void {
         ];
     }
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms / layout /class.tx_cms_layout.php']['tt_content_drawItem']['walls_io_proxy']
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['walls_io_proxy']
         = PageLayoutViewHook::class;
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib /class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache']
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache']
         = DataHandler::class . '->clearCachePostProc';
 });
