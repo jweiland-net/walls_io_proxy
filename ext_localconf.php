@@ -1,15 +1,18 @@
 <?php
+
 if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
 call_user_func(static function (): void {
     // Configure frontend plugin
-    $pluginContent = trim('
+    $pluginContent = trim(
+        '
 tt_content.wallsioproxy =< lib.contentElement
 tt_content.wallsioproxy {
 templateName = WallsIoProxy
-}');
+}'
+    );
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
         'walls_io_proxy',
         'setup',
@@ -18,21 +21,6 @@ templateName = WallsIoProxy
 ' . $pluginContent,
         'defaultContentRendering'
     );
-
-    // Register SVG Icon Identifier
-    $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Core\Imaging\IconRegistry::class
-    );
-    $svgIcons = [
-        'ext-wallsioproxy-wizard-icon' => 'Extension.svg',
-    ];
-    foreach ($svgIcons as $identifier => $fileName) {
-        $iconRegistry->registerIcon(
-            $identifier,
-            \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-            ['source' => 'EXT:walls_io_proxy/Resources/Public/Icons/' . $fileName]
-        );
-    }
 
     // add walls_io_proxy plugin to new element wizard
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
