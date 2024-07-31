@@ -72,9 +72,6 @@ abstract class AbstractRequest implements RequestInterface
 
     /**
      * Check, if parameter exists
-     *
-     * @param string $parameter
-     * @return bool
      */
     public function hasParameter(string $parameter): bool
     {
@@ -83,8 +80,6 @@ abstract class AbstractRequest implements RequestInterface
 
     /**
      * Merge all parameters to build an URI
-     *
-     * @return string
      */
     public function buildUri(): string
     {

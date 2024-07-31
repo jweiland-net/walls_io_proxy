@@ -42,7 +42,6 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
                 }
             }
         } catch (AspectNotFoundException $e) {
-            var_dump($e->getMessage());
         }
 
         return false;

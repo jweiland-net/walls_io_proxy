@@ -26,6 +26,7 @@ use TYPO3\CMS\Frontend\ContentObject\DataProcessorInterface;
 class AddWallsProcessor implements DataProcessorInterface
 {
     protected WallsService $wallsService;
+
     protected FlexFormService $flexFormService;
 
     public function __construct(WallsService $wallsService, FlexFormService $flexFormService)
