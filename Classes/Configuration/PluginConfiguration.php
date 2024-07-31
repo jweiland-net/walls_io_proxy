@@ -17,36 +17,14 @@ namespace JWeiland\WallsIoProxy\Configuration;
 class PluginConfiguration
 {
     /**
-     * @var array
-     */
-    protected $record = [];
-
-    /**
-     * @var string
-     */
-    protected $accessToken = '';
-
-    /**
      * It contains the name of the request class
-     *
-     * @var string
      */
-    protected $requestType = '';
-
-    /**
-     * @var int
-     */
-    protected $entriesToLoad = 24;
-
-    /**
-     * @var int
-     */
-    protected $entriesToShow = 8;
-
-    /**
-     * @var int
-     */
-    protected $showWallsSince = 365;
+    protected string $requestType = '';
+    protected array $record = [];
+    protected string $accessToken = '';
+    protected int $entriesToLoad = 24;
+    protected int $entriesToShow = 8;
+    protected int $showWallsSince = 365;
 
     public function __construct(array $processedData)
     {
