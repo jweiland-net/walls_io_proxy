@@ -36,7 +36,7 @@ call_user_func(static function (): void {
 
     // add walls_io_proxy plugin to new element wizard
     ExtensionManagementUtility::addPageTSConfig(
-        '< INCLUDE_TYPOSCRIPT: source = "FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.tsconfig" > '
+        '<INCLUDE_TYPOSCRIPT:source = "FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.tsconfig" > '
     );
 
     if (!isset($GLOBALS['TYPO3_CONF_VARS']['LOG']['JWeiland']['WallsIoProxy']['writerConfiguration'])) {
