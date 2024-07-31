@@ -11,11 +11,10 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Client;
 
-use JWeiland\WallsIoProxy\Helper\MessageHelper;
 use JWeiland\WallsIoProxy\Request\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Log\Logger;
 
 /**
  * This is the walls.io client which will send the request to the walls.io server
@@ -24,21 +23,24 @@ class WallsIoClient
 {
     protected RequestFactory $requestFactory;
 
-    protected MessageHelper $messageHelper;
+    protected Logger $logger;
 
-    public function __construct(RequestFactory $requestFactory, MessageHelper $messageHelper)
-    {
+    public function __construct(
+        RequestFactory $requestFactory,
+        Logger $logger
+    ) {
         $this->requestFactory = $requestFactory;
-        $this->messageHelper = $messageHelper;
+        $this->logger = $logger;
     }
 
     public function processRequest(RequestInterface $request): array
     {
         if (!$request->isValidRequest()) {
-            $this->messageHelper->addFlashMessage(
-                'URI is empty or contains invalid chars. URI: ' . $request->buildUri(),
-                'Invalid request URI',
-                AbstractMessage::ERROR
+            $this->logger->error(
+                'Request URI is empty or contains invalid chars.',
+                [
+                    'uri' => $request->buildUri(),
+                ]
             );
 
             return [];
@@ -47,42 +49,43 @@ class WallsIoClient
         $processedResponse = [];
         try {
             $response = $this->requestFactory->request($request->buildUri());
-            $this->checkClientResponseForErrors($response);
 
-            if (!$this->hasErrors()) {
+            if (!$this->checkClientResponseForErrors($response)) {
                 $processedResponse = json_decode((string)$response->getBody(), true);
                 if ($this->hasResponseErrors($processedResponse)) {
                     $processedResponse = [];
                 }
             }
         } catch (\Exception $exception) {
-            $this->messageHelper->addFlashMessage(
+            $this->logger->error(
                 str_replace($request->getParameter('access_token'), 'XXX', $exception->getMessage()),
-                'Error Code: ' . $exception->getCode(),
-                AbstractMessage::ERROR
+                [
+                    'Exception Code' => $exception->getCode(),
+                ]
             );
         }
 
         return $processedResponse;
     }
 
-    public function hasErrors(): bool
-    {
-        return $this->messageHelper->hasErrorMessages();
-    }
-
     /**
      * This method will only check the report of the client and not the result itself.
+     *
+     * @return bool Returns false, if no errors were found
      */
-    protected function checkClientResponseForErrors(ResponseInterface $response): void
+    protected function checkClientResponseForErrors(ResponseInterface $response): bool
     {
         if ($response->getStatusCode() !== 200) {
-            $this->messageHelper->addFlashMessage(
+            $this->logger->error(
                 'Walls.io responses with a status code different from 200',
-                'Status Code: ' . $response->getStatusCode(),
-                AbstractMessage::ERROR
+                [
+                    'Status Code' => $response->getStatusCode(),
+                ]
             );
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -93,22 +96,17 @@ class WallsIoClient
     protected function hasResponseErrors(array $response = null): bool
     {
         if ($response === null) {
-            $this->messageHelper->addFlashMessage(
-                'The response of walls.io was not a valid JSON response.',
-                'Invalid JSON response',
-                AbstractMessage::ERROR
-            );
+            $this->logger->error('The response of walls.io was not a valid JSON response.');
 
             return true;
         }
 
         if ($response['status'] !== 'success') {
-            // SF: Haven't found an error request as example.
-            // Correct following line, if you get one ;-)
-            $this->messageHelper->addFlashMessage(
+            $this->logger->error(
                 implode($response['info']),
-                $response['status'],
-                AbstractMessage::ERROR
+                [
+                    'status' => $response['status'],
+                ]
             );
 
             return true;

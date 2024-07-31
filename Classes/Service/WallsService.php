@@ -68,8 +68,6 @@ class WallsService
 
         if ($requestedWallPosts === []) {
             $wallPosts = $this->getStoredWallPostsFromRegistry($pluginConfiguration);
-        } elseif ($this->client->hasErrors()) {
-            $wallPosts = $this->getStoredWallPostsFromRegistry($pluginConfiguration);
         } else {
             $wallPosts = [];
             foreach ($requestedWallPosts as $requestedWallPost) {
