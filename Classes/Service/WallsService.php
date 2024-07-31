@@ -16,24 +16,21 @@ use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\Posts\ChangedRequest;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Request\RequestInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Service to retrieve result from WallsIO, decode the result and store entries into Cache
  */
 class WallsService
 {
-    protected string $targetDirectory = 'typo3temp/assets/walls_io_proxy';
-
     /**
      * Fields to get from the API
+     *
+     * @var array<string> $fields
      */
     protected array $fields = [
         'id',
@@ -60,6 +57,9 @@ class WallsService
         $this->client = $client;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getWallPosts(PluginConfiguration $pluginConfiguration): array
     {
         if (!$this->isValidPluginConfiguration($pluginConfiguration)) {
@@ -70,6 +70,8 @@ class WallsService
 
         if ($requestedWallPosts === []) {
             $wallPosts = $this->getStoredWallPostsFromRegistry($pluginConfiguration);
+        } elseif ($this->client->hasErrors()) {
+            $wallPosts = $this->getStoredWallPostsFromRegistry($pluginConfiguration);
         } else {
             $wallPosts = [];
             foreach ($requestedWallPosts as $requestedWallPost) {
@@ -78,16 +80,15 @@ class WallsService
                     $wallPosts[$sanitizedWallPost['id']] = $sanitizedWallPost;
                 }
             }
-
-            // Do not store wall posts on BE yoast request
-            if (!array_key_exists('x-yoast-page-request', $this->getTypo3Request()->getHeaders())) {
-                $this->setWallPostsToRegistry($wallPosts, $pluginConfiguration);
-            }
+            $this->setWallPostsToRegistry($wallPosts, $pluginConfiguration);
         }
 
         return $wallPosts;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getUncachedRequestFromWallsIO(RequestInterface $wallsIoRequest): array
     {
         $response = $this->client->processRequest($wallsIoRequest);
@@ -104,6 +105,9 @@ class WallsService
         return [];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getStoredWallPostsFromRegistry(PluginConfiguration $pluginConfiguration): array
     {
         return $this->registry->get(
@@ -113,6 +117,9 @@ class WallsService
         );
     }
 
+    /**
+     * @param array<string, mixed> $wallPosts
+     */
     protected function setWallPostsToRegistry(array $wallPosts, PluginConfiguration $pluginConfiguration): void
     {
         $this->registry->set(
@@ -120,16 +127,6 @@ class WallsService
             'ContentRecordUid_' . $pluginConfiguration->getRecordUid(),
             $wallPosts
         );
-        $this->registry->set(
-            'WallsIoProxy',
-            'PageCacheExpireTime_' . $pluginConfiguration->getRecordUid(),
-            $GLOBALS['EXEC_TIME'] + $this->getTypoScriptFrontendController()->get_cache_timeout()
-        );
-    }
-
-    protected function getTypoScriptFrontendController(): TypoScriptFrontendController
-    {
-        return $GLOBALS['TSFE'];
     }
 
     protected function getWallsIoRequest(PluginConfiguration $pluginConfiguration): RequestInterface
@@ -189,7 +186,6 @@ class WallsService
         if ($contentRecordUid !== 0) {
             $registry = GeneralUtility::makeInstance(Registry::class);
             $registry->remove('WallsIoProxy', 'ContentRecordUid_' . $contentRecordUid);
-            $registry->remove('WallsIoProxy', 'PageCacheExpireTime_' . $contentRecordUid);
 
             GeneralUtility::rmdir($this->getTargetDirectory($contentRecordUid));
 
@@ -219,6 +215,10 @@ class WallsService
         return $targetDirectory;
     }
 
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
     protected function getSanitizedPost(array $post, PluginConfiguration $pluginConfiguration): array
     {
         if (array_key_exists('created_timestamp', $post)) {
@@ -282,8 +282,8 @@ class WallsService
             $pathParts['fileext']
         );
 
-        if (!file_exists($filePath) && GeneralUtility::getUrl($resource)) {
-            GeneralUtility::writeFile($filePath, GeneralUtility::getUrl($resource));
+        if (!file_exists($filePath) && $responseContent = GeneralUtility::getUrl($resource)) {
+            GeneralUtility::writeFile($filePath, $responseContent);
         }
 
         return PathUtility::getAbsoluteWebPath($filePath);
@@ -326,10 +326,5 @@ class WallsService
             'walls_io_proxy',
             [$creationDate->format('d.m.Y H:i')]
         );
-    }
-
-    protected function getTypo3Request(): ServerRequestInterface
-    {
-        return $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
     }
 }
