@@ -20,10 +20,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class DataHandler
 {
-    /**
-     * @var WallsService
-     */
-    protected $wallsService;
+    protected WallsService $wallsService;
 
     public function __construct(WallsService $wallsService)
     {
