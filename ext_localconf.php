@@ -49,9 +49,9 @@ call_user_func(static function (): void {
         ];
     }
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms / layout /class.tx_cms_layout . php']['tt_content_drawItem']['walls_io_proxy']
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms / layout /class.tx_cms_layout.php']['tt_content_drawItem']['walls_io_proxy']
         = PageLayoutViewHook::class;
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib /class.t3lib_tcemain . php']['clearCachePostProc']['wallsioproxy_clearcache']
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib /class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache']
         = DataHandler::class . '->clearCachePostProc';
 });
