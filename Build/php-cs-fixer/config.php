@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 /*
- * This file is part of the package jweiland/mediapool.
+ * This file is part of the package jweiland/walls-io-proxy.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
+
+use PhpCsFixer\Config;
 
 if (PHP_SAPI !== 'cli') {
     die('This script supports command line usage only. Please check your command.');
@@ -20,7 +20,7 @@ For the full copyright and license information, please read the
 LICENSE file that was distributed with this source code.
 COMMENT;
 
-return (new \PhpCsFixer\Config())
+return (new Config())
     ->setFinder(
         (new PhpCsFixer\Finder())
             ->ignoreVCSIgnored(true)
@@ -28,18 +28,16 @@ return (new \PhpCsFixer\Config())
                 __DIR__ . '/../../Build/',
                 __DIR__ . '/../../Classes/',
                 __DIR__ . '/../../Configuration/',
+                __DIR__ . '/../../Tests/',
             ])
     )
     ->setUsingCache(false)
     ->setRiskyAllowed(true)
     ->setRules([
         '@DoctrineAnnotation' => true,
-        '@PER' => true,
+        '@PSR2' => true,
         'header_comment' => [
             'header' => $headerComment,
-            'comment_type' => 'comment',
-            'separate' => 'both',
-            'location' => 'after_declare_strict',
         ],
         'array_syntax' => ['syntax' => 'short'],
         'blank_line_after_opening_tag' => true,
