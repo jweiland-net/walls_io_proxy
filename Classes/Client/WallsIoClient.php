@@ -16,6 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
 
+
 /**
  * This is the walls.io client which will send the request to the walls.io server
  */

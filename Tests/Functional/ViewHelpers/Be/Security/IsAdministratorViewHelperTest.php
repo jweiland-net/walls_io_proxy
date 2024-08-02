@@ -11,14 +11,22 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\ViewHelpers\Be;
 
+<<<<<<< HEAD
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
+=======
+use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Prophecy\ObjectProphecy;
+>>>>>>> 6770e38 ([TASK] Migrating Testing framework from Nimut to TYPO3 TF)
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\UserAspect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+<<<<<<< HEAD
 use TYPO3\TestingFramework\Core\Exception;
+=======
+>>>>>>> 6770e38 ([TASK] Migrating Testing framework from Nimut to TYPO3 TF)
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**

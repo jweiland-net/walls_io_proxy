@@ -18,8 +18,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\Response;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * Walls IO Client Test
