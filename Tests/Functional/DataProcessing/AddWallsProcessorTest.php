@@ -14,13 +14,13 @@ namespace JWeiland\WallsIoProxy\Tests\Unit\DataProcessing;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor;
 use JWeiland\WallsIoProxy\Service\WallsService;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * Walls.io Data Processing Test

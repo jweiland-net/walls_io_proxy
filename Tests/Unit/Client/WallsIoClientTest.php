@@ -14,44 +14,31 @@ namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Helper\MessageHelper;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\Response;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * Walls IO Client Test
  */
 class WallsIoClientTest extends UnitTestCase
 {
-    use ProphecyTrait;
+    protected WallsIoClient $subject;
 
-    /**
-     * @var WallsIoClient
-     */
-    protected $subject;
+    protected RequestFactory|MockObject $requestFactoryProphecy;
 
-    /**
-     * @var RequestFactory|ObjectProphecy
-     */
-    protected $requestFactoryProphecy;
-
-    /**
-     * @var MessageHelper|ObjectProphecy
-     */
-    protected $messageHelperProphecy;
+    protected MessageHelper|MockObject $messageHelperProphecy;
 
     protected function setUp(): void
     {
-        $this->requestFactoryProphecy = $this->prophesize(RequestFactory::class);
-        $this->messageHelperProphecy = $this->prophesize(MessageHelper::class);
+        $this->requestFactoryMock = $this->getAccessibleMock(RequestFactory::class);
+        $this->messageHelperMock = $this->getAccessibleMock(MessageHelper::class);
 
         $this->subject = new WallsIoClient(
-            $this->requestFactoryProphecy->reveal(),
-            $this->messageHelperProphecy->reveal()
+            $this->requestFactoryMock,
+            $this->messageHelperMock
         );
     }
 

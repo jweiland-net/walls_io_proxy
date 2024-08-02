@@ -15,7 +15,6 @@ use JWeiland\WallsIoProxy\Helper\MessageHelper;
 use JWeiland\WallsIoProxy\Request\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 
 /**

@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\ViewHelpers\Be;
 
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * Test IsAdministratorViewHelper

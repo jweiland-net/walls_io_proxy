@@ -11,36 +11,33 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\Hook;
 
+use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Hook\DataHandler;
 use JWeiland\WallsIoProxy\Service\WallsService;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\CMS\Core\Registry;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * Test DataHandler
  */
 class DataHandlerTest extends UnitTestCase
 {
-    use ProphecyTrait;
+    protected DataHandler $subject;
 
-    /**
-     * @var DataHandler
-     */
-    protected $subject;
+    protected Registry|MockObject $registryMock;
 
-    /**
-     * @var WallsService|ObjectProphecy
-     */
-    protected $wallsServiceProphecy;
+    protected WallsService|MockObject $wallsServiceMock;
 
     protected function setUp(): void
     {
-        $this->wallsServiceProphecy = $this->prophesize(WallsService::class);
-
+        $this->registryMock = $this->createMock(Registry::class);
+        $this->clientMock = $this->createMock(WallsIoClient::class);
+        $this->wallsServiceMock = $this->getMockBuilder(WallsService::class)
+            ->setConstructorArgs([$this->registryMock, $this->clientMock])
+            ->getMock();
         $this->subject = new DataHandler(
-            $this->wallsServiceProphecy->reveal()
+            $this->wallsServiceMock
         );
     }
 
@@ -48,7 +45,7 @@ class DataHandlerTest extends UnitTestCase
     {
         unset(
             $this->subject,
-            $this->wallsServiceProphecy,
+            $this->wallsServiceMock,
             $_GET['contentRecordUid']
         );
 
@@ -60,9 +57,10 @@ class DataHandlerTest extends UnitTestCase
      */
     public function clearCachePostProcWithEmptyParamsDoesNothing(): void
     {
-        $this->wallsServiceProphecy
-            ->clearCache(Argument::any())
-            ->shouldNotBeCalled();
+        // Set expectation that clearCache should not be called
+        $this->wallsServiceMock
+            ->expects($this->never())
+            ->method('clearCache');
 
         $this->subject->clearCachePostProc([]);
     }
@@ -72,9 +70,10 @@ class DataHandlerTest extends UnitTestCase
      */
     public function clearCachePostProcWithInvalidCacheCmdDoesNothing(): void
     {
-        $this->wallsServiceProphecy
-            ->clearCache(Argument::any())
-            ->shouldNotBeCalled();
+        // Set expectation that clearCache should not be called
+        $this->wallsServiceMock
+            ->expects($this->never())
+            ->method('clearCache');
 
         $this->subject->clearCachePostProc([
             'cacheCmd' => 'wrong',
@@ -88,9 +87,10 @@ class DataHandlerTest extends UnitTestCase
     {
         $_GET['contentRecordUid'] = 0;
 
-        $this->wallsServiceProphecy
-            ->clearCache(Argument::any())
-            ->shouldNotBeCalled();
+        // Set expectation that clearCache should not be called
+        $this->wallsServiceMock
+            ->expects($this->never())
+            ->method('clearCache');
 
         $this->subject->clearCachePostProc([
             'cacheCmd' => 'wallioproxy',
@@ -104,9 +104,10 @@ class DataHandlerTest extends UnitTestCase
     {
         $_GET['contentRecordUid'] = 12;
 
-        $this->wallsServiceProphecy
-            ->clearCache(Argument::exact(12))
-            ->shouldBeCalled();
+        $this->wallsServiceMock
+            ->expects($this->once())
+            ->method('clearCache')
+            ->with($this->equalTo(12));
 
         $this->subject->clearCachePostProc([
             'cacheCmd' => 'wallioproxy',

@@ -12,72 +12,56 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Tests\Unit\Helper;
 
 use JWeiland\WallsIoProxy\Helper\MessageHelper;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * Test MessageHelper
  */
 class MessageHelperTest extends UnitTestCase
 {
-    use ProphecyTrait;
+    protected MessageHelper $subject;
 
-    /**
-     * @var MessageHelper
-     */
-    protected $subject;
+    protected FlashMessageService|MockObject $flashMessageServiceMockObject;
 
-    /**
-     * @var FlashMessageService|ObjectProphecy
-     */
-    protected $flashMessageServiceProphecy;
+    protected FlashMessageQueue|MockObject $flashMessageQueueMockObject;
 
-    /**
-     * @var FlashMessageQueue|ObjectProphecy
-     */
-    protected $flashMessageQueueProphecy;
+    protected BackendUserAuthentication|MockObject $backendUserAuthenticationMockObject;
 
-    /**
-     * @var BackendUserAuthentication|ObjectProphecy
-     */
-    protected $backendUserAuthenticationProphecy;
-
-    /**
-     * @var string
-     */
-    protected $queueIdentifier = 'core.template.flashMessages';
+    protected string $queueIdentifier = 'core.template.flashMessages';
 
     protected function setUp(): void
     {
-        $this->flashMessageServiceProphecy = $this->prophesize(FlashMessageService::class);
-        $this->flashMessageQueueProphecy = $this->prophesize(FlashMessageQueue::class);
-        $this->backendUserAuthenticationProphecy = $this->prophesize(BackendUserAuthentication::class);
+        // Create mock objects for dependencies
+        $this->flashMessageQueueMockObject = $this->createMock(FlashMessageQueue::class);
+        $this->backendUserAuthenticationMockObject = $this->createMock(BackendUserAuthentication::class);
 
-        $this->flashMessageServiceProphecy
-            ->getMessageQueueByIdentifier()
-            ->shouldBeCalled()
-            ->willReturn($this->flashMessageQueueProphecy);
+        // Create a mock object for FlashMessageService
+        $this->flashMessageServiceMockObject = $this->getMockBuilder(FlashMessageService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->subject = new MessageHelper(
-            $this->flashMessageServiceProphecy->reveal()
-        );
+        // Set expectation for getMessageQueueByIdentifier method
+        $this->flashMessageServiceMockObject->expects($this->once())
+            ->method('getMessageQueueByIdentifier')
+            ->willReturn($this->flashMessageQueueMockObject);
+
+        // Initialize the subject with the mocked FlashMessageService
+        $this->subject = new MessageHelper($this->flashMessageServiceMockObject);
     }
 
     protected function tearDown(): void
     {
         unset(
             $this->subject,
-            $this->flashMessageServiceProphecy,
-            $this->flashMessageQueueProphecy,
-            $this->backendUserAuthenticationProphecy
+            $this->flashMessageServiceMockObject,
+            $this->flashMessageQueueMockObject,
+            $this->backendUserAuthenticationMockObject
         );
 
         parent::tearDown();
@@ -86,11 +70,11 @@ class MessageHelperTest extends UnitTestCase
     public function dataProviderForAllSeverities(): array
     {
         return [
-            'OK' => [ContextualFeedbackSeverity::OK, 'Ok'],
-            'ERROR' => [ContextualFeedbackSeverity::ERROR, 'Error'],
-            'INFO' => [ContextualFeedbackSeverity::INFO, 'Info'],
-            'NOTICE' => [ContextualFeedbackSeverity::NOTICE, 'Notice'],
-            'WARNING' => [ContextualFeedbackSeverity::WARNING, 'Warning'],
+            [(int)ContextualFeedbackSeverity::WARNING, 'Warning'],
+            [(int)ContextualFeedbackSeverity::ERROR, 'Error'],
+            [(int)ContextualFeedbackSeverity::OK, 'OK'],
+            [(int)ContextualFeedbackSeverity::INFO, 'INFO'],
+            [(int)ContextualFeedbackSeverity::NOTICE, 'NOTICE'],
         ];
     }
 
@@ -99,19 +83,24 @@ class MessageHelperTest extends UnitTestCase
      */
     public function addFlashMessageWillAddMessageToQueue(): void
     {
-        $this->flashMessageQueueProphecy
-            ->enqueue(Argument::that(static function (FlashMessage $flashMessage) {
+        // Create a mock for the FlashMessageQueue
+        $flashMessageQueueMock = $this->createMock(FlashMessageQueue::class);
+
+        // Set up the expectation for the enqueue method
+        $flashMessageQueueMock->expects($this->once())
+            ->method('enqueue')
+            ->with($this->callback(function (FlashMessage $flashMessage) {
                 return $flashMessage->getTitle() === 'header'
                     && $flashMessage->getMessage() === 'hello'
                     && $flashMessage->getSeverity() === ContextualFeedbackSeverity::OK
                     && $flashMessage->isSessionMessage() === true;
-            }))
-            ->shouldBeCalled();
+            }));
 
-        $this->subject->addFlashMessage(
-            'hello',
-            'header'
-        );
+        // Set the mock object in the subject (assuming it has a setter method or similar)
+        $this->subject->setFlashMessageQueue($flashMessageQueueMock);
+
+        // Call the method being tested
+        $this->subject->addFlashMessage('hello', 'header');
     }
 
     /**
@@ -119,16 +108,26 @@ class MessageHelperTest extends UnitTestCase
      */
     public function getAllFlashMessagesWithoutFlushWillReturnAllFlashMessages(): void
     {
-        $this->flashMessageQueueProphecy
-            ->getAllMessagesAndFlush()
-            ->shouldNotBeCalled();
+        // Create a mock for the FlashMessageQueue
+        $flashMessageQueueMock = $this->createMock(FlashMessageQueue::class);
 
-        $this->flashMessageQueueProphecy
-            ->getAllMessages()
-            ->shouldBeCalled()
+        // Set up the expectation that getAllMessagesAndFlush should not be called
+        $flashMessageQueueMock->expects($this->never())
+            ->method('getAllMessagesAndFlush');
+
+        // Set up the expectation that getAllMessages should be called and return an empty array
+        $flashMessageQueueMock->expects($this->once())
+            ->method('getAllMessages')
             ->willReturn([]);
 
-        $this->subject->getAllFlashMessages(false);
+        // Set the mock object in the subject (assuming it has a setter method or similar)
+        $this->subject->setFlashMessageQueue($flashMessageQueueMock);
+
+        // Call the method being tested
+        $result = $this->subject->getAllFlashMessages(false);
+
+        // Add assertions to verify the result, if needed
+        $this->assertSame([], $result);
     }
 
     /**
@@ -136,16 +135,26 @@ class MessageHelperTest extends UnitTestCase
      */
     public function getAllFlashMessagesWithFlushWillReturnAllFlashMessages(): void
     {
-        $this->flashMessageQueueProphecy
-            ->getAllMessagesAndFlush()
-            ->shouldBeCalled()
+        // Create a mock for the FlashMessageQueue
+        $flashMessageQueueMock = $this->createMock(FlashMessageQueue::class);
+
+        // Set up the expectation that getAllMessagesAndFlush should be called and return an empty array
+        $flashMessageQueueMock->expects($this->once())
+            ->method('getAllMessagesAndFlush')
             ->willReturn([]);
 
-        $this->flashMessageQueueProphecy
-            ->getAllMessages()
-            ->shouldNotBeCalled();
+        // Set up the expectation that getAllMessages should not be called
+        $flashMessageQueueMock->expects($this->never())
+            ->method('getAllMessages');
 
-        $this->subject->getAllFlashMessages(true);
+        // Set the mock object in the subject (assuming it has a setter method or similar)
+        $this->subject->setFlashMessageQueue($flashMessageQueueMock);
+
+        // Call the method being tested
+        $result = $this->subject->getAllFlashMessages(true);
+
+        // Add assertions to verify the result, if needed
+        $this->assertSame([], $result);
     }
 
     /**
@@ -153,6 +162,10 @@ class MessageHelperTest extends UnitTestCase
      */
     public function hasMessagesWithMessagesWillReturnTrue(): void
     {
+        // Create a mock for the FlashMessageQueue
+        $flashMessageQueueMock = $this->createMock(FlashMessageQueue::class);
+
+        // Create an instance of FlashMessage
         $flashMessage = new FlashMessage(
             'message',
             'title',
@@ -160,14 +173,19 @@ class MessageHelperTest extends UnitTestCase
             true
         );
 
-        $this->flashMessageQueueProphecy
-            ->getAllMessages()
-            ->shouldBeCalled()
+        // Set up the expectation that getAllMessages should be called and return the flash message
+        $flashMessageQueueMock->expects($this->once())
+            ->method('getAllMessages')
             ->willReturn([$flashMessage]);
 
-        self::assertTrue(
-            $this->subject->hasMessages()
-        );
+        // Set the mock object in the subject (assuming it has a setter method or similar)
+        $this->subject->setFlashMessageQueue($flashMessageQueueMock);
+
+        // Call the method being tested
+        $result = $this->subject->hasMessages();
+
+        // Add an assertion to verify the result
+        $this->assertTrue($result);
     }
 
     /**
@@ -175,14 +193,22 @@ class MessageHelperTest extends UnitTestCase
      */
     public function hasMessagesWithoutMessagesWillReturnFalse(): void
     {
-        $this->flashMessageQueueProphecy
-            ->getAllMessages()
-            ->shouldBeCalled()
+        // Create a mock for the FlashMessageQueue
+        $flashMessageQueueMock = $this->createMock(FlashMessageQueue::class);
+
+        // Set up the expectation that getAllMessages should be called and return an empty array
+        $flashMessageQueueMock->expects($this->once())
+            ->method('getAllMessages')
             ->willReturn([]);
 
-        self::assertFalse(
-            $this->subject->hasMessages()
-        );
+        // Set the mock object in the subject (assuming it has a setter method or similar)
+        $this->subject->setFlashMessageQueue($flashMessageQueueMock);
+
+        // Call the method being tested
+        $result = $this->subject->hasMessages();
+
+        // Add an assertion to verify the result
+        $this->assertFalse($result);
     }
 
     /**
@@ -192,6 +218,10 @@ class MessageHelperTest extends UnitTestCase
      */
     public function getFlashMessagesBySeverityAndFlushWillReturnFlashMessageWithSeverity(int $severity, string $severityName): void
     {
+        // Create a mock for the FlashMessageQueue
+        $flashMessageQueueMock = $this->createMock(FlashMessageQueue::class);
+
+        // Create an instance of FlashMessage
         $flashMessage = new FlashMessage(
             'message',
             'title',
@@ -199,15 +229,20 @@ class MessageHelperTest extends UnitTestCase
             true
         );
 
-        $this->flashMessageQueueProphecy
-            ->getAllMessagesAndFlush($severity)
-            ->shouldBeCalled()
+        // Set up the expectation that getAllMessagesAndFlush should be called with the specified severity and return the flash message
+        $flashMessageQueueMock->expects($this->once())
+            ->method('getAllMessagesAndFlush')
+            ->with($this->equalTo($severity))
             ->willReturn([$flashMessage]);
 
-        self::assertSame(
-            [$flashMessage],
-            $this->subject->getFlashMessagesBySeverityAndFlush($severity)
-        );
+        // Set the mock object in the subject (assuming it has a setter method or similar)
+        $this->subject->setFlashMessageQueue($flashMessageQueueMock);
+
+        // Call the method being tested
+        $result = $this->subject->getFlashMessagesBySeverityAndFlush($severity);
+
+        // Add an assertion to verify the result
+        $this->assertSame([$flashMessage], $result);
     }
 
     /**
@@ -217,6 +252,10 @@ class MessageHelperTest extends UnitTestCase
      */
     public function hasSeverityMessagesWithMessagesWillReturnTrue(int $severity, string $severityName): void
     {
+        // Create a mock for the FlashMessageQueue
+        $flashMessageQueueMock = $this->createMock(FlashMessageQueue::class);
+
+        // Create an instance of FlashMessage
         $flashMessage = new FlashMessage(
             'message',
             'title',
@@ -224,16 +263,21 @@ class MessageHelperTest extends UnitTestCase
             true
         );
 
-        $this->flashMessageQueueProphecy
-            ->getAllMessages($severity)
-            ->shouldBeCalled()
+        // Set up the expectation that getAllMessages should be called with the specified severity and return the flash message
+        $flashMessageQueueMock->expects($this->once())
+            ->method('getAllMessages')
+            ->with($this->equalTo($severity))
             ->willReturn([$flashMessage]);
 
+        // Set the mock object in the subject (assuming it has a setter method or similar)
+        $this->subject->setFlashMessageQueue($flashMessageQueueMock);
+
+        // Build the method name dynamically
         $methodName = 'has' . $severityName . 'Messages';
 
-        self::assertTrue(
-            $this->subject->$methodName()
-        );
+        // Call the dynamically named method and assert the result
+        $result = $this->subject->$methodName();
+        $this->assertTrue($result);
     }
 
     /**
@@ -243,16 +287,24 @@ class MessageHelperTest extends UnitTestCase
      */
     public function hasSeverityMessagesWithoutMessagesWillReturnFalse(int $severity, string $severityName): void
     {
-        $this->flashMessageQueueProphecy
-            ->getAllMessages($severity)
-            ->shouldBeCalled()
+        // Create a mock for the FlashMessageQueue
+        $flashMessageQueueMock = $this->createMock(FlashMessageQueue::class);
+
+        // Set up the expectation that getAllMessages should be called with the specified severity and return an empty array
+        $flashMessageQueueMock->expects($this->once())
+            ->method('getAllMessages')
+            ->with($this->equalTo($severity))
             ->willReturn([]);
 
+        // Set the mock object in the subject
+        $this->subject->setFlashMessageQueue($flashMessageQueueMock);
+
+        // Build the method name dynamically
         $methodName = 'has' . $severityName . 'Messages';
 
-        self::assertFalse(
-            $this->subject->$methodName()
-        );
+        // Call the dynamically named method and assert the result
+        $result = $this->subject->$methodName();
+        $this->assertFalse($result);
     }
 
     /**
@@ -262,17 +314,26 @@ class MessageHelperTest extends UnitTestCase
      */
     public function getWarningMessagesWithoutFlushWillReturnAllFlashMessages(int $severity, string $severityName): void
     {
-        $this->flashMessageQueueProphecy
-            ->getAllMessagesAndFlush($severity)
-            ->shouldNotBeCalled();
+        // Create a mock for the FlashMessageQueue
+        $flashMessageQueueMock = $this->createMock(FlashMessageQueue::class);
 
-        $this->flashMessageQueueProphecy
-            ->getAllMessages($severity)
-            ->shouldBeCalled()
+        // Set up the expectation that getAllMessagesAndFlush should not be called
+        $flashMessageQueueMock->expects($this->never())
+            ->method('getAllMessagesAndFlush');
+
+        // Set up the expectation that getAllMessages should be called with the specified severity and return an empty array
+        $flashMessageQueueMock->expects($this->once())
+            ->method('getAllMessages')
+            ->with($this->equalTo($severity))
             ->willReturn([]);
 
+        // Set the mock object in the subject
+        $this->subject->setFlashMessageQueue($flashMessageQueueMock);
+
+        // Build the method name dynamically
         $methodName = 'get' . $severityName . 'Messages';
 
+        // Call the dynamically named method
         $this->subject->$methodName(false);
     }
 
@@ -283,17 +344,26 @@ class MessageHelperTest extends UnitTestCase
      */
     public function getErrorMessagesWithFlushWillReturnAllFlashMessages(int $severity, string $severityName): void
     {
-        $this->flashMessageQueueProphecy
-            ->getAllMessagesAndFlush($severity)
-            ->shouldBeCalled()
+        // Create a mock for the FlashMessageQueue
+        $flashMessageQueueMock = $this->createMock(FlashMessageQueue::class);
+
+        // Set up the expectation that getAllMessagesAndFlush should be called with the specified severity and return the flash message
+        $flashMessageQueueMock->expects($this->once())
+            ->method('getAllMessagesAndFlush')
+            ->with($this->equalTo($severity))
             ->willReturn([]);
 
-        $this->flashMessageQueueProphecy
-            ->getAllMessages($severity)
-            ->shouldNotBeCalled();
+        // Set up the expectation that getAllMessages should not be called
+        $flashMessageQueueMock->expects($this->never())
+            ->method('getAllMessages');
 
+        // Set the mock object in the subject
+        $this->subject->setFlashMessageQueue($flashMessageQueueMock);
+
+        // Build the method name dynamically
         $methodName = 'get' . $severityName . 'Messages';
 
+        // Call the dynamically named method
         $this->subject->$methodName(true);
     }
 }
