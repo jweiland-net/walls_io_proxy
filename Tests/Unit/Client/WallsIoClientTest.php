@@ -52,8 +52,8 @@ class WallsIoClientTest extends UnitTestCase
     {
         unset(
             $this->subject,
-            $this->requestFactoryProphecy,
-            $this->messageHelperProphecy
+            $this->requestFactoryMock,
+            $this->messageHelperMock
         );
         parent::tearDown();
     }
@@ -63,7 +63,7 @@ class WallsIoClientTest extends UnitTestCase
      */
     public function processRequestWithInvalidRequestAddsFlashMessage(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
+        /** @var PostsRequest|MockObject $postsRequest */
         $postsRequest = $this->createMock(PostsRequest::class);
         $postsRequest
             ->method('buildUri')
@@ -91,7 +91,7 @@ class WallsIoClientTest extends UnitTestCase
      */
     public function processRequestWithInvalidClientResponseAddsFlashMessage(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
+        /** @var PostsRequest|MockObject $postsRequest */
         $postsRequest = $this->getMockBuilder(PostsRequest::class)->getMock();
         $postsRequest
             ->method('buildUri')
@@ -100,7 +100,7 @@ class WallsIoClientTest extends UnitTestCase
             ->method('isValidRequest')
             ->willReturn(true);
 
-        /** @var Response|ObjectProphecy $clientResponse */
+        /** @var Response|MockObject $clientResponse */
         $clientResponse = $this->createMock(Response::class);
         $clientResponse
             ->method('getStatusCode')
@@ -178,7 +178,7 @@ class WallsIoClientTest extends UnitTestCase
      */
     public function processRequestWithInvalidResponseAddsFlashMessage(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
+        /** @var PostsRequest|MockObject $postsRequest */
         $postsRequest = $this->getMockBuilder(PostsRequest::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -189,7 +189,7 @@ class WallsIoClientTest extends UnitTestCase
             ->method('isValidRequest')
             ->willReturn(true);
 
-        /** @var Response|ObjectProphecy $clientResponse */
+        /** @var Response|MockObject $clientResponse */
         $clientResponse = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -236,7 +236,7 @@ class WallsIoClientTest extends UnitTestCase
      */
     public function processRequestWithInvalidStatusAddsFlashMessage(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
+        /** @var PostsRequest|MockObject $postsRequest */
         $postsRequest = $this->createMock(PostsRequest::class);
         $postsRequest
             ->method('buildUri')
@@ -299,7 +299,7 @@ class WallsIoClientTest extends UnitTestCase
      */
     public function processRequestReturnsWalls(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
+        /** @var PostsRequest|MockObject $postsRequest */
         $postsRequest = $this->getMockBuilder(PostsRequest::class)
             ->disableOriginalConstructor()
             ->getMock();
