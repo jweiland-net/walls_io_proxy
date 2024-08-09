@@ -14,9 +14,7 @@ namespace JWeiland\WallsIoProxy\Tests\Unit\DataProcessing;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor;
 use JWeiland\WallsIoProxy\Service\WallsService;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -27,47 +25,28 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class AddWallsProcessorTest extends FunctionalTestCase
 {
-    use ProphecyTrait;
+    protected AddWallsProcessor $subject;
 
-    /**
-     * @var AddWallsProcessor
-     */
-    protected $subject;
+    protected WallsService|MockObject $wallsServiceMock;
 
-    /**
-     * @var WallsService|ObjectProphecy
-     */
-    protected $wallsServiceProphecy;
+    protected FlexFormService $flexFormService;
 
-    /**
-     * @var FlexFormService
-     */
-    protected $flexFormService;
+    protected ContentObjectRenderer|MockObject $contentObjectRendererMock;
 
-    /**
-     * @var ContentObjectRenderer|ObjectProphecy
-     */
-    protected $contentObjectRendererProphecy;
-
-    /**
-     * Because of using EXT: we have to load our extension before testing
-     *
-     * @var array
-     */
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/walls_io_proxy',
+    protected array $testExtensionsToLoad = [
+        'jweiland/walls_io_proxy',
     ];
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->wallsServiceProphecy = $this->prophesize(WallsService::class);
+        $this->wallsServiceMock = $this->createMock(WallsService::class);
         $this->flexFormService = new FlexFormService();
-        $this->contentObjectRendererProphecy = $this->prophesize(ContentObjectRenderer::class);
+        $this->contentObjectRendererMock = $this->createMock(ContentObjectRenderer::class);
 
         $this->subject = new AddWallsProcessor(
-            $this->wallsServiceProphecy->reveal(),
+            $this->wallsServiceMock,
             $this->flexFormService
         );
     }
@@ -76,7 +55,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $this->wallsServiceProphecy,
+            $this->wallsServiceMock,
             $this->flexFormService
         );
 
@@ -96,19 +75,19 @@ class AddWallsProcessorTest extends FunctionalTestCase
             ],
         ];
 
-        $this->contentObjectRendererProphecy
-            ->checkIf($processorConfiguration['if.'])
-            ->shouldBeCalled()
+        $this->contentObjectRendererMock
+            ->method('checkIf')
+            ->with($processorConfiguration['if.'])
             ->willReturn(false);
 
-        $this->wallsServiceProphecy
-            ->getWallPosts(Argument::any())
-            ->shouldNotBeCalled();
+        $this->wallsServiceMock
+            ->method('getWallPosts')
+            ->with($this->any());
 
         self::assertSame(
             $processedData,
             $this->subject->process(
-                $this->contentObjectRendererProphecy->reveal(),
+                $this->contentObjectRendererMock,
                 [],
                 $processorConfiguration,
                 $processedData
@@ -123,9 +102,9 @@ class AddWallsProcessorTest extends FunctionalTestCase
     {
         $processedData = [];
 
-        $this->wallsServiceProphecy
-            ->getWallPosts(Argument::any())
-            ->shouldBeCalled()
+        $this->wallsServiceMock
+            ->method('getWallPosts')
+            ->with($this->any())
             ->willReturn([]);
 
         self::assertSame(
@@ -134,7 +113,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
                 'walls' => [],
             ],
             $this->subject->process(
-                $this->contentObjectRendererProphecy->reveal(),
+                $this->contentObjectRendererMock,
                 [],
                 [],
                 $processedData
@@ -164,15 +143,15 @@ class AddWallsProcessorTest extends FunctionalTestCase
         ];
         $expectedProcessedData['walls'] = [];
 
-        $this->wallsServiceProphecy
-            ->getWallPosts(Argument::any())
-            ->shouldBeCalled()
+        $this->wallsServiceMock
+            ->method('getWallPosts')
+            ->with($this->any())
             ->willReturn([]);
 
         self::assertSame(
             $expectedProcessedData,
             $this->subject->process(
-                $this->contentObjectRendererProphecy->reveal(),
+                $this->contentObjectRendererMock,
                 [],
                 [],
                 $processedData
@@ -191,11 +170,13 @@ class AddWallsProcessorTest extends FunctionalTestCase
             ],
         ];
 
-        $this->wallsServiceProphecy
-            ->getWallPosts(Argument::that(static function (PluginConfiguration $pluginConfiguration) {
-                return $pluginConfiguration->getRecordUid() === 1;
-            }))
-            ->shouldBeCalled()
+        $this->wallsServiceMock
+            ->method('getWallPosts')
+            ->with(
+                $this->callback(function (PluginConfiguration $pluginConfiguration) {
+                    return $pluginConfiguration->getRecordUid() === 1;
+                })
+            )
             ->willReturn([]);
 
         self::assertSame(
@@ -207,7 +188,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
                 'walls' => [],
             ],
             $this->subject->process(
-                $this->contentObjectRendererProphecy->reveal(),
+                $this->contentObjectRendererMock,
                 [],
                 [],
                 $processedData
@@ -234,9 +215,9 @@ class AddWallsProcessorTest extends FunctionalTestCase
             ],
         ];
 
-        $this->wallsServiceProphecy
-            ->getWallPosts(Argument::any())
-            ->shouldBeCalled()
+        $this->wallsServiceMock
+            ->method('getWallPosts')
+            ->with($this->any())
             ->willReturn($walls);
 
         self::assertSame(
@@ -249,7 +230,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
                 'walls' => $walls,
             ],
             $this->subject->process(
-                $this->contentObjectRendererProphecy->reveal(),
+                $this->contentObjectRendererMock,
                 [],
                 [],
                 $processedData

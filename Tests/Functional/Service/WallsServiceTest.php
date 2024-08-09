@@ -15,9 +15,7 @@ use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Service\WallsService;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -28,24 +26,13 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class WallsServiceTest extends FunctionalTestCase
 {
-    use ProphecyTrait;
+    protected WallsService $subject;
 
-    /**
-     * @var WallsService
-     */
-    protected $subject;
+    protected Registry $registry;
 
-    /**
-     * @var Registry
-     */
-    protected $registry;
+    protected WallsIoClient|MockObject $wallsIoClientMock;
 
-    /**
-     * @var WallsIoClient|ObjectProphecy
-     */
-    protected $wallsIoClientProphecy;
-
-    protected $processedDataForPostsRequest = [
+    protected array $processedDataForPostsRequest = [
         'data' => [
             'uid' => '12345',
         ],
@@ -60,8 +47,8 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @var array
      */
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/walls_io_proxy',
+    protected array $testExtensionsToLoad = [
+        'jweiland/walls_io_proxy',
     ];
 
     protected function setUp(): void
@@ -75,11 +62,11 @@ class WallsServiceTest extends FunctionalTestCase
         $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
 
         $this->registry = new Registry();
-        $this->wallsIoClientProphecy = $this->prophesize(WallsIoClient::class);
+        $this->wallsIoClientMock = $this->prophesize(WallsIoClient::class);
 
         $this->subject = new WallsService(
             $this->registry,
-            $this->wallsIoClientProphecy->reveal()
+            $this->wallsIoClientMock->reveal()
         );
     }
 
@@ -88,7 +75,7 @@ class WallsServiceTest extends FunctionalTestCase
         unset(
             $this->subject,
             $this->registry,
-            $this->wallsIoClientProphecy
+            $this->wallsIoClientMock
         );
 
         parent::tearDown();
@@ -126,7 +113,7 @@ class WallsServiceTest extends FunctionalTestCase
      */
     public function getWallPostsWithEmptyClientResultWillReturnEmptyWalls(): void
     {
-        $this->wallsIoClientProphecy
+        $this->wallsIoClientMock
             ->processRequest(Argument::type(PostsRequest::class))
             ->shouldBeCalled()
             ->willReturn(
@@ -157,7 +144,7 @@ class WallsServiceTest extends FunctionalTestCase
             ]
         );
 
-        $this->wallsIoClientProphecy
+        $this->wallsIoClientMock
             ->processRequest(Argument::type(PostsRequest::class))
             ->shouldBeCalled()
             ->willReturn(['status' => 'error']);
@@ -189,7 +176,7 @@ class WallsServiceTest extends FunctionalTestCase
             ],
         ];
 
-        $this->wallsIoClientProphecy
+        $this->wallsIoClientMock
             ->processRequest(Argument::type(PostsRequest::class))
             ->shouldBeCalled()
             ->willReturn(
@@ -198,7 +185,7 @@ class WallsServiceTest extends FunctionalTestCase
                     'data' => $expected,
                 ]
             );
-        $this->wallsIoClientProphecy
+        $this->wallsIoClientMock
             ->hasErrors()
             ->shouldBeCalled()
             ->willReturn(false);
@@ -234,7 +221,7 @@ class WallsServiceTest extends FunctionalTestCase
             ],
         ];
 
-        $this->wallsIoClientProphecy
+        $this->wallsIoClientMock
             ->processRequest(Argument::type(PostsRequest::class))
             ->shouldBeCalled()
             ->willReturn(
@@ -243,7 +230,7 @@ class WallsServiceTest extends FunctionalTestCase
                     'data' => $data,
                 ]
             );
-        $this->wallsIoClientProphecy
+        $this->wallsIoClientMock
             ->hasErrors()
             ->shouldBeCalled()
             ->willReturn(false);
@@ -276,7 +263,7 @@ class WallsServiceTest extends FunctionalTestCase
             ],
         ];
 
-        $this->wallsIoClientProphecy
+        $this->wallsIoClientMock
             ->processRequest(Argument::type(PostsRequest::class))
             ->shouldBeCalled()
             ->willReturn(
@@ -285,7 +272,7 @@ class WallsServiceTest extends FunctionalTestCase
                     'data' => $data,
                 ]
             );
-        $this->wallsIoClientProphecy
+        $this->wallsIoClientMock
             ->hasErrors()
             ->shouldBeCalled()
             ->willReturn(false);

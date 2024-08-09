@@ -11,8 +11,7 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\ViewHelpers\Be;
 
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
@@ -22,13 +21,8 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class IsAdministratorViewHelperTest extends FunctionalTestCase
 {
-    use ProphecyTrait;
-
-    /**
-     * @var array
-     */
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/walls_io_proxy',
+    protected array $testExtensionsToLoad = [
+        'jweiland/walls_io_proxy',
     ];
 
     /**
@@ -36,14 +30,13 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
      */
     public function beUserIsAdministrator(): void
     {
-        /** @var BackendUserAuthentication|ObjectProphecy $backendUserAuthenticationProphecy */
-        $backendUserAuthenticationProphecy = $this->prophesize(BackendUserAuthentication::class);
-        $backendUserAuthenticationProphecy
-            ->isAdmin()
-            ->shouldBeCalled()
+        /** @var BackendUserAuthentication|MockObject $backendUserAuthenticationMock */
+        $backendUserAuthenticationMock = $this->createMock(BackendUserAuthentication::class);
+        $backendUserAuthenticationMock
+            ->method('isAdmin')
             ->willReturn(true);
 
-        $GLOBALS['BE_USER'] = $backendUserAuthenticationProphecy->reveal();
+        $GLOBALS['BE_USER'] = $backendUserAuthenticationMock;
         $GLOBALS['BE_USER']->user = ['uid' => 1];
 
         $view = new StandaloneView();
@@ -70,14 +63,13 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
      */
     public function beUserIsNotAdministrator(): void
     {
-        /** @var BackendUserAuthentication|ObjectProphecy $backendUserAuthenticationProphecy */
-        $backendUserAuthenticationProphecy = $this->prophesize(BackendUserAuthentication::class);
-        $backendUserAuthenticationProphecy
-            ->isAdmin()
-            ->shouldBeCalled()
+        /** @var BackendUserAuthentication|MockObject $backendUserAuthenticationMock */
+        $backendUserAuthenticationMock = $this->createMock(BackendUserAuthentication::class);
+        $backendUserAuthenticationMock
+            ->method('isAdmin')
             ->willReturn(false);
 
-        $GLOBALS['BE_USER'] = $backendUserAuthenticationProphecy->reveal();
+        $GLOBALS['BE_USER'] = $backendUserAuthenticationMock;
         $GLOBALS['BE_USER']->user = ['uid' => 1];
 
         $view = new StandaloneView();
@@ -104,10 +96,10 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
      */
     public function beUserHasNoUserRecord(): void
     {
-        /** @var BackendUserAuthentication|ObjectProphecy $backendUserAuthenticationProphecy */
-        $backendUserAuthenticationProphecy = $this->prophesize(BackendUserAuthentication::class);
+        /** @var BackendUserAuthentication|MockObject $backendUserAuthenticationMock */
+        $backendUserAuthenticationMock = $this->createMock(BackendUserAuthentication::class);
 
-        $GLOBALS['BE_USER'] = $backendUserAuthenticationProphecy->reveal();
+        $GLOBALS['BE_USER'] = $backendUserAuthenticationMock;
 
         $view = new StandaloneView();
         $view->setTemplateSource('
