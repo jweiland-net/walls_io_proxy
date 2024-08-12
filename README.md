@@ -47,7 +47,7 @@ After installing the extension, you need to configure it to start retrieving dat
 
 <!-- MARKDOWN LINKS & IMAGES -->
 
-[extension-build-shield]: https://poser.pugx.org/jweiland-net/walls_io_proxy/v/stable.svg?style=for-the-badge
+[extension-build-shield]: https://poser.pugx.org/jweiland/walls-io-proxy/v/stable.svg?style=for-the-badge
 
 [extension-downloads-badge]: https://poser.pugx.org/jweiland/walls-io-proxy/d/total.svg?style=for-the-badge
 
@@ -63,4 +63,4 @@ After installing the extension, you need to configure it to start retrieving dat
 
 [TYPO3-shield]: https://img.shields.io/badge/TYPO3-12.4-green.svg?style=for-the-badge&logo=typo3
 
-[LICENSE_BADGE]: http://poser.pugx.org/jweiland-net/walls_io_proxy/license?style=for-the-badge
+[LICENSE_BADGE]: https://img.shields.io/github/license/jweiland-net/walls_io_proxy?label=license&style=for-the-badge
