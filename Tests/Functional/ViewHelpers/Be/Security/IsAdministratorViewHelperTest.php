@@ -22,7 +22,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 class IsAdministratorViewHelperTest extends FunctionalTestCase
 {
     protected array $testExtensionsToLoad = [
-        'jweiland/walls_io_proxy',
+        'jweiland/walls-io-proxy',
     ];
 
     /**

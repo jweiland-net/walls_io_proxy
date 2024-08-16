@@ -40,7 +40,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
     protected $contentObjectRendererMock;
 
     protected array $testExtensionsToLoad = [
-        'jweiland/walls_io_proxy',
+        'jweiland/walls-io-proxy',
     ];
 
     protected function setUp(): void

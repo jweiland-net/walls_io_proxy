@@ -31,7 +31,7 @@ or errors.
 
 ### Affected Versions
 
-- All versions up to the current release
+All versions up to the current release
 
 ### Workaround
 
@@ -65,66 +65,66 @@ designed to handle 4-byte Unicode characters.
 
 2. **Update TYPO3 Connection Configuration**
 
-   Update the database connection settings in TYPO3 to use `utf8mb4`:
+    Update the database connection settings in TYPO3 to use `utf8mb4`:
 
-   - **For TYPO3 v9 and earlier:**
+    - **For TYPO3 v9 and earlier:**
 
-     Edit your `LocalConfiguration.php` file:
+        Edit your `LocalConfiguration.php` file:
 
-     ```php
-     'DB' => [
-         'Connections' => [
-             'Default' => [
-                 'driver' => 'mysqli',
-                 'dbname' => 'your_database_name',
-                 'user' => 'your_database_user',
-                 'password' => 'your_database_password',
-                 'host' => 'your_database_host',
-                 'port' => 3306,
-                 'charset' => 'utf8mb4',
-                 'collation' => 'utf8mb4_unicode_ci',
-             ],
-         ],
-     ],
-     ```
+        ```php
+        'DB' => [
+            'Connections' => [
+                'Default' => [
+                    'driver' => 'mysqli',
+                    'dbname' => 'your_database_name',
+                    'user' => 'your_database_user',
+                    'password' => 'your_database_password',
+                    'host' => 'your_database_host',
+                    'port' => 3306,
+                    'charset' => 'utf8mb4',
+                    'collation' => 'utf8mb4_unicode_ci',
+                ],
+            ],
+        ],
+        ```
 
-   - **For TYPO3 v10 and v11:**
+    - **For TYPO3 v10 and v11:**
 
-     Edit your `AdditionalConfiguration.php` file:
+        Edit your `AdditionalConfiguration.php` file:
 
-     ```php
-     $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['charset'] = 'utf8mb4';
-     $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['collation'] = 'utf8mb4_unicode_ci';
-     ```
+        ```php
+        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['charset'] = 'utf8mb4';
+        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['collation'] = 'utf8mb4_unicode_ci';
+        ```
 
-   - **For TYPO3 v12:**
+    - **For TYPO3 v12:**
 
-     Edit your `additional.php` file:
+        Edit your `additional.php` file:
 
-     ```php
-     $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['charset'] = 'utf8mb4';
-     $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['collation'] = 'utf8mb4_unicode_ci';
-     ```
+        ```php
+        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['charset'] = 'utf8mb4';
+        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['collation'] = 'utf8mb4_unicode_ci';
+        ```
 
-     Edit your configuration file in `config/system/settings.php`:
+        Edit your configuration file in `config/system/settings.php`:
 
-     ```php
-     return [
-         'DB' => [
-             'Connections' => [
-                 'Default' => [
-                     'charset' => 'utf8mb4',
-                     'collation' => 'utf8mb4_unicode_ci',
-                 ],
-             ],
-         ],
-     ];
-     ```
+        ```php
+        return [
+            'DB' => [
+                'Connections' => [
+                    'Default' => [
+                        'charset' => 'utf8mb4',
+                        'collation' => 'utf8mb4_unicode_ci',
+                    ],
+                ],
+            ],
+        ];
+        ```
 
 3. **Verify the Changes**
 
-   Ensure your database and tables are set to `utf8mb4`, and test your
-   extension thoroughly to confirm that it can handle emojis correctly.
+    Ensure your database and tables are set to `utf8mb4`, and test your
+    extension thoroughly to confirm that it can handle emojis correctly.
 
 ---
 

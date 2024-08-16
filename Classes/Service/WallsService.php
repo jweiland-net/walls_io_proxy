@@ -282,8 +282,8 @@ class WallsService
             $pathParts['fileext']
         );
 
-        if (!file_exists($filePath) && GeneralUtility::getUrl($resource)) {
-            GeneralUtility::writeFile($filePath, GeneralUtility::getUrl($resource));
+        if (!file_exists($filePath) && $responseContent = GeneralUtility::getUrl($resource)) {
+            GeneralUtility::writeFile($filePath, $responseContent);
         }
 
         return PathUtility::getAbsoluteWebPath($filePath);
