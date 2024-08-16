@@ -25,9 +25,15 @@ class DataHandlerTest extends UnitTestCase
 {
     protected DataHandler $subject;
 
-    protected Registry|MockObject $registryMock;
+    /**
+     * @var Registry|MockObject|(object&MockObject)|(Registry&object&MockObject)|(Registry&MockObject)
+     */
+    protected $registryMock;
 
-    protected WallsService|MockObject $wallsServiceMock;
+    /**
+     * @var WallsService|MockObject|(WallsService&MockObject)
+     */
+    protected $wallsServiceMock;
 
     protected function setUp(): void
     {
@@ -59,7 +65,7 @@ class DataHandlerTest extends UnitTestCase
     {
         // Set expectation that clearCache should not be called
         $this->wallsServiceMock
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('clearCache');
 
         $this->subject->clearCachePostProc([]);
@@ -72,7 +78,7 @@ class DataHandlerTest extends UnitTestCase
     {
         // Set expectation that clearCache should not be called
         $this->wallsServiceMock
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('clearCache');
 
         $this->subject->clearCachePostProc([
@@ -89,7 +95,7 @@ class DataHandlerTest extends UnitTestCase
 
         // Set expectation that clearCache should not be called
         $this->wallsServiceMock
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('clearCache');
 
         $this->subject->clearCachePostProc([
@@ -105,9 +111,9 @@ class DataHandlerTest extends UnitTestCase
         $_GET['contentRecordUid'] = 12;
 
         $this->wallsServiceMock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('clearCache')
-            ->with($this->equalTo(12));
+            ->with(self::equalTo(12));
 
         $this->subject->clearCachePostProc([
             'cacheCmd' => 'wallioproxy',

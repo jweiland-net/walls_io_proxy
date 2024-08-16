@@ -30,13 +30,14 @@
 		"source": "https://github.com/jweiland-net/walls_io_proxy"
 	},
 	"require": {
-		"typo3/cms-core": "^12.4.17"
+		"typo3/cms-core": ">=11.5.39 <=12.4.99"
 	},
 	"require-dev": {
 		"friendsofphp/php-cs-fixer": "^3.14",
+		"phpstan/phpstan": "^1.10",
 		"phpunit/phpunit": "^9.6",
 		"typo3/coding-standards": "^0.6",
-		"typo3/testing-framework": "^7.0.2"
+		"typo3/testing-framework": "^7.1.0"
 	},
 	"replace": {
 		"typo3-ter/walls_io_proxy": "self.version"
@@ -56,6 +57,7 @@
 		"vendor-dir": ".Build/vendor",
 		"bin-dir": ".Build/bin",
 		"allow-plugins": {
+			"ergebnis/composer-normalize": true,
 			"typo3/class-alias-loader": true,
 			"typo3/cms-composer-installers": true
 		}
@@ -64,12 +66,7 @@
 		"typo3/cms": {
 			"extension-key": "walls_io_proxy",
 			"app-dir": ".Build",
-			"web-dir": ".Build/public"
+			"web-dir": ".Build/web"
 		}
-	},
-	"scripts": {
-		"ci:php:fix": ".Build/bin/php-cs-fixer --config=Build/php-cs-fixer/config.php fix Classes Tests",
-		"ci:php:lint": "find *.php Classes Configuration Tests -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l",
-		"ci:php:fixer": ".Build/bin/php-cs-fixer --config=Build/php-cs-fixer/config.php fix --dry-run -v --show-progress=dots --diff Classes Tests"
 	}
 }

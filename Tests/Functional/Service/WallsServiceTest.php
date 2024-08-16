@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\Service;
 
-use JWeiland\Pforum\Domain\Model\Post;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
@@ -19,7 +18,6 @@ use JWeiland\WallsIoProxy\Service\WallsService;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Registry;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -31,7 +29,10 @@ class WallsServiceTest extends FunctionalTestCase
 
     protected Registry $registry;
 
-    protected WallsIoClient|MockObject $wallsIoClientMock;
+    /**
+     * @var WallsIoClient|MockObject|(WallsIoClient&MockObject)
+     */
+    protected $wallsIoClientMock;
 
     protected array $processedDataForPostsRequest = [
         'data' => [
@@ -62,7 +63,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         $GLOBALS['LANG'] = $this->getMockBuilder(LanguageService::class)
             ->disableOriginalConstructor()
-            ->getMock();;
+            ->getMock();
 
         $this->registry = new Registry();
         $this->wallsIoClientMock = $this->getMockBuilder(WallsIoClient::class)
@@ -139,7 +140,7 @@ class WallsServiceTest extends FunctionalTestCase
     {
         $this->wallsIoClientMock
             ->method('processRequest')
-            ->with($this->isInstanceOf(PostsRequest::class))
+            ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
                 [
                     'status' => 'success',
@@ -173,7 +174,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         $this->wallsIoClientMock
             ->method('processRequest')
-            ->with($this->isInstanceOf(PostsRequest::class))
+            ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(['status' => 'error']);
         $this->subject = new WallsService($this->registry, $this->wallsIoClientMock);
         $result = $this->subject->getWallPosts(
@@ -207,7 +208,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         $this->wallsIoClientMock
             ->method('processRequest')
-            ->with($this->isInstanceOf(PostsRequest::class))
+            ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
                 [
                     'status' => 'success',
@@ -254,7 +255,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         $this->wallsIoClientMock
             ->method('processRequest')
-            ->with($this->isInstanceOf(PostsRequest::class))
+            ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
                 [
                     'status' => 'success',
@@ -296,7 +297,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         $this->wallsIoClientMock
             ->method('processRequest')
-            ->with($this->isInstanceOf(PostsRequest::class))
+            ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
                 [
                     'status' => 'success',

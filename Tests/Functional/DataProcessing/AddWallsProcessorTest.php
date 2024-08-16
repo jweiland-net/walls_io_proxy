@@ -27,11 +27,17 @@ class AddWallsProcessorTest extends FunctionalTestCase
 {
     protected AddWallsProcessor $subject;
 
-    protected WallsService|MockObject $wallsServiceMock;
+    /**
+     * @var WallsService|MockObject|(WallsService&object&MockObject)|(WallsService&MockObject)|(object&MockObject)
+     */
+    protected $wallsServiceMock;
 
     protected FlexFormService $flexFormService;
 
-    protected ContentObjectRenderer|MockObject $contentObjectRendererMock;
+    /**
+     * @var ContentObjectRenderer|MockObject
+     */
+    protected $contentObjectRendererMock;
 
     protected array $testExtensionsToLoad = [
         'jweiland/walls_io_proxy',
@@ -82,7 +88,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
 
         $this->wallsServiceMock
             ->method('getWallPosts')
-            ->with($this->isInstanceOf(PluginConfiguration::class))
+            ->with(self::isInstanceOf(PluginConfiguration::class))
             ->willReturn([]);
 
         self::assertSame(
@@ -105,7 +111,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
 
         $this->wallsServiceMock
             ->method('getWallPosts')
-            ->with($this->isInstanceOf(PluginConfiguration::class))
+            ->with(self::isInstanceOf(PluginConfiguration::class))
             ->willReturn([]);
 
         self::assertSame(
@@ -146,11 +152,10 @@ class AddWallsProcessorTest extends FunctionalTestCase
 
         $this->wallsServiceMock
             ->method('getWallPosts')
-            ->with($this->callback(function (PluginConfiguration $config) {
+            ->with(self::callback(function (PluginConfiguration $config) {
                 return $config->getAccessToken() === 'ABC123';
             }))
             ->willReturn([]);
-
 
         self::assertSame(
             $expectedProcessedData,
@@ -177,7 +182,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         $this->wallsServiceMock
             ->method('getWallPosts')
             ->with(
-                $this->callback(function (PluginConfiguration $pluginConfiguration) {
+                self::callback(function (PluginConfiguration $pluginConfiguration) {
                     return $pluginConfiguration->getRecordUid() === 1;
                 })
             )
@@ -221,7 +226,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
 
         $this->wallsServiceMock
             ->method('getWallPosts')
-            ->with($this->isInstanceOf(PluginConfiguration::class))
+            ->with(self::isInstanceOf(PluginConfiguration::class))
             ->willReturn($walls);
 
         self::assertSame(

@@ -28,9 +28,15 @@ class WallsIoClientTest extends UnitTestCase
 {
     protected WallsIoClient $subject;
 
-    protected RequestFactory|MockObject $requestFactoryMock;
+    /**
+     * @var RequestFactory|MockObject|(RequestFactory&MockObject)
+     */
+    protected $requestFactoryMock;
 
-    protected MessageHelper|MockObject $messageHelperMock;
+    /**
+     * @var MessageHelper|MockObject|(MessageHelper&MockObject)
+     */
+    protected $messageHelperMock;
 
     protected function setUp(): void
     {
@@ -256,7 +262,7 @@ class WallsIoClientTest extends UnitTestCase
             ->getMock();
 
         // Configure the stream mock to return the JSON string when __toString() is called
-        $streamMock->expects($this->once())
+        $streamMock->expects(self::once())
             ->method('__toString')
             ->willReturn(
                 json_encode([
@@ -315,7 +321,7 @@ class WallsIoClientTest extends UnitTestCase
             ->getMock();
 
         // Configure the stream mock to return the JSON string when __toString() is called
-        $streamMock->expects($this->once())
+        $streamMock->expects(self::once())
             ->method('__toString')
             ->willReturn(
                 json_encode([

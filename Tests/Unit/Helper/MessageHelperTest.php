@@ -27,11 +27,20 @@ class MessageHelperTest extends UnitTestCase
 {
     protected string $queueIdentifier = 'core.template.flashMessages';
 
-    protected BackendUserAuthentication|MockObject $backendUserAuthenticationMock;
+    /**
+     * @var BackendUserAuthentication|MockObject
+     */
+    protected $backendUserAuthenticationMock;
 
-    protected FlashMessageService|MockObject $flashMessageServiceMock;
+    /**
+     * @var FlashMessageService|MockObject|(FlashMessageService&MockObject)
+     */
+    protected $flashMessageServiceMock;
 
-    protected FlashMessageQueue|MockObject $flashMessageQueueMock;
+    /**
+     * @var FlashMessageQueue|MockObject|(FlashMessageQueue&MockObject)
+     */
+    protected $flashMessageQueueMock;
 
     protected MessageHelper $subject;
 
@@ -45,7 +54,7 @@ class MessageHelperTest extends UnitTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->flashMessageServiceMock->expects($this->once())
+        $this->flashMessageServiceMock->expects(self::once())
             ->method('getMessageQueueByIdentifier')
             ->willReturn($this->flashMessageQueueMock);
 
@@ -87,7 +96,7 @@ class MessageHelperTest extends UnitTestCase
         $this->flashMessageQueueMock
             ->method('enqueue')
             ->with(
-                $this->callback(static function (FlashMessage $flashMessage) {
+                self::callback(static function (FlashMessage $flashMessage) {
                     return $flashMessage->getTitle() === 'header'
                         && $flashMessage->getMessage() === 'hello'
                         && $flashMessage->getSeverity() === ContextualFeedbackSeverity::OK
