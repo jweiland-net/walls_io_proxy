@@ -18,7 +18,7 @@ use JWeiland\WallsIoProxy\Request\PostsRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\Response;
-use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
+use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
@@ -83,7 +83,7 @@ class WallsIoClientTest extends UnitTestCase
             ->with(
                 'URI is empty or contains invalid chars. URI: https://www.jweiland.net',
                 'Invalid request URI',
-                ContextualFeedbackSeverity::ERROR
+                FlashMessage::ERROR
             );
 
         self::assertSame(
@@ -122,7 +122,7 @@ class WallsIoClientTest extends UnitTestCase
             ->with(
                 'Walls.io responses with a status code different from 200',
                 'Status Code: 500',
-                ContextualFeedbackSeverity::ERROR
+                FlashMessage::ERROR
             );
         $this->messageHelperMock
             ->method('hasErrorMessages')
@@ -170,7 +170,7 @@ class WallsIoClientTest extends UnitTestCase
             ->with(
                 'Server down. Uri: https://api.walls.io?fields=test&access_token=XXX&since=123',
                 'Error Code: 564',
-                ContextualFeedbackSeverity::ERROR
+                FlashMessage::ERROR
             );
 
         self::assertSame(
@@ -225,7 +225,7 @@ class WallsIoClientTest extends UnitTestCase
             ->with(
                 'The response of walls.io was not a valid JSON response.',
                 'Invalid JSON response',
-                ContextualFeedbackSeverity::ERROR
+                FlashMessage::ERROR
             );
         $this->messageHelperMock
             ->method('hasErrorMessages')
@@ -287,7 +287,7 @@ class WallsIoClientTest extends UnitTestCase
             ->with(
                 'broken',
                 'error',
-                ContextualFeedbackSeverity::ERROR
+                FlashMessage::ERROR
             );
 
         $this->messageHelperMock

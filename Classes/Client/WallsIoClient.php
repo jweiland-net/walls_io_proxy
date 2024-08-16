@@ -15,7 +15,7 @@ use JWeiland\WallsIoProxy\Helper\MessageHelper;
 use JWeiland\WallsIoProxy\Request\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
-use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
+use TYPO3\CMS\Core\Messaging\FlashMessage;
 
 /**
  * This is the walls.io client which will send the request to the walls.io server
@@ -38,13 +38,16 @@ class WallsIoClient
         $this->messageHelper = $messageHelper;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function processRequest(RequestInterface $request): array
     {
         if (!$request->isValidRequest()) {
             $this->messageHelper->addFlashMessage(
                 'URI is empty or contains invalid chars. URI: ' . $request->buildUri(),
                 'Invalid request URI',
-                ContextualFeedbackSeverity::ERROR
+                FlashMessage::ERROR
             );
 
             return [];
@@ -65,7 +68,7 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 str_replace($request->getParameter('access_token'), 'XXX', $exception->getMessage()),
                 'Error Code: ' . $exception->getCode(),
-                ContextualFeedbackSeverity::ERROR
+                FlashMessage::ERROR
             );
         }
 
@@ -86,7 +89,7 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 'Walls.io responses with a status code different from 200',
                 'Status Code: ' . $response->getStatusCode(),
-                ContextualFeedbackSeverity::ERROR
+                FlashMessage::ERROR
             );
         }
     }
@@ -94,7 +97,7 @@ class WallsIoClient
     /**
      * Check processed response from walls.io for errors
      *
-     * @param array|null $response
+     * @param array<string, mixed>|null $response
      */
     protected function hasResponseErrors(array $response = null): bool
     {
@@ -102,7 +105,7 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 'The response of walls.io was not a valid JSON response.',
                 'Invalid JSON response',
-                ContextualFeedbackSeverity::ERROR
+                FlashMessage::ERROR
             );
 
             return true;
@@ -114,7 +117,7 @@ class WallsIoClient
             $this->messageHelper->addFlashMessage(
                 implode($response['info']),
                 $response['status'],
-                ContextualFeedbackSeverity::ERROR
+                FlashMessage::ERROR
             );
 
             return true;

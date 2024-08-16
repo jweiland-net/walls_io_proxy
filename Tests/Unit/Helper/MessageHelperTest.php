@@ -17,7 +17,6 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
-use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
@@ -80,11 +79,11 @@ class MessageHelperTest extends UnitTestCase
     public function dataProviderForAllSeverities(): array
     {
         return [
-            'OK' => [ContextualFeedbackSeverity::OK, 'Ok'],
-            'ERROR' => [ContextualFeedbackSeverity::ERROR, 'Error'],
-            'INFO' => [ContextualFeedbackSeverity::INFO, 'Info'],
-            'NOTICE' => [ContextualFeedbackSeverity::NOTICE, 'Notice'],
-            'WARNING' => [ContextualFeedbackSeverity::WARNING, 'Warning'],
+            'OK' => [FlashMessage::OK, 'Ok'],
+            'ERROR' => [FlashMessage::ERROR, 'Error'],
+            'INFO' => [FlashMessage::INFO, 'Info'],
+            'NOTICE' => [FlashMessage::NOTICE, 'Notice'],
+            'WARNING' => [FlashMessage::WARNING, 'Warning'],
         ];
     }
 
@@ -99,7 +98,7 @@ class MessageHelperTest extends UnitTestCase
                 self::callback(static function (FlashMessage $flashMessage) {
                     return $flashMessage->getTitle() === 'header'
                         && $flashMessage->getMessage() === 'hello'
-                        && $flashMessage->getSeverity() === ContextualFeedbackSeverity::OK
+                        && $flashMessage->getSeverity() === FlashMessage::OK
                         && $flashMessage->isSessionMessage() === true;
                 })
             );
@@ -148,7 +147,7 @@ class MessageHelperTest extends UnitTestCase
         $flashMessage = new FlashMessage(
             'message',
             'title',
-            ContextualFeedbackSeverity::OK,
+            FlashMessage::OK,
             true
         );
 
@@ -179,7 +178,7 @@ class MessageHelperTest extends UnitTestCase
      * @test
      * @dataProvider dataProviderForAllSeverities
      */
-    public function getFlashMessagesBySeverityAndFlushWillReturnFlashMessageWithSeverity(ContextualFeedbackSeverity $severity, string $severityName): void
+    public function getFlashMessagesBySeverityAndFlushWillReturnFlashMessageWithSeverity(int $severity, string $severityName): void
     {
         $flashMessage = new FlashMessage(
             'message',
@@ -203,7 +202,7 @@ class MessageHelperTest extends UnitTestCase
      * @test
      * @dataProvider dataProviderForAllSeverities
      */
-    public function hasSeverityMessagesWithMessagesWillReturnTrue(ContextualFeedbackSeverity $severity, string $severityName): void
+    public function hasSeverityMessagesWithMessagesWillReturnTrue(int $severity, string $severityName): void
     {
         $flashMessage = new FlashMessage(
             'message',
@@ -228,7 +227,7 @@ class MessageHelperTest extends UnitTestCase
      * @test
      * @dataProvider dataProviderForAllSeverities
      */
-    public function hasSeverityMessagesWithoutMessagesWillReturnFalse(ContextualFeedbackSeverity $severity, string $severityName): void
+    public function hasSeverityMessagesWithoutMessagesWillReturnFalse(int $severity, string $severityName): void
     {
         $this->flashMessageQueueMock
             ->method('getAllMessages')
@@ -246,7 +245,7 @@ class MessageHelperTest extends UnitTestCase
      * @test
      * @dataProvider dataProviderForAllSeverities
      */
-    public function getWarningMessagesWithoutFlushWillReturnAllFlashMessages(ContextualFeedbackSeverity $severity, string $severityName): void
+    public function getWarningMessagesWithoutFlushWillReturnAllFlashMessages(int $severity, string $severityName): void
     {
         $this->flashMessageQueueMock
             ->method('getAllMessagesAndFlush')
@@ -266,7 +265,7 @@ class MessageHelperTest extends UnitTestCase
      * @test
      * @dataProvider dataProviderForAllSeverities
      */
-    public function getErrorMessagesWithFlushWillReturnAllFlashMessages(ContextualFeedbackSeverity $severity, string $severityName): void
+    public function getErrorMessagesWithFlushWillReturnAllFlashMessages(int $severity, string $severityName): void
     {
         $this->flashMessageQueueMock
             ->method('getAllMessagesAndFlush')

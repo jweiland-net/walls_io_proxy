@@ -14,7 +14,6 @@ namespace JWeiland\WallsIoProxy\Helper;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
-use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -30,7 +29,7 @@ class MessageHelper
         $this->flashMessageService = $flashMessageService;
     }
 
-    public function addFlashMessage(string $message, string $title = '', ContextualFeedbackSeverity $severity = ContextualFeedbackSeverity::OK): void
+    public function addFlashMessage(string $message, string $title = '', int $severity = FlashMessage::OK): void
     {
         // We activate storeInSession, so that messages can be displayed when click on Save&Close button.
         $flashMessage = GeneralUtility::makeInstance(
@@ -62,19 +61,19 @@ class MessageHelper
     }
 
     /**
-     * @param ContextualFeedbackSeverity $severity Must be one of the constants in AbstractMessage class
+     * @param int $severity Must be one of the constants in AbstractMessage class
      * @return FlashMessage[]
      */
-    protected function getFlashMessagesBySeverity(ContextualFeedbackSeverity $severity): array
+    protected function getFlashMessagesBySeverity(int $severity): array
     {
         return $this->getFlashMessageQueue()->getAllMessages($severity);
     }
 
     /**
-     * @param ContextualFeedbackSeverity $severity Must be one of the constants in AbstractMessage class
+     * @param int $severity Must be one of the constants in AbstractMessage class
      * @return FlashMessage[]
      */
-    public function getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity $severity): array
+    public function getFlashMessagesBySeverityAndFlush(int $severity): array
     {
         return $this->getFlashMessageQueue()->getAllMessagesAndFlush($severity);
     }
@@ -90,10 +89,10 @@ class MessageHelper
     public function getErrorMessages(bool $flush = true): array
     {
         if ($flush) {
-            return $this->getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity::ERROR);
+            return $this->getFlashMessagesBySeverityAndFlush(FlashMessage::ERROR);
         }
 
-        return $this->getFlashMessagesBySeverity(ContextualFeedbackSeverity::ERROR);
+        return $this->getFlashMessagesBySeverity(FlashMessage::ERROR);
     }
 
     public function hasWarningMessages(): bool
@@ -107,10 +106,10 @@ class MessageHelper
     public function getWarningMessages(bool $flush = true): array
     {
         if ($flush) {
-            return $this->getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity::WARNING);
+            return $this->getFlashMessagesBySeverityAndFlush(FlashMessage::WARNING);
         }
 
-        return $this->getFlashMessagesBySeverity(ContextualFeedbackSeverity::WARNING);
+        return $this->getFlashMessagesBySeverity(FlashMessage::WARNING);
     }
 
     public function hasOkMessages(): bool
@@ -124,10 +123,10 @@ class MessageHelper
     public function getOkMessages(bool $flush = true): array
     {
         if ($flush) {
-            return $this->getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity::OK);
+            return $this->getFlashMessagesBySeverityAndFlush(FlashMessage::OK);
         }
 
-        return $this->getFlashMessagesBySeverity(ContextualFeedbackSeverity::OK);
+        return $this->getFlashMessagesBySeverity(FlashMessage::OK);
     }
 
     public function hasInfoMessages(): bool
@@ -141,10 +140,10 @@ class MessageHelper
     public function getInfoMessages(bool $flush = true): array
     {
         if ($flush) {
-            return $this->getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity::INFO);
+            return $this->getFlashMessagesBySeverityAndFlush(FlashMessage::INFO);
         }
 
-        return $this->getFlashMessagesBySeverity(ContextualFeedbackSeverity::INFO);
+        return $this->getFlashMessagesBySeverity(FlashMessage::INFO);
     }
 
     public function hasNoticeMessages(): bool
@@ -158,10 +157,10 @@ class MessageHelper
     public function getNoticeMessages(bool $flush = true): array
     {
         if ($flush) {
-            return $this->getFlashMessagesBySeverityAndFlush(ContextualFeedbackSeverity::NOTICE);
+            return $this->getFlashMessagesBySeverityAndFlush(FlashMessage::NOTICE);
         }
 
-        return $this->getFlashMessagesBySeverity(ContextualFeedbackSeverity::NOTICE);
+        return $this->getFlashMessagesBySeverity(FlashMessage::NOTICE);
     }
 
     protected function getFlashMessageQueue(): FlashMessageQueue

@@ -29,6 +29,8 @@ class WallsService
 {
     /**
      * Fields to get from the API
+     *
+     * @var array<string> $fields
      */
     protected array $fields = [
         'id',
@@ -55,6 +57,9 @@ class WallsService
         $this->client = $client;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getWallPosts(PluginConfiguration $pluginConfiguration): array
     {
         if (!$this->isValidPluginConfiguration($pluginConfiguration)) {
@@ -81,6 +86,9 @@ class WallsService
         return $wallPosts;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getUncachedRequestFromWallsIO(RequestInterface $wallsIoRequest): array
     {
         $response = $this->client->processRequest($wallsIoRequest);
@@ -97,6 +105,9 @@ class WallsService
         return [];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getStoredWallPostsFromRegistry(PluginConfiguration $pluginConfiguration): array
     {
         return $this->registry->get(
@@ -106,6 +117,9 @@ class WallsService
         );
     }
 
+    /**
+     * @param array<string, mixed> $wallPosts
+     */
     protected function setWallPostsToRegistry(array $wallPosts, PluginConfiguration $pluginConfiguration): void
     {
         $this->registry->set(
@@ -201,6 +215,10 @@ class WallsService
         return $targetDirectory;
     }
 
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
     protected function getSanitizedPost(array $post, PluginConfiguration $pluginConfiguration): array
     {
         if (array_key_exists('created_timestamp', $post)) {

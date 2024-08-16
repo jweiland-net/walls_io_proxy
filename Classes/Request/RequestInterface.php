@@ -20,8 +20,14 @@ interface RequestInterface
 
     public function isValidRequest(): bool;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getParameters(): array;
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function setParameters(array $parameters): void;
 
     /**
@@ -40,4 +46,13 @@ interface RequestInterface
      * Merge all parameters to build an URI
      */
     public function buildUri(): string;
+
+    /**
+     * @param array<string, mixed> $fields
+     */
+    public function setFields(array $fields): void;
+
+    public function setAccessToken(string $accessToken): void;
+
+    public function setLimit(int $limit): void;
 }

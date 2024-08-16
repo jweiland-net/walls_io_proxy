@@ -29,6 +29,8 @@ class DataHandler
 
     /**
      * Removes the cache of one specific walls_io_proxy Plugin from sys_registry
+     *
+     * @param array<string, mixed> $params
      */
     public function clearCachePostProc(array $params): void
     {

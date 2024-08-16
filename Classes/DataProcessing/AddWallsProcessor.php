@@ -37,10 +37,10 @@ class AddWallsProcessor implements DataProcessorInterface
      * Process data of a record to resolve File objects to the view
      *
      * @param ContentObjectRenderer $cObj The data of the content element or page
-     * @param array $contentObjectConfiguration The configuration of Content Object
-     * @param array $processorConfiguration The configuration of this processor
-     * @param array $processedData Key/value store of processed data (e.g. to be passed to a Fluid View)
-     * @return array the processed data as key/value store
+     * @param array<string, mixed> $contentObjectConfiguration The configuration of Content Object
+     * @param array<string, mixed> $processorConfiguration The configuration of this processor
+     * @param array<string, mixed> $processedData Key/value store of processed data (e.g. to be passed to a Fluid View)
+     * @return array<string, mixed> the processed data as key/value store
      * @throws \Exception
      */
     public function process(
@@ -64,6 +64,9 @@ class AddWallsProcessor implements DataProcessorInterface
         return $processedData;
     }
 
+    /**
+     * @param array<string, mixed> $processedData
+     */
     protected function getPluginConfiguration(array $processedData): PluginConfiguration
     {
         return GeneralUtility::makeInstance(
