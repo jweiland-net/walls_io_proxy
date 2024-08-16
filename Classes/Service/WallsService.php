@@ -31,6 +31,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class WallsService
 {
+<<<<<<< HEAD
     protected string $targetDirectory = 'typo3temp/assets/walls_io_proxy';
     protected Registry $registry;
     protected WallsIoClient $client;
@@ -38,6 +39,11 @@ class WallsService
 
     /**
      * Fields to get from the API
+=======
+    /**
+     * Fields to get from the API
+     *
+>>>>>>> 175686d ([TASK] Fixed phpStan Level 6 Fixes)
      * @var array<string> $fields
      */
     protected array $fields = [

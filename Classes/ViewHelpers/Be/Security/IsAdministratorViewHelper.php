@@ -24,6 +24,11 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
 {
     /**
      * This method decides, if the current logged-in user is an administrator
+     *
+     * @param mixed $arguments ViewHelper arguments to evaluate the condition for this ViewHelper,
+     * allows for flexibility in overriding this method.
+     *
+     * @return bool Returns true if the user is an administrator, otherwise false.
      */
     protected static function evaluateCondition($arguments = null): bool
     {
