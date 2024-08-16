@@ -281,4 +281,61 @@ class WallsIoClientTest extends UnitTestCase
             $this->subject->processRequest($postsRequest)
         );
     }
+
+    /**
+     * @test
+     */
+    public function processRequestReturnsWalls(): void
+    {
+        /** @var PostsRequest|MockObject $postsRequest */
+        $postsRequest = $this->getMockBuilder(PostsRequest::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $postsRequest
+            ->method('buildUri')
+            ->willReturn('https://www.jweiland.net');
+        $postsRequest
+            ->method('isValidRequest')
+            ->willReturn(true);
+
+        $streamMock = $this->getMockBuilder(Stream::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        // Configure the stream mock to return the JSON string when __toString() is called
+        $streamMock->expects(self::once())
+            ->method('__toString')
+            ->willReturn(
+                json_encode([
+                    'status' => 'success',
+                ], JSON_THROW_ON_ERROR)
+            );
+
+        /** @var Response|MockObject $clientResponse */
+        $clientResponse = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $clientResponse
+            ->method('getStatusCode')
+            ->willReturn(200);
+        $clientResponse
+            ->method('getBody')
+            ->willReturn($streamMock);
+
+        $this->requestFactoryMock
+            ->method('request')
+            ->with('https://www.jweiland.net')
+            ->willReturn($clientResponse);
+
+        $this->messageHelperMock
+            ->method('hasErrorMessages')
+            ->willReturn(false);
+
+        self::assertSame(
+            [
+                'status' => 'success',
+            ],
+            $this->subject->processRequest($postsRequest)
+        );
+    }
 }

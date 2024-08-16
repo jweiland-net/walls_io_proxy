@@ -68,5 +68,5 @@
 			"app-dir": ".Build",
 			"web-dir": ".Build/web"
 		}
-	},
+	}
 }
