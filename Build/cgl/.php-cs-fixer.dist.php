@@ -50,9 +50,22 @@ return (new Config())
         'function_declaration' => [
             'closure_fn_spacing' => 'none',
         ],
-        'function_to_constant' => ['functions' => ['get_called_class', 'get_class', 'get_class_this', 'php_sapi_name', 'phpversion', 'pi']],
+        'function_to_constant' => [
+            'functions' => [
+                'get_called_class',
+                'get_class',
+                'get_class_this',
+                'php_sapi_name',
+                'phpversion',
+                'pi',
+            ],
+        ],
         'type_declaration_spaces' => true,
-        'global_namespace_import' => ['import_classes' => false, 'import_constants' => false, 'import_functions' => false],
+        'global_namespace_import' => [
+            'import_classes' => false,
+            'import_constants' => false,
+            'import_functions' => false,
+        ],
         'list_syntax' => ['syntax' => 'short'],
         // @todo: Can be dropped once we enable @PER-CS2.0
         'method_argument_space' => true,
@@ -95,7 +108,8 @@ return (new Config())
         'yoda_style' => ['equal' => false, 'identical' => false, 'less_and_greater' => false],
 
         // We need this for documentation!
-        'no_useless_else' => false, // We want to preserve else with comments only
+        'no_useless_else' => false,
+        // We want to preserve else with comments only
 
         // Add this rule to convert FQCN to use statements
         'full_opening_tag' => true,
