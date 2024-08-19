@@ -15,6 +15,7 @@ use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Hook\DataHandler;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
@@ -35,12 +36,18 @@ class DataHandlerTest extends UnitTestCase
      */
     protected $wallsServiceMock;
 
+    /**
+     * @var ServerRequest|MockObject|(ServerRequest&MockObject)
+     */
+    protected $requestMock;
+
     protected function setUp(): void
     {
         $this->registryMock = $this->createMock(Registry::class);
         $this->clientMock = $this->createMock(WallsIoClient::class);
+        $this->requestMock = $this->createMock(ServerRequest::class);
         $this->wallsServiceMock = $this->getMockBuilder(WallsService::class)
-            ->setConstructorArgs([$this->registryMock, $this->clientMock])
+            ->setConstructorArgs([$this->registryMock, $this->clientMock, $this->requestMock])
             ->getMock();
         $this->subject = new DataHandler(
             $this->wallsServiceMock
