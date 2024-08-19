@@ -308,7 +308,6 @@ class WallsServiceTest extends FunctionalTestCase
                 ]
             );
 
-
         $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
         $result = $this->subject->getWallPosts(
             new PluginConfiguration($this->processedDataForPostsRequest)

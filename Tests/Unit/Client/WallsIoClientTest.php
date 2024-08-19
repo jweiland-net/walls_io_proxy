@@ -18,10 +18,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\Response;
-<<<<<<< HEAD
-=======
-use TYPO3\CMS\Core\Messaging\FlashMessage;
->>>>>>> 175686d ([TASK] Fixed phpStan Level 6 Fixes)
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
@@ -84,14 +80,8 @@ class WallsIoClientTest extends UnitTestCase
             ->expects(self::once())
             ->method('error')
             ->with(
-<<<<<<< HEAD
                 'Request URI is empty or contains invalid chars.',
                 ['uri' => 'https://www.jweiland.net']
-=======
-                'URI is empty or contains invalid chars. URI: https://www.jweiland.net',
-                'Invalid request URI',
-                FlashMessage::ERROR
->>>>>>> 175686d ([TASK] Fixed phpStan Level 6 Fixes)
             );
 
         self::assertSame(
@@ -130,12 +120,7 @@ class WallsIoClientTest extends UnitTestCase
             ->method('error')
             ->with(
                 'Walls.io responses with a status code different from 200',
-<<<<<<< HEAD
                 ['Status Code' => 500]
-=======
-                'Status Code: 500',
-                FlashMessage::ERROR
->>>>>>> 175686d ([TASK] Fixed phpStan Level 6 Fixes)
             );
 
         self::assertSame(
@@ -180,12 +165,7 @@ class WallsIoClientTest extends UnitTestCase
             ->method('error')
             ->with(
                 'Server down. Uri: https://api.walls.io?fields=test&access_token=XXX&since=123',
-<<<<<<< HEAD
                 ['Exception Code' => 564]
-=======
-                'Error Code: 564',
-                FlashMessage::ERROR
->>>>>>> 175686d ([TASK] Fixed phpStan Level 6 Fixes)
             );
 
         self::assertSame(
@@ -235,23 +215,10 @@ class WallsIoClientTest extends UnitTestCase
             ->with('https://www.jweiland.net')
             ->willReturn($clientResponse);
 
-<<<<<<< HEAD
         $this->loggerMock
             ->expects(self::once())
             ->method('error')
             ->with('The response of walls.io was not a valid JSON response.');
-=======
-        $this->messageHelperMock
-            ->method('addFlashMessage')
-            ->with(
-                'The response of walls.io was not a valid JSON response.',
-                'Invalid JSON response',
-                FlashMessage::ERROR
-            );
-        $this->messageHelperMock
-            ->method('hasErrorMessages')
-            ->willReturn(false);
->>>>>>> 175686d ([TASK] Fixed phpStan Level 6 Fixes)
 
         self::assertSame(
             [],
@@ -304,24 +271,10 @@ class WallsIoClientTest extends UnitTestCase
             ->with('https://www.jweiland.net')
             ->willReturn($clientResponse);
 
-<<<<<<< HEAD
         $this->loggerMock
             ->expects(self::once())
             ->method('error')
             ->with('broken', ['status' => 'error']);
-=======
-        $this->messageHelperMock
-            ->method('addFlashMessage')
-            ->with(
-                'broken',
-                'error',
-                FlashMessage::ERROR
-            );
-
-        $this->messageHelperMock
-            ->method('hasErrorMessages')
-            ->willReturn(false);
->>>>>>> 175686d ([TASK] Fixed phpStan Level 6 Fixes)
 
         self::assertSame(
             [],
@@ -373,10 +326,6 @@ class WallsIoClientTest extends UnitTestCase
             ->method('request')
             ->with('https://www.jweiland.net')
             ->willReturn($clientResponse);
-
-        $this->messageHelperMock
-            ->method('hasErrorMessages')
-            ->willReturn(false);
 
         self::assertSame(
             [
