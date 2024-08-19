@@ -1,8 +1,8 @@
 {
 	"name": "jweiland/walls-io-proxy",
-	"type": "typo3-cms-extension",
 	"description": "Cache and Proxy for walls.io, so no Cookie will be set on Client",
 	"license": "GPL-2.0-or-later",
+	"type": "typo3-cms-extension",
 	"keywords": [
 		"typo3",
 		"TYPO3 CMS",
@@ -11,7 +11,6 @@
 		"cache",
 		"proxy"
 	],
-	"homepage": "https://jweiland.net",
 	"authors": [
 		{
 			"name": "Stefan Froemken",
@@ -24,6 +23,7 @@
 			"role": "Senior Developer"
 		}
 	],
+	"homepage": "https://jweiland.net",
 	"support": {
 		"email": "projects@jweiland.net",
 		"issues": "https://github.com/jweiland-net/walls_io_proxy/issues",
@@ -33,6 +33,7 @@
 		"typo3/cms-core": "^11.5.38 || ^12.4.17"
 	},
 	"require-dev": {
+		"ergebnis/composer-normalize": "~2.42.0",
 		"friendsofphp/php-cs-fixer": "^3.14",
 		"phpstan/phpstan": "^1.10",
 		"phpunit/phpunit": "^9.6",
@@ -53,19 +54,19 @@
 		}
 	},
 	"config": {
-		"sort-packages": true,
-		"vendor-dir": ".Build/vendor",
-		"bin-dir": ".Build/bin",
 		"allow-plugins": {
 			"ergebnis/composer-normalize": true,
 			"typo3/class-alias-loader": true,
 			"typo3/cms-composer-installers": true
-		}
+		},
+		"bin-dir": ".Build/bin",
+		"sort-packages": true,
+		"vendor-dir": ".Build/vendor"
 	},
 	"extra": {
 		"typo3/cms": {
-			"extension-key": "walls_io_proxy",
 			"app-dir": ".Build",
+			"extension-key": "walls_io_proxy",
 			"web-dir": ".Build/web"
 		}
 	}
