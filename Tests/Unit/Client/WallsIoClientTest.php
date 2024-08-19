@@ -13,9 +13,9 @@ namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
 use GuzzleHttp\Psr7\Stream;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
-use JWeiland\WallsIoProxy\Helper\MessageHelper;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
@@ -34,9 +34,9 @@ class WallsIoClientTest extends UnitTestCase
     protected $requestFactoryMock;
 
     /**
-     * @var MessageHelper|MockObject|(MessageHelper&MockObject)
+     * @var LoggerInterface|MockObject|(LoggerInterface&MockObject)
      */
-    protected $messageHelperMock;
+    protected $loggerMock;
 
     protected function setUp(): void
     {
@@ -44,13 +44,12 @@ class WallsIoClientTest extends UnitTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->messageHelperMock = $this->getMockBuilder(MessageHelper::class)
-            ->disableOriginalConstructor()
+        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
             ->getMock();
 
         $this->subject = new WallsIoClient(
             $this->requestFactoryMock,
-            $this->messageHelperMock
+            $this->loggerMock
         );
     }
 
@@ -59,7 +58,7 @@ class WallsIoClientTest extends UnitTestCase
         unset(
             $this->subject,
             $this->requestFactoryMock,
-            $this->messageHelperMock
+            $this->loggerMock
         );
         parent::tearDown();
     }
@@ -67,7 +66,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidRequestAddsFlashMessage(): void
+    public function processRequestWithInvalidRequestLogsError(): void
     {
         /** @var PostsRequest|MockObject $postsRequest */
         $postsRequest = $this->createMock(PostsRequest::class);
@@ -78,12 +77,12 @@ class WallsIoClientTest extends UnitTestCase
             ->method('isValidRequest')
             ->willReturn(false);
 
-        $this->messageHelperMock
-            ->method('addFlashMessage')
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
             ->with(
-                'URI is empty or contains invalid chars. URI: https://www.jweiland.net',
-                'Invalid request URI',
-                FlashMessage::ERROR
+                'Request URI is empty or contains invalid chars.',
+                ['uri' => 'https://www.jweiland.net']
             );
 
         self::assertSame(
@@ -95,7 +94,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidClientResponseAddsFlashMessage(): void
+    public function processRequestWithInvalidClientResponseLogsError(): void
     {
         /** @var PostsRequest|MockObject $postsRequest */
         $postsRequest = $this->getMockBuilder(PostsRequest::class)->getMock();
@@ -117,16 +116,13 @@ class WallsIoClientTest extends UnitTestCase
             ->with('https://www.jweiland.net')
             ->willReturn($clientResponse);
 
-        $this->messageHelperMock
-            ->method('addFlashMessage')
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
             ->with(
                 'Walls.io responses with a status code different from 200',
-                'Status Code: 500',
-                FlashMessage::ERROR
+                ['Status Code' => 500]
             );
-        $this->messageHelperMock
-            ->method('hasErrorMessages')
-            ->willReturn(true);
 
         self::assertSame(
             [],
@@ -137,7 +133,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidRequestResultsInExceptionWithChangedAccessToken(): void
+    public function processRequestWithExceptionLogsError(): void
     {
         $postsRequest = $this->getMockBuilder(PostsRequest::class)
             ->getMock();
@@ -165,12 +161,12 @@ class WallsIoClientTest extends UnitTestCase
             ->with('https://www.jweiland.net')
             ->willThrowException($exception);
 
-        $this->messageHelperMock
-            ->method('addFlashMessage')
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
             ->with(
                 'Server down. Uri: https://api.walls.io?fields=test&access_token=XXX&since=123',
-                'Error Code: 564',
-                FlashMessage::ERROR
+                ['Exception Code' => 564]
             );
 
         self::assertSame(
@@ -182,7 +178,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidResponseAddsFlashMessage(): void
+    public function processRequestWithInvalidResponseLogsError(): void
     {
         /** @var PostsRequest|MockObject $postsRequest */
         $postsRequest = $this->getMockBuilder(PostsRequest::class)
@@ -220,16 +216,10 @@ class WallsIoClientTest extends UnitTestCase
             ->with('https://www.jweiland.net')
             ->willReturn($clientResponse);
 
-        $this->messageHelperMock
-            ->method('addFlashMessage')
-            ->with(
-                'The response of walls.io was not a valid JSON response.',
-                'Invalid JSON response',
-                FlashMessage::ERROR
-            );
-        $this->messageHelperMock
-            ->method('hasErrorMessages')
-            ->willReturn(false);
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
+            ->with('The response of walls.io was not a valid JSON response.');
 
         self::assertSame(
             [],
@@ -240,7 +230,7 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidStatusAddsFlashMessage(): void
+    public function processRequestWithInvalidStatusLogsError(): void
     {
         /** @var PostsRequest|MockObject $postsRequest */
         $postsRequest = $this->createMock(PostsRequest::class);
@@ -282,77 +272,13 @@ class WallsIoClientTest extends UnitTestCase
             ->with('https://www.jweiland.net')
             ->willReturn($clientResponse);
 
-        $this->messageHelperMock
-            ->method('addFlashMessage')
-            ->with(
-                'broken',
-                'error',
-                FlashMessage::ERROR
-            );
-
-        $this->messageHelperMock
-            ->method('hasErrorMessages')
-            ->willReturn(false);
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
+            ->with('broken', ['status' => 'error']);
 
         self::assertSame(
             [],
-            $this->subject->processRequest($postsRequest)
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function processRequestReturnsWalls(): void
-    {
-        /** @var PostsRequest|MockObject $postsRequest */
-        $postsRequest = $this->getMockBuilder(PostsRequest::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $postsRequest
-            ->method('buildUri')
-            ->willReturn('https://www.jweiland.net');
-        $postsRequest
-            ->method('isValidRequest')
-            ->willReturn(true);
-
-        $streamMock = $this->getMockBuilder(Stream::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        // Configure the stream mock to return the JSON string when __toString() is called
-        $streamMock->expects(self::once())
-            ->method('__toString')
-            ->willReturn(
-                json_encode([
-                    'status' => 'success',
-                ], JSON_THROW_ON_ERROR)
-            );
-
-        /** @var Response|MockObject $clientResponse */
-        $clientResponse = $this->getMockBuilder(Response::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $clientResponse
-            ->method('getStatusCode')
-            ->willReturn(200);
-        $clientResponse
-            ->method('getBody')
-            ->willReturn($streamMock);
-
-        $this->requestFactoryMock
-            ->method('request')
-            ->with('https://www.jweiland.net')
-            ->willReturn($clientResponse);
-
-        $this->messageHelperMock
-            ->method('hasErrorMessages')
-            ->willReturn(false);
-
-        self::assertSame(
-            [
-                'status' => 'success',
-            ],
             $this->subject->processRequest($postsRequest)
         );
     }

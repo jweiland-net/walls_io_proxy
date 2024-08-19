@@ -32,16 +32,17 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
 
     private static function isBeUserAdmin(): bool
     {
+        $context = self::getContext();
         try {
-            if (
-                ($context = self::getContext())
-                && $context->hasAspect('backend.user')
-                && ($userAspect = $context->getAspect('backend.user'))
-                && $userAspect instanceof UserAspect
-            ) {
-                return $userAspect->isAdmin();
+            $context = self::getContext();
+            if ($context->hasAspect('backend.user')) {
+                $userAspect = $context->getAspect('backend.user');
+                if ($userAspect instanceof UserAspect) {
+                    return $userAspect->isAdmin();
+                }
             }
         } catch (AspectNotFoundException $e) {
+            var_dump($e->getMessage());
         }
 
         return false;

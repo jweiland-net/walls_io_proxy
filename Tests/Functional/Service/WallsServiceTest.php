@@ -16,6 +16,7 @@ use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
@@ -28,6 +29,11 @@ class WallsServiceTest extends FunctionalTestCase
     protected WallsService $subject;
 
     protected Registry $registry;
+
+    /**
+     * @var ServerRequest|MockObject|(ServerRequest&MockObject)
+     */
+    protected $requestMock;
 
     /**
      * @var WallsIoClient|MockObject|(WallsIoClient&MockObject)
@@ -70,9 +76,12 @@ class WallsServiceTest extends FunctionalTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->requestMock = $this->createMock(ServerRequest::class);
+
         $this->subject = new WallsService(
             $this->registry,
-            $this->wallsIoClientMock
+            $this->wallsIoClientMock,
+            $this->requestMock
         );
     }
 
@@ -148,7 +157,7 @@ class WallsServiceTest extends FunctionalTestCase
                 ]
             );
 
-        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock);
+        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
         $result = $this->subject->getWallPosts(
             new PluginConfiguration($this->processedDataForPostsRequest)
         );
@@ -176,7 +185,7 @@ class WallsServiceTest extends FunctionalTestCase
             ->method('processRequest')
             ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(['status' => 'error']);
-        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock);
+        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
         $result = $this->subject->getWallPosts(
             new PluginConfiguration($this->processedDataForPostsRequest)
         );
@@ -216,10 +225,7 @@ class WallsServiceTest extends FunctionalTestCase
                 ]
             );
 
-        $this->wallsIoClientMock
-            ->method('hasErrors')
-            ->willReturn(false);
-        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock);
+        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
         $result = $this->subject->getWallPosts(
             new PluginConfiguration($this->processedDataForPostsRequest)
         );
@@ -263,9 +269,6 @@ class WallsServiceTest extends FunctionalTestCase
                 ]
             );
 
-        $this->wallsIoClientMock
-            ->method('hasErrors')
-            ->willReturn(false);
         $result = $this->subject->getWallPosts(
             new PluginConfiguration($this->processedDataForPostsRequest)
         );
@@ -305,11 +308,8 @@ class WallsServiceTest extends FunctionalTestCase
                 ]
             );
 
-        $this->wallsIoClientMock
-            ->method('hasErrors')
-            ->willReturn(false);
 
-        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock);
+        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
         $result = $this->subject->getWallPosts(
             new PluginConfiguration($this->processedDataForPostsRequest)
         );

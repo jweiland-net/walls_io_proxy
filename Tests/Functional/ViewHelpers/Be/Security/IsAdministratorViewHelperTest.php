@@ -12,8 +12,13 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Tests\Unit\ViewHelpers\Be;
 
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\UserAspect;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\TestingFramework\Core\Exception;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -27,17 +32,14 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
 
     /**
      * @test
+     * @throws Exception
      */
     public function beUserIsAdministrator(): void
     {
-        /** @var BackendUserAuthentication|MockObject $backendUserAuthenticationMock */
-        $backendUserAuthenticationMock = $this->createMock(BackendUserAuthentication::class);
-        $backendUserAuthenticationMock
-            ->method('isAdmin')
-            ->willReturn(true);
+        $this->importCSVDataSet(__DIR__ . '/../../../Fixtures/Database/be_users.csv');
 
-        $GLOBALS['BE_USER'] = $backendUserAuthenticationMock;
-        $GLOBALS['BE_USER']->user = ['uid' => 1];
+        $backendUserAuthentication = $this->setUpBackendUser(2);
+        $GLOBALS['BE_USER'] = $backendUserAuthentication;
 
         $view = new StandaloneView();
         $view->setTemplateSource('
@@ -71,6 +73,21 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
 
         $GLOBALS['BE_USER'] = $backendUserAuthenticationMock;
         $GLOBALS['BE_USER']->user = ['uid' => 1];
+
+        // Mock the UserAspect to return the mocked BackendUserAuthentication
+        $userAspectMock = $this->getMockBuilder(UserAspect::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $userAspectMock->method('isAdmin')->willReturn(true);
+
+        // Mock the Context to return the mocked UserAspect
+        $contextMock = $this->getMockBuilder(Context::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $contextMock->method('getAspect')->willReturn($userAspectMock);
+
+        // Replace the Context instance in the GeneralUtility
+        GeneralUtility::setSingletonInstance(Context::class, $contextMock);
 
         $view = new StandaloneView();
         $view->setTemplateSource('
