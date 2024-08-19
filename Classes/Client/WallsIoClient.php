@@ -33,9 +33,6 @@ class WallsIoClient
         $this->logger = $logger;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function processRequest(RequestInterface $request): array
     {
         if (!$request->isValidRequest()) {
@@ -94,7 +91,7 @@ class WallsIoClient
     /**
      * Check processed response from walls.io for errors
      *
-     * @param array<string, mixed>|null $response
+     * @param array|null $response
      */
     protected function hasResponseErrors(array $response = null): bool
     {
