@@ -28,7 +28,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
     protected AddWallsProcessor $subject;
 
     /**
-     * @var WallsService|MockObject|(WallsService&object&MockObject)|(WallsService&MockObject)|(object&MockObject)
+     * @var WallsService|MockObject
      */
     protected $wallsServiceMock;
 
