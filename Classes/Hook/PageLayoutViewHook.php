@@ -22,7 +22,7 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
  * Let's clear cache for our individual cacheCmd=WallsIoProxy
  * We do not use CachingFramework, but we use their API to catch that cacheCmd.
  */
-class PageLayoutViewHook implements PageLayoutViewDrawItemHookInterface
+class PageLayoutViewHook implements PageLayoutViewDrawItemHookInterface // @phpstan-ignore-line
 {
     protected Registry $registry;
 

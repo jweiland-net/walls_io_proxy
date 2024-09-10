@@ -7,13 +7,14 @@
  * LICENSE file that was distributed with this source code.
  */
 
-if (!defined('TYPO3_MODE')) {
+if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
 use JWeiland\WallsIoProxy\Hook\DataHandler;
 use JWeiland\WallsIoProxy\Hook\PageLayoutViewHook;
 use Psr\Log\LogLevel;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Log\Writer\FileWriter;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
@@ -49,8 +50,12 @@ call_user_func(static function (): void {
         ];
     }
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['walls_io_proxy']
-        = PageLayoutViewHook::class;
+    $typo3Version = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Information\Typo3Version::class);
+    if (version_compare($typo3Version->getBranch(), '11.5', '<=')) {
+        // @phpstan-ignore-next-line
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['walls_io_proxy']
+            = PageLayoutViewHook::class;
+    }
 
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache']
         = DataHandler::class . '->clearCachePostProc';
