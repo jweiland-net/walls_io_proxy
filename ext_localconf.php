@@ -14,7 +14,6 @@ if (!defined('TYPO3')) {
 use JWeiland\WallsIoProxy\Hook\DataHandler;
 use JWeiland\WallsIoProxy\Hook\PageLayoutViewHook;
 use Psr\Log\LogLevel;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Log\Writer\FileWriter;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
@@ -50,7 +49,9 @@ call_user_func(static function (): void {
         ];
     }
 
-    $typo3Version = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Information\Typo3Version::class);
+    $typo3Version = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+        \TYPO3\CMS\Core\Information\Typo3Version::class
+    );
     if (version_compare($typo3Version->getBranch(), '11.5', '<=')) {
         // @phpstan-ignore-next-line
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['walls_io_proxy']
