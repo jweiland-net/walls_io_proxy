@@ -15,8 +15,6 @@
 
 The **walls_io_proxy** extension for TYPO3 addresses this limitation by eliminating the need for client-side cookies from walls.io. It achieves this by moving all XHR/Ajax requests from walls.io's JavaScript file to the server-side using PHP. This approach ensures that no walls.io cookies are set on the client-side, enhancing privacy and compliance with cookie regulations.
 
-Please note, **walls_io_proxy** is not an API and does not use the API of walls.io.
-
 ## Features
 
 - **Server-Side Data Retrieval**: Moves all data retrieval processes to the server-side, avoiding client-side cookies.
