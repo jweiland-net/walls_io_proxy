@@ -54,6 +54,6 @@ class StringUtility
             Typo3Version::class
         );
 
-        return ($versionInformation->getMajorVersion() < 12);
+        return $versionInformation->getMajorVersion() < 12;
     }
 }
