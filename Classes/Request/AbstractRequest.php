@@ -19,7 +19,7 @@ use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 abstract class AbstractRequest implements RequestInterface
 {
     /**
-     * @var array<string, mixed> $allowedParameters
+     * @var array<string, mixed>
      */
     protected array $allowedParameters = [];
 
