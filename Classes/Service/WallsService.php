@@ -19,7 +19,7 @@ use JWeiland\WallsIoProxy\Request\RequestInterface;
 use JWeiland\WallsIoProxy\Utility\StringUtility;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Http\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
