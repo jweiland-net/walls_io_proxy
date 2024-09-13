@@ -22,11 +22,6 @@ The **walls_io_proxy** extension for TYPO3 addresses this limitation by eliminat
   (Note: Each social media provider has its own design restrctions. So, you have to adapt these design rules into your templates.)
 - **Enhanced Privacy**: No walls.io cookies are set on the client-side, ensuring better privacy for your users.
 
-## Limitations
-
-- **No API Integration**: This extension does not integrate with the walls.io API.
-- **Custom Styling Required**: You will need to create your own templates and styles, as the extension does not support all the integrated themes, styles, and views provided by walls.io.
-
 ## Installation
 
 You can install this extension via Composer with the following command:
