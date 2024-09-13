@@ -27,7 +27,7 @@ class DataHandlerTest extends UnitTestCase
     protected DataHandler $subject;
 
     /**
-     * @var Registry|MockObject|(object&MockObject)|(Registry&object&MockObject)|(Registry&MockObject)
+     * @var Registry|MockObject
      */
     protected $registryMock;
 
