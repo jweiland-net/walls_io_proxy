@@ -18,7 +18,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Let's clear cache for our individual cacheCmd=WallsIoProxy
  * We do not use CachingFramework, but we use their API to catch that cacheCmd.
  */
-class DataHandler
+class DataHandlerHook
 {
     protected WallsService $wallsService;
 

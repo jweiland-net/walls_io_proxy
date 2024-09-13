@@ -11,7 +11,7 @@ if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
-use JWeiland\WallsIoProxy\Hook\DataHandler;
+use JWeiland\WallsIoProxy\Hook\DataHandlerHook;
 use JWeiland\WallsIoProxy\Hook\PageLayoutViewHook;
 use Psr\Log\LogLevel;
 use TYPO3\CMS\Core\Information\Typo3Version;
@@ -64,6 +64,6 @@ call_user_func(static function (): void {
     }
 
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache']
-        = DataHandler::class . '->clearCachePostProc';
+        = DataHandlerHook::class . '->clearCachePostProc';
 
 });
