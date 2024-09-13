@@ -6,7 +6,6 @@
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
-
 if (!defined('TYPO3')) {
     die('Access denied.');
 }
@@ -14,8 +13,10 @@ if (!defined('TYPO3')) {
 use JWeiland\WallsIoProxy\Hook\DataHandler;
 use JWeiland\WallsIoProxy\Hook\PageLayoutViewHook;
 use Psr\Log\LogLevel;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Log\Writer\FileWriter;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 call_user_func(static function (): void {
     // Configure frontend plugin
@@ -34,11 +35,6 @@ call_user_func(static function (): void {
         'defaultContentRendering'
     );
 
-    // add walls_io_proxy plugin to new element wizard
-    ExtensionManagementUtility::addPageTSConfig(
-        '<INCLUDE_TYPOSCRIPT:source = "FILE:EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.tsconfig" > '
-    );
-
     if (!isset($GLOBALS['TYPO3_CONF_VARS']['LOG']['JWeiland']['WallsIoProxy']['writerConfiguration'])) {
         $GLOBALS['TYPO3_CONF_VARS']['LOG']['JWeiland']['WallsIoProxy']['writerConfiguration'] = [
             LogLevel::INFO => [
@@ -49,11 +45,19 @@ call_user_func(static function (): void {
         ];
     }
 
-    $typo3Version = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Core\Information\Typo3Version::class
+    $versionInformation = GeneralUtility::makeInstance(
+        Typo3Version::class
     );
-    if (version_compare($typo3Version->getBranch(), '11.5', '<=')) {
-        // @phpstan-ignore-next-line
+
+    // add walls_io_proxy plugin to new element wizard
+    // Only include page.tsconfig if TYPO3 version is below 12 so that it is not imported twice.
+    if ($versionInformation->getMajorVersion() < 12) {
+        ExtensionManagementUtility::addPageTSConfig('
+            @import "EXT:walls_io_proxy/Configuration/page.tsconfig"
+        ');
+    }
+
+    if (version_compare($versionInformation->getBranch(), '11.5', '<=')) {
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem']['walls_io_proxy']
             = PageLayoutViewHook::class;
     }
