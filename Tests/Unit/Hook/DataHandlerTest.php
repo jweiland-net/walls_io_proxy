@@ -37,7 +37,7 @@ class DataHandlerTest extends UnitTestCase
     protected $wallsServiceMock;
 
     /**
-     * @var ServerRequest|MockObject
+     * @var ServerRequestInterface|MockObject
      */
     protected $requestMock;
 
