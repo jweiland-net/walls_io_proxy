@@ -151,8 +151,11 @@ class WallsService
 
     protected function getWallsIoRequest(PluginConfiguration $pluginConfiguration): RequestInterface
     {
-        /** @var RequestInterface $wallsIoRequest */
-        $wallsIoRequest = GeneralUtility::makeInstance($pluginConfiguration->getRequestType());
+        /** @var class-string<RequestInterface> $requestType */
+        $requestType = $pluginConfiguration->getRequestType();
+
+        /** @phpstan-var RequestInterface $wallsIoRequest */
+        $wallsIoRequest = GeneralUtility::makeInstance($requestType);
         $wallsIoRequest->setFields($this->fields);
         $wallsIoRequest->setAccessToken($pluginConfiguration->getAccessToken());
         $wallsIoRequest->setLimit($pluginConfiguration->getEntriesToLoad());
