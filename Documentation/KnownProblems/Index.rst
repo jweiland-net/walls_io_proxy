@@ -82,7 +82,10 @@ designed to handle 4-byte Unicode characters.
                     'host' => 'your_database_host',
                     'port' => 3306,
                     'charset' => 'utf8mb4',
-                    'collation' => 'utf8mb4_unicode_ci',
+                    'tableoptions' => [
+                        'charset' => 'utf8mb4',
+                        'collate' => 'utf8mb4_unicode_ci',
+                    ],
                 ],
             ],
         ],
@@ -94,7 +97,8 @@ designed to handle 4-byte Unicode characters.
 
         ```php
         $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['charset'] = 'utf8mb4';
-        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['collation'] = 'utf8mb4_unicode_ci';
+        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['tableoptions']['charset'] = 'utf8mb4';
+        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['tableoptions']['collate'] = 'utf8mb4_unicode_ci';
         ```
 
     - **For TYPO3 v12:**
@@ -103,7 +107,8 @@ designed to handle 4-byte Unicode characters.
 
         ```php
         $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['charset'] = 'utf8mb4';
-        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['collation'] = 'utf8mb4_unicode_ci';
+        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['tableoptions']['charset'] = 'utf8mb4';
+        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['tableoptions']['collate'] = 'utf8mb4_unicode_ci';
         ```
 
         Edit your configuration file in `config/system/settings.php`:
@@ -114,7 +119,10 @@ designed to handle 4-byte Unicode characters.
                 'Connections' => [
                     'Default' => [
                         'charset' => 'utf8mb4',
-                        'collation' => 'utf8mb4_unicode_ci',
+                        'tableoptions' => [
+                            'charset' => 'utf8mb4',
+                            'collate' => 'utf8mb4_unicode_ci',
+                        ],
                     ],
                 ],
             ],
