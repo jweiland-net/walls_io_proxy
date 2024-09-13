@@ -58,17 +58,16 @@ class WallsService
 
     protected ServerRequestInterface $request;
 
-    public function __construct(Registry $registry, WallsIoClient $client, ServerRequest $request)
+    public function __construct(Registry $registry, WallsIoClient $client)
     {
         $this->registry = $registry;
         $this->client = $client;
-        $this->request = $request;
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function getWallPosts(PluginConfiguration $pluginConfiguration): array
+    public function getWallPosts(PluginConfiguration $pluginConfiguration, ServerRequestInterface $request): array
     {
         if (!$this->isValidPluginConfiguration($pluginConfiguration)) {
             return [];
@@ -88,7 +87,7 @@ class WallsService
             }
 
             // Do not store wall posts on BE yoast request
-            if ($this->getTypo3Request()->getHeaders() && !array_key_exists('x-yoast-page-request', $this->getTypo3Request()->getHeaders())) {
+            if ($request->getHeaders() && !array_key_exists('x-yoast-page-request', $request->getHeaders())) {
                 $this->setWallPostsToRegistry($wallPosts, $pluginConfiguration);
             }
         }

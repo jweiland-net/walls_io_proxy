@@ -13,6 +13,7 @@ namespace JWeiland\WallsIoProxy\DataProcessing;
 
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Service\WallsService;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -28,10 +29,13 @@ class AddWallsProcessor implements DataProcessorInterface
 
     protected FlexFormService $flexFormService;
 
-    public function __construct(WallsService $wallsService, FlexFormService $flexFormService)
+    protected ServerRequest $request;
+
+    public function __construct(WallsService $wallsService, FlexFormService $flexFormService, ServerRequest $request)
     {
         $this->wallsService = $wallsService;
         $this->flexFormService = $flexFormService;
+        $this->request = $request;
     }
 
     /**
@@ -59,7 +63,8 @@ class AddWallsProcessor implements DataProcessorInterface
         );
 
         $processedData['walls'] = $this->wallsService->getWallPosts(
-            $this->getPluginConfiguration($processedData)
+            $this->getPluginConfiguration($processedData),
+            $this->request
         );
 
         return $processedData;

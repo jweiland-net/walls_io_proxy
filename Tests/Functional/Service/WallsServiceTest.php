@@ -80,8 +80,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         $this->subject = new WallsService(
             $this->registry,
-            $this->wallsIoClientMock,
-            $this->requestMock
+            $this->wallsIoClientMock
         );
     }
 
@@ -137,7 +136,8 @@ class WallsServiceTest extends FunctionalTestCase
         self::assertSame(
             [],
             $this->subject->getWallPosts(
-                new PluginConfiguration($processedData)
+                new PluginConfiguration($processedData),
+                $this->requestMock
             )
         );
     }
@@ -159,7 +159,8 @@ class WallsServiceTest extends FunctionalTestCase
 
         $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
         $result = $this->subject->getWallPosts(
-            new PluginConfiguration($this->processedDataForPostsRequest)
+            new PluginConfiguration($this->processedDataForPostsRequest),
+            $this->requestMock
         );
 
         self::assertSame(
@@ -187,7 +188,8 @@ class WallsServiceTest extends FunctionalTestCase
             ->willReturn(['status' => 'error']);
         $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
         $result = $this->subject->getWallPosts(
-            new PluginConfiguration($this->processedDataForPostsRequest)
+            new PluginConfiguration($this->processedDataForPostsRequest),
+            $this->requestMock
         );
 
         self::assertSame(
@@ -227,7 +229,8 @@ class WallsServiceTest extends FunctionalTestCase
 
         $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
         $result = $this->subject->getWallPosts(
-            new PluginConfiguration($this->processedDataForPostsRequest)
+            new PluginConfiguration($this->processedDataForPostsRequest),
+            $this->requestMock
         );
 
         self::assertSame(
@@ -270,7 +273,8 @@ class WallsServiceTest extends FunctionalTestCase
             );
 
         $result = $this->subject->getWallPosts(
-            new PluginConfiguration($this->processedDataForPostsRequest)
+            new PluginConfiguration($this->processedDataForPostsRequest),
+            $this->requestMock
         );
         self::assertSame(
             $expected,
@@ -310,7 +314,8 @@ class WallsServiceTest extends FunctionalTestCase
 
         $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
         $result = $this->subject->getWallPosts(
-            new PluginConfiguration($this->processedDataForPostsRequest)
+            new PluginConfiguration($this->processedDataForPostsRequest),
+            $this->requestMock
         );
         self::assertSame(
             $expected,
