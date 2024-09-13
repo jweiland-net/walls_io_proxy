@@ -95,7 +95,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
             ->with($processorConfiguration['if.']);
 
         $this->wallsServiceMock
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('getWallPosts')
             ->with(self::isInstanceOf(PluginConfiguration::class))
             ->willReturn([]);
