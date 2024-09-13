@@ -1,3 +1,3 @@
-be_users,,,,,,,,,,,,,,,,,,,,
+be_users,,,,
 ,uid,pid,admin,mfa,
 ,2,0,1,"{""name"":""value"",""name2"":{""name3"":""subvalue"", ""empty-array"":[]}}",

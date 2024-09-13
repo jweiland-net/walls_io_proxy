@@ -25,6 +25,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class IsAdministratorViewHelperTest extends FunctionalTestCase
 {
+    protected bool $resetSingletonInstances = true;
     protected array $testExtensionsToLoad = [
         'jweiland/walls-io-proxy',
     ];
@@ -67,6 +68,7 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
         /** @var BackendUserAuthentication|MockObject $backendUserAuthenticationMock */
         $backendUserAuthenticationMock = $this->createMock(BackendUserAuthentication::class);
         $backendUserAuthenticationMock
+            ->expects(self::never())
             ->method('isAdmin')
             ->willReturn(false);
 
@@ -77,13 +79,19 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
         $userAspectMock = $this->getMockBuilder(UserAspect::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $userAspectMock->method('isAdmin')->willReturn(true);
+        $userAspectMock
+            ->expects(self::never())
+            ->method('isAdmin')
+            ->willReturn(true);
 
         // Mock the Context to return the mocked UserAspect
         $contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $contextMock->method('getAspect')->willReturn($userAspectMock);
+        $contextMock
+            ->expects(self::never())
+            ->method('getAspect')
+            ->willReturn($userAspectMock);
 
         // Replace the Context instance in the GeneralUtility
         GeneralUtility::setSingletonInstance(Context::class, $contextMock);
@@ -158,5 +166,12 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
             'IS NOT ADMIN',
             $view->render()
         );
+    }
+
+    protected function tearDown(): void
+    {
+        // The tearDown process will reset the Singleton instances because
+        // resetSingletonInstances is set to true.
+        parent::tearDown();
     }
 }

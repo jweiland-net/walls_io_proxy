@@ -73,6 +73,7 @@ class WallsIoClientTest extends UnitTestCase
             ->method('buildUri')
             ->willReturn('https://www.jweiland.net');
         $postsRequest
+            ->expects(self::once())
             ->method('isValidRequest')
             ->willReturn(false);
 

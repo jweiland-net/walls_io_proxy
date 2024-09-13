@@ -148,6 +148,7 @@ class WallsServiceTest extends FunctionalTestCase
     public function getWallPostsWithEmptyClientResultWillReturnEmptyWalls(): void
     {
         $this->wallsIoClientMock
+            ->expects(self::once())
             ->method('processRequest')
             ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
@@ -183,6 +184,7 @@ class WallsServiceTest extends FunctionalTestCase
         );
 
         $this->wallsIoClientMock
+            ->expects(self::once())
             ->method('processRequest')
             ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(['status' => 'error']);
@@ -218,6 +220,7 @@ class WallsServiceTest extends FunctionalTestCase
         ];
 
         $this->wallsIoClientMock
+            ->expects(self::once())
             ->method('processRequest')
             ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
@@ -263,6 +266,7 @@ class WallsServiceTest extends FunctionalTestCase
         ];
 
         $this->wallsIoClientMock
+            ->expects(self::once())
             ->method('processRequest')
             ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
@@ -303,6 +307,7 @@ class WallsServiceTest extends FunctionalTestCase
         ];
 
         $this->wallsIoClientMock
+            ->expects(self::once())
             ->method('processRequest')
             ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(

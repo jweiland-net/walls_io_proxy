@@ -43,7 +43,7 @@ designed to handle 4-byte Unicode characters.
 Steps to Resolve
 ----------------
 
-1. **Update MySQL Database Charset and Collation**
+1.  **Update MySQL Database Charset and Collation**
 
     Run the following SQL command to update the database charset:
 
@@ -65,7 +65,7 @@ Steps to Resolve
         ALTER TABLE index_phash CHANGE your_column_name your_column_name TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
         ALTER TABLE index_fulltext CHANGE your_column_name your_column_name TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-2. **Update TYPO3 Connection Configuration**
+2.  **Update TYPO3 Connection Configuration**
 
     Update the database connection settings in TYPO3 to use `utf8mb4`:
 
@@ -93,7 +93,7 @@ Steps to Resolve
                 ],
             ],
 
-    - **For TYPO3 v10 and v11:**
+    - **For TYPO3 v11:**
 
         Edit your `AdditionalConfiguration.php` file:
 
@@ -131,7 +131,7 @@ Steps to Resolve
                 ],
             ];
 
-3. **Verify the Changes**
+3.  **Verify the Changes**
 
     Ensure your database and tables are set to `utf8mb4`, and test your
     extension thoroughly to confirm that it can handle emojis correctly.
