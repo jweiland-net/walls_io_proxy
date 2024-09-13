@@ -56,7 +56,7 @@ class WallsService
 
     protected WallsIoClient $client;
 
-    protected ServerRequest $request;
+    protected ServerRequestInterface $request;
 
     public function __construct(Registry $registry, WallsIoClient $client, ServerRequest $request)
     {
