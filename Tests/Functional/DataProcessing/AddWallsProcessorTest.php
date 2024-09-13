@@ -90,7 +90,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         ];
 
         $this->contentObjectRendererMock
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('checkIf')
             ->with($processorConfiguration['if.']);
 
