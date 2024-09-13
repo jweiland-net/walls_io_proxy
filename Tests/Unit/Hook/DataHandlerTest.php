@@ -32,7 +32,7 @@ class DataHandlerTest extends UnitTestCase
     protected $registryMock;
 
     /**
-     * @var WallsService|MockObject|(WallsService&MockObject)
+     * @var WallsService|MockObject
      */
     protected $wallsServiceMock;
 
