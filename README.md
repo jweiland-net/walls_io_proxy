@@ -19,6 +19,7 @@ The **walls_io_proxy** extension for TYPO3 addresses this limitation by eliminat
 
 - **Server-Side Data Retrieval**: Moves all data retrieval processes to the server-side, avoiding client-side cookies.
 - **Customizable Templates**: Allows you to create your own FluidTemplate for displaying the social wall, providing full control over the design and layout.
+  (Note: Each social media provider has its own design restrctions. So, you have to adapt these design rules into your templates.)
 - **Enhanced Privacy**: No walls.io cookies are set on the client-side, ensuring better privacy for your users.
 
 ## Limitations
