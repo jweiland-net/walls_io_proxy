@@ -119,7 +119,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         $processedData = [];
 
         $this->wallsServiceMock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getWallPosts')
             ->with(self::isInstanceOf(PluginConfiguration::class))
             ->willReturn([]);
@@ -161,7 +161,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         $expectedProcessedData['walls'] = [];
 
         $this->wallsServiceMock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getWallPosts')
             ->with(self::callback(function (PluginConfiguration $config) {
                 return $config->getAccessToken() === 'ABC123';
@@ -191,7 +191,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         ];
 
         $this->wallsServiceMock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getWallPosts')
             ->with(
                 self::callback(function (PluginConfiguration $pluginConfiguration) {
@@ -237,7 +237,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         ];
 
         $this->wallsServiceMock
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getWallPosts')
             ->with(self::isInstanceOf(PluginConfiguration::class))
             ->willReturn($walls);
