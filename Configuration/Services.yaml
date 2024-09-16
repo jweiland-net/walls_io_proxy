@@ -16,7 +16,7 @@ services:
     public: true
 
   # Will be called by GeneralUtility::makeInstance in TYPO3's DataHandler
-  JWeiland\WallsIoProxy\Hook\DataHandler:
+  JWeiland\WallsIoProxy\Hook\DataHandlerHook:
     public: true
 
   # Will be called by GeneralUtility::makeInstance in WallsService
