@@ -31,7 +31,10 @@ class PageLayoutViewHook implements PageLayoutViewDrawItemHookInterface
         $this->registry = $registry;
     }
 
-    public function preProcess(PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row)
+    /**
+     * @param array<string, mixed> $row
+     */
+    public function preProcess(PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row): void
     {
         if ($row['CType'] !== 'wallsioproxy') {
             return;

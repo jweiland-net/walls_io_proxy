@@ -18,7 +18,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Let's clear cache for our individual cacheCmd=WallsIoProxy
  * We do not use CachingFramework, but we use their API to catch that cacheCmd.
  */
-class DataHandler
+class DataHandlerHook
 {
     protected WallsService $wallsService;
 
@@ -29,6 +29,8 @@ class DataHandler
 
     /**
      * Removes the cache of one specific walls_io_proxy Plugin from sys_registry
+     *
+     * @param array<string, mixed> $params
      */
     public function clearCachePostProc(array $params): void
     {

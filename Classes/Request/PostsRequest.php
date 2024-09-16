@@ -23,12 +23,18 @@ class PostsRequest extends AbstractRequest
 {
     protected string $path = '/v1/posts';
 
+    /**
+     * @var array<string, mixed> $parameters
+     */
     protected array $parameters = [
         'fields' => 'id,comment,type',
         'include_inactive' => 0,
         'limit' => 24,
     ];
 
+    /**
+     * @var array<string, mixed> $allowedParameters
+     */
     protected array $allowedParameters = [
         'access_token' => 1,
         'limit' => 1,
@@ -43,6 +49,9 @@ class PostsRequest extends AbstractRequest
         'include_source' => 1,
     ];
 
+    /**
+     * @var array<string> $allowedFields
+     */
     protected array $allowedFields = [
         'id',
         'comment',
@@ -88,6 +97,8 @@ class PostsRequest extends AbstractRequest
 
     /**
      * A comma-separated list of fields you would like to receive for each post.
+     *
+     *  @param array<string, mixed> $fields
      */
     public function setFields(array $fields): void
     {

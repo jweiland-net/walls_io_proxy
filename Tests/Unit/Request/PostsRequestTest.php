@@ -12,16 +12,13 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Tests\Unit\Request;
 
 use JWeiland\WallsIoProxy\Request\PostsRequest;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * Walls IO Request Test
  */
 class PostsRequestTest extends UnitTestCase
 {
-    use ProphecyTrait;
-
     /**
      * @var PostsRequest
      */

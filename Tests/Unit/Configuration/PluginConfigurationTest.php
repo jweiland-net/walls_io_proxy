@@ -12,20 +12,14 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Tests\Unit\Configuration;
 
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * Test PluginConfiguration
  */
 class PluginConfigurationTest extends UnitTestCase
 {
-    use ProphecyTrait;
-
-    /**
-     * @var PluginConfiguration
-     */
-    protected $subject;
+    protected PluginConfiguration $subject;
 
     /**
      * @test

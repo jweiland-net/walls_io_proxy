@@ -11,46 +11,44 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
+use GuzzleHttp\Psr7\Stream;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
-use JWeiland\WallsIoProxy\Helper\MessageHelper;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\Response;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * Walls IO Client Test
  */
 class WallsIoClientTest extends UnitTestCase
 {
-    use ProphecyTrait;
+    protected WallsIoClient $subject;
 
     /**
-     * @var WallsIoClient
+     * @var RequestFactory|MockObject|(RequestFactory&MockObject)
      */
-    protected $subject;
+    protected $requestFactoryMock;
 
     /**
-     * @var RequestFactory|ObjectProphecy
+     * @var LoggerInterface|MockObject|(LoggerInterface&MockObject)
      */
-    protected $requestFactoryProphecy;
-
-    /**
-     * @var MessageHelper|ObjectProphecy
-     */
-    protected $messageHelperProphecy;
+    protected $loggerMock;
 
     protected function setUp(): void
     {
-        $this->requestFactoryProphecy = $this->prophesize(RequestFactory::class);
-        $this->messageHelperProphecy = $this->prophesize(MessageHelper::class);
+        $this->requestFactoryMock = $this->getMockBuilder(RequestFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
+            ->getMock();
 
         $this->subject = new WallsIoClient(
-            $this->requestFactoryProphecy->reveal(),
-            $this->messageHelperProphecy->reveal()
+            $this->requestFactoryMock,
+            $this->loggerMock
         );
     }
 
@@ -58,8 +56,8 @@ class WallsIoClientTest extends UnitTestCase
     {
         unset(
             $this->subject,
-            $this->requestFactoryProphecy,
-            $this->messageHelperProphecy
+            $this->requestFactoryMock,
+            $this->loggerMock
         );
         parent::tearDown();
     }
@@ -67,97 +65,87 @@ class WallsIoClientTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestWithInvalidRequestAddsFlashMessage(): void
+    public function processRequestWithInvalidRequestLogsError(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
-        $postsRequest = $this->prophesize(PostsRequest::class);
+        /** @var PostsRequest|MockObject $postsRequest */
+        $postsRequest = $this->createMock(PostsRequest::class);
         $postsRequest
-            ->buildUri()
-            ->shouldBeCalled()
+            ->method('buildUri')
             ->willReturn('https://www.jweiland.net');
         $postsRequest
-            ->isValidRequest()
-            ->shouldBeCalled()
+            ->expects(self::once())
+            ->method('isValidRequest')
             ->willReturn(false);
 
-        $this->messageHelperProphecy
-            ->addFlashMessage(
-                'URI is empty or contains invalid chars. URI: https://www.jweiland.net',
-                'Invalid request URI',
-                AbstractMessage::ERROR
-            )
-            ->shouldBeCalled();
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
+            ->with(
+                'Request URI is empty or contains invalid chars.',
+                ['uri' => 'https://www.jweiland.net']
+            );
 
         self::assertSame(
             [],
-            $this->subject->processRequest($postsRequest->reveal())
+            $this->subject->processRequest($postsRequest)
         );
     }
 
     /**
      * @test
      */
-    public function processRequestWithInvalidClientResponseAddsFlashMessage(): void
+    public function processRequestWithInvalidClientResponseLogsError(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
-        $postsRequest = $this->prophesize(PostsRequest::class);
+        /** @var PostsRequest|MockObject $postsRequest */
+        $postsRequest = $this->getMockBuilder(PostsRequest::class)->getMock();
         $postsRequest
-            ->buildUri()
-            ->shouldBeCalled()
+            ->method('buildUri')
             ->willReturn('https://www.jweiland.net');
         $postsRequest
-            ->isValidRequest()
-            ->shouldBeCalled()
+            ->method('isValidRequest')
             ->willReturn(true);
 
-        /** @var Response|ObjectProphecy $clientResponse */
-        $clientResponse = $this->prophesize(Response::class);
+        /** @var Response|MockObject $clientResponse */
+        $clientResponse = $this->createMock(Response::class);
         $clientResponse
-            ->getStatusCode()
-            ->shouldBeCalled()
+            ->method('getStatusCode')
             ->willReturn(500);
 
-        $this->requestFactoryProphecy
-            ->request('https://www.jweiland.net')
-            ->shouldBeCalled()
-            ->willReturn($clientResponse->reveal());
+        $this->requestFactoryMock
+            ->method('request')
+            ->with('https://www.jweiland.net')
+            ->willReturn($clientResponse);
 
-        $this->messageHelperProphecy
-            ->addFlashMessage(
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
+            ->with(
                 'Walls.io responses with a status code different from 200',
-                'Status Code: 500',
-                AbstractMessage::ERROR
-            )
-            ->shouldBeCalled();
-        $this->messageHelperProphecy
-            ->hasErrorMessages()
-            ->shouldBeCalled()
-            ->willReturn(true);
+                ['Status Code' => 500]
+            );
 
         self::assertSame(
             [],
-            $this->subject->processRequest($postsRequest->reveal())
+            $this->subject->processRequest($postsRequest)
         );
     }
 
     /**
      * @test
      */
-    public function processRequestWithInvalidRequestResultsInExceptionWithChangedAccessToken(): void
+    public function processRequestWithExceptionLogsError(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
-        $postsRequest = $this->prophesize(PostsRequest::class);
+        $postsRequest = $this->getMockBuilder(PostsRequest::class)
+            ->getMock();
         $postsRequest
-            ->buildUri()
-            ->shouldBeCalled()
+            ->method('buildUri')
             ->willReturn('https://www.jweiland.net');
         $postsRequest
-            ->getParameter('access_token')
-            ->shouldBeCalled()
+            ->method('getParameter')
+            ->with('access_token')
             ->willReturn('ABC');
         $postsRequest
-            ->isValidRequest()
-            ->shouldBeCalled()
+            ->method('isValidRequest')
             ->willReturn(true);
 
         $exception = new \ErrorException(
@@ -168,127 +156,130 @@ class WallsIoClientTest extends UnitTestCase
             123
         );
 
-        $this->requestFactoryProphecy
-            ->request('https://www.jweiland.net')
-            ->shouldBeCalled()
-            ->willThrow($exception);
+        $this->requestFactoryMock
+            ->method('request')
+            ->with('https://www.jweiland.net')
+            ->willThrowException($exception);
 
-        $this->messageHelperProphecy
-            ->addFlashMessage(
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
+            ->with(
                 'Server down. Uri: https://api.walls.io?fields=test&access_token=XXX&since=123',
-                'Error Code: 564',
-                AbstractMessage::ERROR
-            )
-            ->shouldBeCalled();
+                ['Exception Code' => 564]
+            );
 
         self::assertSame(
             [],
-            $this->subject->processRequest($postsRequest->reveal())
+            $this->subject->processRequest($postsRequest)
         );
     }
 
     /**
      * @test
      */
-    public function processRequestWithInvalidResponseAddsFlashMessage(): void
+    public function processRequestWithInvalidResponseLogsError(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
-        $postsRequest = $this->prophesize(PostsRequest::class);
+        /** @var PostsRequest|MockObject $postsRequest */
+        $postsRequest = $this->getMockBuilder(PostsRequest::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $postsRequest
-            ->buildUri()
-            ->shouldBeCalled()
+            ->method('buildUri')
             ->willReturn('https://www.jweiland.net');
         $postsRequest
-            ->isValidRequest()
-            ->shouldBeCalled()
+            ->method('isValidRequest')
             ->willReturn(true);
 
-        /** @var Response|ObjectProphecy $clientResponse */
-        $clientResponse = $this->prophesize(Response::class);
+        /** @var Response|MockObject $clientResponse */
+        $clientResponse = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $clientResponse
-            ->getStatusCode()
-            ->shouldBeCalled()
+            ->method('getStatusCode')
             ->willReturn(200);
+
+        // Create a mock for the StreamInterface
+        $streamMock = $this->getMockBuilder(Stream::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $streamMock->method('__toString')
+            ->willReturn('');
+
         $clientResponse
-            ->getBody()
-            ->shouldBeCalled()
-            ->willReturn(null);
+            ->method('getBody')
+            ->willReturn($streamMock);
 
-        $this->requestFactoryProphecy
-            ->request('https://www.jweiland.net')
-            ->shouldBeCalled()
-            ->willReturn($clientResponse->reveal());
+        $this->requestFactoryMock
+            ->method('request')
+            ->with('https://www.jweiland.net')
+            ->willReturn($clientResponse);
 
-        $this->messageHelperProphecy
-            ->addFlashMessage(
-                'The response of walls.io was not a valid JSON response.',
-                'Invalid JSON response',
-                AbstractMessage::ERROR
-            )
-            ->shouldBeCalled();
-        $this->messageHelperProphecy
-            ->hasErrorMessages()
-            ->shouldBeCalled()
-            ->willReturn(false);
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
+            ->with('The response of walls.io was not a valid JSON response.');
 
         self::assertSame(
             [],
-            $this->subject->processRequest($postsRequest->reveal())
+            $this->subject->processRequest($postsRequest)
         );
     }
 
     /**
      * @test
      */
-    public function processRequestWithInvalidStatusAddsFlashMessage(): void
+    public function processRequestWithInvalidStatusLogsError(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
-        $postsRequest = $this->prophesize(PostsRequest::class);
+        /** @var PostsRequest|MockObject $postsRequest */
+        $postsRequest = $this->createMock(PostsRequest::class);
         $postsRequest
-            ->buildUri()
-            ->shouldBeCalled()
+            ->method('buildUri')
             ->willReturn('https://www.jweiland.net');
+
         $postsRequest
-            ->isValidRequest()
-            ->shouldBeCalled()
+            ->method('isValidRequest')
             ->willReturn(true);
 
-        /** @var Response|ObjectProphecy $clientResponse */
-        $clientResponse = $this->prophesize(Response::class);
+        $clientResponse = $this->createMock(Response::class);
         $clientResponse
-            ->getStatusCode()
-            ->shouldBeCalled()
+            ->method('getStatusCode')
             ->willReturn(200);
+
+        $streamMock = $this->getMockBuilder(Stream::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        // Configure the stream mock to return the JSON string when __toString() is called
+        $streamMock->expects(self::once())
+            ->method('__toString')
+            ->willReturn(
+                json_encode([
+                    'status' => 'error',
+                    'info' => [
+                        0 => 'broken',
+                    ],
+                ], JSON_THROW_ON_ERROR)
+            );
+
         $clientResponse
-            ->getBody()
-            ->shouldBeCalled()
-            ->willReturn(json_encode([
-                'status' => 'error',
-                'info' => [
-                    0 => 'broken',
-                ],
-            ]));
+            ->method('getBody')
+            ->willReturn($streamMock);
 
-        $this->requestFactoryProphecy
-            ->request('https://www.jweiland.net')
-            ->shouldBeCalled()
-            ->willReturn($clientResponse->reveal());
+        $this->requestFactoryMock
+            ->method('request')
+            ->with('https://www.jweiland.net')
+            ->willReturn($clientResponse);
 
-        $this->messageHelperProphecy
-            ->addFlashMessage(
-                'broken',
-                'error',
-                AbstractMessage::ERROR
-            )
-            ->shouldBeCalled();
-        $this->messageHelperProphecy
-            ->hasErrorMessages()
-            ->shouldBeCalled()
-            ->willReturn(false);
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
+            ->with('broken', ['status' => 'error']);
 
         self::assertSame(
             [],
-            $this->subject->processRequest($postsRequest->reveal())
+            $this->subject->processRequest($postsRequest)
         );
     }
 
@@ -297,45 +288,51 @@ class WallsIoClientTest extends UnitTestCase
      */
     public function processRequestReturnsWalls(): void
     {
-        /** @var PostsRequest|ObjectProphecy $postsRequest */
-        $postsRequest = $this->prophesize(PostsRequest::class);
+        /** @var PostsRequest|MockObject $postsRequest */
+        $postsRequest = $this->getMockBuilder(PostsRequest::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $postsRequest
-            ->buildUri()
-            ->shouldBeCalled()
+            ->method('buildUri')
             ->willReturn('https://www.jweiland.net');
         $postsRequest
-            ->isValidRequest()
-            ->shouldBeCalled()
+            ->method('isValidRequest')
             ->willReturn(true);
 
-        /** @var Response|ObjectProphecy $clientResponse */
-        $clientResponse = $this->prophesize(Response::class);
+        $streamMock = $this->getMockBuilder(Stream::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        // Configure the stream mock to return the JSON string when __toString() is called
+        $streamMock->expects(self::once())
+            ->method('__toString')
+            ->willReturn(
+                json_encode([
+                    'status' => 'success',
+                ], JSON_THROW_ON_ERROR)
+            );
+
+        /** @var Response|MockObject $clientResponse */
+        $clientResponse = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $clientResponse
-            ->getStatusCode()
-            ->shouldBeCalled()
+            ->method('getStatusCode')
             ->willReturn(200);
         $clientResponse
-            ->getBody()
-            ->shouldBeCalled()
-            ->willReturn(json_encode([
-                'status' => 'success',
-            ]));
+            ->method('getBody')
+            ->willReturn($streamMock);
 
-        $this->requestFactoryProphecy
-            ->request('https://www.jweiland.net')
-            ->shouldBeCalled()
-            ->willReturn($clientResponse->reveal());
-
-        $this->messageHelperProphecy
-            ->hasErrorMessages()
-            ->shouldBeCalled()
-            ->willReturn(false);
+        $this->requestFactoryMock
+            ->method('request')
+            ->with('https://www.jweiland.net')
+            ->willReturn($clientResponse);
 
         self::assertSame(
             [
                 'status' => 'success',
             ],
-            $this->subject->processRequest($postsRequest->reveal())
+            $this->subject->processRequest($postsRequest)
         );
     }
 }

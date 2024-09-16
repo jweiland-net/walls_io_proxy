@@ -18,11 +18,19 @@ use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
  */
 abstract class AbstractRequest implements RequestInterface
 {
+    /**
+     * @var array<string, mixed>
+     */
+    protected array $allowedParameters = [];
+
+    /**
+     * @var array<string, mixed>
+     */
+    protected array $parameters = [];
+
     protected PluginConfiguration $pluginConfiguration;
 
     protected string $path = '';
-
-    protected array $parameters = [];
 
     public function getPath(): string
     {
@@ -34,11 +42,17 @@ abstract class AbstractRequest implements RequestInterface
         $this->path = trim($path);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getParameters(): array
     {
         return $this->parameters;
     }
 
+    /**
+     * @param  array<string, mixed> $parameters
+     */
     public function setParameters(array $parameters): void
     {
         $this->parameters = array_intersect_key($parameters, $this->allowedParameters);

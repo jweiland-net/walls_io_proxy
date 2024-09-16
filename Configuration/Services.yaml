@@ -16,7 +16,7 @@ services:
     public: true
 
   # Will be called by GeneralUtility::makeInstance in TYPO3's DataHandler
-  JWeiland\WallsIoProxy\Hook\DataHandler:
+  JWeiland\WallsIoProxy\Hook\DataHandlerHook:
     public: true
 
   # Will be called by GeneralUtility::makeInstance in WallsService
@@ -25,4 +25,7 @@ services:
 
   # Will be called by GeneralUtility::makeInstance from tt_content_drawItem Hook
   JWeiland\WallsIoProxy\Hook\PageLayoutViewHook:
+    public: true
+
+  JWeiland\WallsIoProxy\Preview\WallsIoBackendPreviewRenderer:
     public: true

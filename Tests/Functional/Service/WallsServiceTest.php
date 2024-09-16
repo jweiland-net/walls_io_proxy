@@ -15,37 +15,32 @@ use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Service\WallsService;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
+use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Registry;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * Walls Service Test
  */
 class WallsServiceTest extends FunctionalTestCase
 {
-    use ProphecyTrait;
+    protected WallsService $subject;
+
+    protected Registry $registry;
 
     /**
-     * @var WallsService
+     * @var ServerRequest|MockObject|(ServerRequest&MockObject)
      */
-    protected $subject;
+    protected $requestMock;
 
     /**
-     * @var Registry
+     * @var WallsIoClient|MockObject|(WallsIoClient&MockObject)
      */
-    protected $registry;
+    protected $wallsIoClientMock;
 
-    /**
-     * @var WallsIoClient|ObjectProphecy
-     */
-    protected $wallsIoClientProphecy;
-
-    protected $processedDataForPostsRequest = [
+    protected array $processedDataForPostsRequest = [
         'data' => [
             'uid' => '12345',
         ],
@@ -60,26 +55,32 @@ class WallsServiceTest extends FunctionalTestCase
     /**
      * @var array
      */
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/walls_io_proxy',
+    protected array $testExtensionsToLoad = [
+        'jweiland/walls-io-proxy',
     ];
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->importDataSet('ntf://Database/pages.xml');
-        $this->importDataSet('ntf://Database/tt_content.xml');
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/Database/pages.csv');
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/Database/tt_content.csv');
         $this->setUpFrontendRootPage(1);
 
-        $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
+        $GLOBALS['LANG'] = $this->getMockBuilder(LanguageService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->registry = new Registry();
-        $this->wallsIoClientProphecy = $this->prophesize(WallsIoClient::class);
+        $this->wallsIoClientMock = $this->getMockBuilder(WallsIoClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->requestMock = $this->createMock(ServerRequest::class);
 
         $this->subject = new WallsService(
             $this->registry,
-            $this->wallsIoClientProphecy->reveal()
+            $this->wallsIoClientMock
         );
     }
 
@@ -88,27 +89,46 @@ class WallsServiceTest extends FunctionalTestCase
         unset(
             $this->subject,
             $this->registry,
-            $this->wallsIoClientProphecy
+            $this->wallsIoClientMock
         );
 
         parent::tearDown();
     }
 
-    public function dataProviderForInvalidPluginConfiguration(): array
+    public static function dataProviderForInvalidPluginConfiguration(): array
     {
         return [
             'Missing record UID' => [[]],
             'Missing access token' => [['data' => ['uid' => 1]]],
             'Missing entries to load' => [['data' => ['uid' => 1], 'conf' => ['accessToken' => 'ABC123']]],
-            'Missing entries to show' => [['data' => ['uid' => 1], 'conf' => ['accessToken' => 'ABC123', 'entriesToLoad' => 24]]],
-            'Missing request type' => [['data' => ['uid' => 1], 'conf' => ['accessToken' => 'ABC123', 'entriesToLoad' => 24, 'entriesToShow' => 8]]],
-            'Invalid request type' => [['data' => ['uid' => 1], 'conf' => ['accessToken' => 'ABC123', 'entriesToLoad' => 24, 'entriesToShow' => 8, 'requestType' => 'foo']]],
+            'Missing entries to show' => [
+                [
+                    'data' => ['uid' => 1],
+                    'conf' => ['accessToken' => 'ABC123', 'entriesToLoad' => 24],
+                ],
+            ],
+            'Missing request type' => [
+                [
+                    'data' => ['uid' => 1],
+                    'conf' => ['accessToken' => 'ABC123', 'entriesToLoad' => 24, 'entriesToShow' => 8],
+                ],
+            ],
+            'Invalid request type' => [
+                [
+                    'data' => ['uid' => 1],
+                    'conf' => [
+                        'accessToken' => 'ABC123',
+                        'entriesToLoad' => 24,
+                        'entriesToShow' => 8,
+                        'requestType' => 'foo',
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * @test
-     *
      * @dataProvider dataProviderForInvalidPluginConfiguration
      */
     public function getWallPostsWithInvalidPluginConfigurationWillReturnEmptyArray(array $processedData): void
@@ -116,7 +136,8 @@ class WallsServiceTest extends FunctionalTestCase
         self::assertSame(
             [],
             $this->subject->getWallPosts(
-                new PluginConfiguration($processedData)
+                new PluginConfiguration($processedData),
+                $this->requestMock
             )
         );
     }
@@ -126,9 +147,10 @@ class WallsServiceTest extends FunctionalTestCase
      */
     public function getWallPostsWithEmptyClientResultWillReturnEmptyWalls(): void
     {
-        $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
-            ->shouldBeCalled()
+        $this->wallsIoClientMock
+            ->expects(self::once())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
                 [
                     'status' => 'success',
@@ -136,11 +158,15 @@ class WallsServiceTest extends FunctionalTestCase
                 ]
             );
 
+        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
+        $result = $this->subject->getWallPosts(
+            new PluginConfiguration($this->processedDataForPostsRequest),
+            $this->requestMock
+        );
+
         self::assertSame(
             [],
-            $this->subject->getWallPosts(
-                new PluginConfiguration($this->processedDataForPostsRequest)
-            )
+            $result
         );
     }
 
@@ -157,18 +183,22 @@ class WallsServiceTest extends FunctionalTestCase
             ]
         );
 
-        $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
-            ->shouldBeCalled()
+        $this->wallsIoClientMock
+            ->expects(self::once())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(['status' => 'error']);
+        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
+        $result = $this->subject->getWallPosts(
+            new PluginConfiguration($this->processedDataForPostsRequest),
+            $this->requestMock
+        );
 
         self::assertSame(
             [
                 'foo' => 'far',
             ],
-            $this->subject->getWallPosts(
-                new PluginConfiguration($this->processedDataForPostsRequest)
-            )
+            $result
         );
     }
 
@@ -189,25 +219,26 @@ class WallsServiceTest extends FunctionalTestCase
             ],
         ];
 
-        $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
-            ->shouldBeCalled()
+        $this->wallsIoClientMock
+            ->expects(self::once())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
                 [
                     'status' => 'success',
                     'data' => $expected,
                 ]
             );
-        $this->wallsIoClientProphecy
-            ->hasErrors()
-            ->shouldBeCalled()
-            ->willReturn(false);
+
+        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
+        $result = $this->subject->getWallPosts(
+            new PluginConfiguration($this->processedDataForPostsRequest),
+            $this->requestMock
+        );
 
         self::assertSame(
             $expected,
-            $this->subject->getWallPosts(
-                new PluginConfiguration($this->processedDataForPostsRequest)
-            )
+            $result
         );
     }
 
@@ -234,25 +265,24 @@ class WallsServiceTest extends FunctionalTestCase
             ],
         ];
 
-        $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
-            ->shouldBeCalled()
+        $this->wallsIoClientMock
+            ->expects(self::once())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
                 [
                     'status' => 'success',
                     'data' => $data,
                 ]
             );
-        $this->wallsIoClientProphecy
-            ->hasErrors()
-            ->shouldBeCalled()
-            ->willReturn(false);
 
+        $result = $this->subject->getWallPosts(
+            new PluginConfiguration($this->processedDataForPostsRequest),
+            $this->requestMock
+        );
         self::assertSame(
             $expected,
-            $this->subject->getWallPosts(
-                new PluginConfiguration($this->processedDataForPostsRequest)
-            )
+            $result
         );
     }
 
@@ -276,25 +306,25 @@ class WallsServiceTest extends FunctionalTestCase
             ],
         ];
 
-        $this->wallsIoClientProphecy
-            ->processRequest(Argument::type(PostsRequest::class))
-            ->shouldBeCalled()
+        $this->wallsIoClientMock
+            ->expects(self::once())
+            ->method('processRequest')
+            ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(
                 [
                     'status' => 'success',
                     'data' => $data,
                 ]
             );
-        $this->wallsIoClientProphecy
-            ->hasErrors()
-            ->shouldBeCalled()
-            ->willReturn(false);
 
+        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
+        $result = $this->subject->getWallPosts(
+            new PluginConfiguration($this->processedDataForPostsRequest),
+            $this->requestMock
+        );
         self::assertSame(
             $expected,
-            $this->subject->getWallPosts(
-                new PluginConfiguration($this->processedDataForPostsRequest)
-            )
+            $result
         );
     }
 }

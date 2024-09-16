@@ -1,7 +1,18 @@
 <?php
-if (!defined('TYPO3_MODE')) {
+
+/*
+ * This file is part of the package jweiland/walls-io-proxy.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
+if (!defined('TYPO3')) {
     die('Access denied.');
 }
+
+use JWeiland\WallsIoProxy\Preview\WallsIoBackendPreviewRenderer;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 $GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['showitem'] = '
     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
@@ -23,13 +34,13 @@ $GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['showitem'] = '
     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:extended,
 ';
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue(
+ExtensionManagementUtility::addPiFlexFormValue(
     '*',
     'FILE:EXT:walls_io_proxy/Configuration/FlexForms/WallsIoProxy.xml',
     'wallsioproxy'
 );
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
+ExtensionManagementUtility::addPlugin(
     [
         'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang_db.xlf:plugin.walls_io_proxy.title',
         'wallsioproxy',
@@ -38,3 +49,6 @@ $GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['showitem'] = '
     'CType',
     'walls_io_proxy'
 );
+
+$GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['previewRenderer']
+    = WallsIoBackendPreviewRenderer::class;

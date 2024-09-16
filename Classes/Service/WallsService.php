@@ -16,13 +16,12 @@ use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\Posts\ChangedRequest;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Request\RequestInterface;
+use JWeiland\WallsIoProxy\Utility\StringUtility;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
-use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
@@ -35,6 +34,7 @@ class WallsService
 
     /**
      * Fields to get from the API
+     * @var array<string> $fields
      */
     protected array $fields = [
         'id',
@@ -55,13 +55,18 @@ class WallsService
 
     protected WallsIoClient $client;
 
+    protected ServerRequestInterface $request;
+
     public function __construct(Registry $registry, WallsIoClient $client)
     {
         $this->registry = $registry;
         $this->client = $client;
     }
 
-    public function getWallPosts(PluginConfiguration $pluginConfiguration): array
+    /**
+     * @return array<string, mixed>
+     */
+    public function getWallPosts(PluginConfiguration $pluginConfiguration, ServerRequestInterface $request): array
     {
         if (!$this->isValidPluginConfiguration($pluginConfiguration)) {
             return [];
@@ -81,7 +86,7 @@ class WallsService
             }
 
             // Do not store wall posts on BE yoast request
-            if (!array_key_exists('x-yoast-page-request', $this->getTypo3Request()->getHeaders())) {
+            if ($request->getHeaders() && !array_key_exists('x-yoast-page-request', $request->getHeaders())) {
                 $this->setWallPostsToRegistry($wallPosts, $pluginConfiguration);
             }
         }
@@ -89,6 +94,9 @@ class WallsService
         return $wallPosts;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getUncachedRequestFromWallsIO(RequestInterface $wallsIoRequest): array
     {
         $response = $this->client->processRequest($wallsIoRequest);
@@ -105,6 +113,9 @@ class WallsService
         return [];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getStoredWallPostsFromRegistry(PluginConfiguration $pluginConfiguration): array
     {
         return $this->registry->get(
@@ -114,6 +125,9 @@ class WallsService
         );
     }
 
+    /**
+     * @param array<string, mixed> $wallPosts
+     */
     protected function setWallPostsToRegistry(array $wallPosts, PluginConfiguration $pluginConfiguration): void
     {
         $this->registry->set(
@@ -135,8 +149,11 @@ class WallsService
 
     protected function getWallsIoRequest(PluginConfiguration $pluginConfiguration): RequestInterface
     {
-        /** @var RequestInterface $wallsIoRequest */
-        $wallsIoRequest = GeneralUtility::makeInstance($pluginConfiguration->getRequestType());
+        /** @var class-string<RequestInterface> $requestType */
+        $requestType = $pluginConfiguration->getRequestType();
+
+        /** @phpstan-var RequestInterface $wallsIoRequest */
+        $wallsIoRequest = GeneralUtility::makeInstance($requestType);
         $wallsIoRequest->setFields($this->fields);
         $wallsIoRequest->setAccessToken($pluginConfiguration->getAccessToken());
         $wallsIoRequest->setLimit($pluginConfiguration->getEntriesToLoad());
@@ -220,6 +237,10 @@ class WallsService
         return $targetDirectory;
     }
 
+    /**
+     * @param array<string, mixed> $post
+     * @return array<string, mixed>
+     */
     protected function getSanitizedPost(array $post, PluginConfiguration $pluginConfiguration): array
     {
         if (array_key_exists('created_timestamp', $post)) {
@@ -330,6 +351,6 @@ class WallsService
 
     protected function getTypo3Request(): ServerRequestInterface
     {
-        return $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
+        return $this->request;
     }
 }

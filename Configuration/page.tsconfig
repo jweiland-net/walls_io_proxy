@@ -1,0 +1,2 @@
+@import 'EXT:walls_io_proxy/Configuration/TSconfig/ContentElementWizard.tsconfig'
+@import 'EXT:walls_io_proxy/Configuration/TSconfig/ContentElementPreview.tsconfig'

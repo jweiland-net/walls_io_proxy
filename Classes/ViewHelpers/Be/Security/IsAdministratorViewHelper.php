@@ -24,6 +24,11 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
 {
     /**
      * This method decides, if the current logged-in user is an administrator
+     *
+     * @param mixed $arguments ViewHelper arguments to evaluate the condition for this ViewHelper,
+     * allows for flexibility in overriding this method.
+     *
+     * @return bool Returns true if the user is an administrator, otherwise false.
      */
     protected static function evaluateCondition($arguments = null): bool
     {
@@ -32,14 +37,14 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
 
     private static function isBeUserAdmin(): bool
     {
+        $context = self::getContext();
         try {
-            if (
-                ($context = self::getContext())
-                && $context->hasAspect('backend.user')
-                && ($userAspect = $context->getAspect('backend.user'))
-                && $userAspect instanceof UserAspect
-            ) {
-                return $userAspect->isAdmin();
+            $context = self::getContext();
+            if ($context->hasAspect('backend.user')) {
+                $userAspect = $context->getAspect('backend.user');
+                if ($userAspect instanceof UserAspect) {
+                    return $userAspect->isAdmin();
+                }
             }
         } catch (AspectNotFoundException $e) {
         }

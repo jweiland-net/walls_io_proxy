@@ -23,12 +23,18 @@ class ChangedRequest extends AbstractRequest
 {
     protected string $path = '/v1/posts/changed';
 
+    /**
+     * @var array<string, mixed> $parameters
+     */
     protected array $parameters = [
         'fields' => 'id,comment,type',
         'include_inactive' => 0,
         'limit' => 24,
     ];
 
+    /**
+     * @var array<string, mixed> $allowedParameters
+     */
     protected array $allowedParameters = [
         'access_token' => 1,
         'since' => 1,
@@ -42,6 +48,9 @@ class ChangedRequest extends AbstractRequest
         'include_source' => 1,
     ];
 
+    /**
+     * @var array<string> $allowedFields
+     */
     protected array $allowedFields = [
         'id',
         'comment',
@@ -99,6 +108,8 @@ class ChangedRequest extends AbstractRequest
 
     /**
      * A comma-separated list of fields you would like to receive for each post.
+     *
+     * @param array<string, mixed> $fields
      */
     public function setFields(array $fields): void
     {
