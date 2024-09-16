@@ -11,8 +11,8 @@ if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use JWeiland\WallsIoProxy\Preview\WallsIoBackendPreviewRenderer;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 $GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['showitem'] = '
     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
