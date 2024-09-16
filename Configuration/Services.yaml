@@ -26,3 +26,6 @@ services:
   # Will be called by GeneralUtility::makeInstance from tt_content_drawItem Hook
   JWeiland\WallsIoProxy\Hook\PageLayoutViewHook:
     public: true
+
+  JWeiland\WallsIoProxy\Preview\WallsIoBackendPreviewRenderer:
+    public: true
