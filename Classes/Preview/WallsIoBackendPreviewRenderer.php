@@ -42,7 +42,7 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
     {
         $record = $item->getRecord();
         $itemLabels = $item->getContext()->getItemLabels();
-        $table = $item->getTable();
+        $table = 'tt_content';
         $outHeader = '';
 
         $headerLayout = (string)($record['header_layout'] ?? '');
@@ -75,7 +75,7 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
     {
         $recordType = $item->getRecordType();
         $languageService = $this->getLanguageService();
-        $table = $item->getTable();
+        $table = 'tt_content';
         $record = $item->getRecord();
         $out = '';
 
@@ -108,7 +108,7 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
     {
         $info = [];
         $record = $item->getRecord();
-        $table = $item->getTable();
+        $table = 'tt_content';
         $fieldList = [];
         $startTimeField = (string)($GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['starttime'] ?? '');
         if ($startTimeField !== '') {
@@ -180,7 +180,7 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
     {
         $itemLabels = $item->getContext()->getItemLabels();
         $record = $item->getRecord();
-        $table = $item->getTable();
+        $table = 'tt_content';
         $fieldArr = explode(',', $fieldList);
         foreach ($fieldArr as $field) {
             if ($record[$field]) {
@@ -193,24 +193,13 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
     protected function renderContentElementPreviewFromFluidTemplate(array $row, ?GridColumnItem $item = null): ?string
     {
         // Backwards compatibility for call of this method with only 1 parameter.
-        $recordType = $item?->getRecordType() ?? $row['CType'] ?? null;
+        $recordType = $item !== null ? ($item->getRecordType() ?? $row['CType'] ?? null) : ($row['CType'] ?? null);
         if ($recordType === null) {
             return null;
         }
-        $table = $item?->getTable() ?? 'tt_content';
+        $table = 'tt_content';
         $tsConfig = BackendUtility::getPagesTSconfig($row['pid'])['mod.']['web_layout.'][$table . '.']['preview.'] ?? [];
-        $fluidTemplateFile = '';
-
-        if (
-            $table === 'tt_content'
-            && $recordType === 'list'
-            && !empty($row['list_type'])
-            && !empty($tsConfig['list.'][$row['list_type']])
-        ) {
-            $fluidTemplateFile = $tsConfig['list.'][$row['list_type']];
-        } elseif (!empty($tsConfig[$recordType])) {
-            $fluidTemplateFile = $tsConfig[$recordType];
-        }
+        $fluidTemplateFile = $tsConfig['wallsioproxy'] ?? '';
 
         if ($fluidTemplateFile === '') {
             return null;
@@ -260,7 +249,7 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
      */
     protected function getThumbCodeUnlinked($row, $table, $field): string
     {
-        return BackendUtility::thumbCode(row: $row, table: $table, field: $field, linkInfoPopup: false);
+        return BackendUtility::thumbCode($row, $table, $field, false);
     }
 
     /**
