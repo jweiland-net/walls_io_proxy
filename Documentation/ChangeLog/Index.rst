@@ -7,6 +7,14 @@
 ChangeLog
 =========
 
+Version 7.0.0
+=============
+
+*   TASK: Add TYPO3 12 compatibility
+*   Test Suite Improvements
+*   PHPStan Error Fixes
+*   Documentation Updates
+
 Version 6.0.0
 =============
 
