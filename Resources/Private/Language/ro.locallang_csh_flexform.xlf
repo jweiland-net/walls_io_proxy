@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<xliff version="1.0">
+  <file source-language="en" target-language="ro" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
+    <header/>
+    <body>
+      <trans-unit id="entriesToLoad.description">
+        <source>Define how many entries should be loaded.</source>
+        <target state="needs-translation">Define how many entries should be loaded.</target>
+      </trans-unit>
+      <trans-unit id="entriesToLoad.details">
+        <source>This is only the amount of entries/postings to load. This value should be a multiple of "Entries to show". Why? See this example: If you configure entriesToLoad to 24 and entriesToShow to 8 you can click the button "Load more" 2 times (not 3, as the first 8 entries are already shown) before it hides.</source>
+        <target state="needs-translation">This is only the amount of entries/postings to load. This value should be a multiple of "Entries to show". Why? See this example: If you configure entriesToLoad to 24 and entriesToShow to 8 you can click the button "Load more" 2 times (not 3, as the first 8 entries are already shown) before it hides.</target>
+      </trans-unit>
+      <trans-unit id="entriesToShow.description">
+        <source>Define how many entries should initially be shown.</source>
+        <target state="needs-translation">Define how many entries should initially be shown.</target>
+      </trans-unit>
+      <trans-unit id="entriesToShow.details">
+        <source>This value gets the first x entries of "Entries to load" and shows them in frontend. With each click on button "Load more" this amount of entries will be dynamically added to the other shown entries.</source>
+        <target state="needs-translation">This value gets the first x entries of "Entries to load" and shows them in frontend. With each click on button "Load more" this amount of entries will be dynamically added to the other shown entries.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
