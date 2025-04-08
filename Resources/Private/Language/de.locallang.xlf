@@ -1,37 +1,36 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <xliff version="1.0">
-	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
-		<header/>
-		<body>
-			<trans-unit id="creationTime.seconds">
-				<source>1 minute ago</source>
-				<target>vor %s Minuten</target>
-			</trans-unit>
-			<trans-unit id="creationTime.minutes">
-				<source>%s minutes ago</source>
-				<target>vor %s Minuten</target>
-			</trans-unit>
-			<trans-unit id="creationTime.hours">
-				<source>%s hours ago</source>
-				<target>vor %s Stunden</target>
-			</trans-unit>
-			<trans-unit id="creationTime.date">
-				<source>on %s</source>
-				<target>am %s</target>
-			</trans-unit>
-			<trans-unit id="loadPosts">
-				<source>Load further posts</source>
-				<target>Lade weitere Posts</target>
-			</trans-unit>
-			<trans-unit id="noPosts">
-				<source>No posts found. Please activate posts at walls.io</source>
-				<target>Keine Posts gefunden. Bitte aktivieren Sie Posts bei walls.io</target>
-			</trans-unit>
-
-			<trans-unit id="clearCache.posts">
-				<source>Clear cached walls.io posts</source>
-				<target>Lösche zwischengespeicherte wall.io Beiträge</target>
-			</trans-unit>
-		</body>
-	</file>
+  <file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
+    <header/>
+    <body>
+      <trans-unit id="creationTime.seconds" approved="yes">
+        <source>1 minute ago</source>
+        <target state="final">vor %s Minuten</target>
+      </trans-unit>
+      <trans-unit id="creationTime.minutes" approved="yes">
+        <source>%s minutes ago</source>
+        <target state="final">vor %s Minuten</target>
+      </trans-unit>
+      <trans-unit id="creationTime.hours" approved="yes">
+        <source>%s hours ago</source>
+        <target state="final">vor %s Stunden</target>
+      </trans-unit>
+      <trans-unit id="creationTime.date" approved="yes">
+        <source>on %s</source>
+        <target state="final">am %s</target>
+      </trans-unit>
+      <trans-unit id="loadPosts" approved="yes">
+        <source>Load further posts</source>
+        <target state="final">Lade weitere Posts</target>
+      </trans-unit>
+      <trans-unit id="noPosts" approved="yes">
+        <source>No posts found. Please activate posts at walls.io</source>
+        <target state="final">Keine Posts gefunden. Bitte aktivieren Sie Posts bei walls.io</target>
+      </trans-unit>
+      <trans-unit id="clearCache.posts" approved="yes">
+        <source>Clear cached walls.io posts</source>
+        <target state="final">Lösche zwischengespeicherte wall.io Beiträge</target>
+      </trans-unit>
+    </body>
+  </file>
 </xliff>
