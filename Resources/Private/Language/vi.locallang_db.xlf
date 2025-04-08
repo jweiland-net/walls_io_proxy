@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<xliff version="1.0">
+  <file source-language="en" target-language="vi" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
+    <header/>
+    <body>
+      <trans-unit id="plugin.walls_io_proxy.title">
+        <source>Walls.io Proxy</source>
+        <target state="needs-translation">Walls.io Proxy</target>
+      </trans-unit>
+      <trans-unit id="plugin.walls_io_proxy.description">
+        <source>Shows new posts of Facebook, Twitter and Instagram through the walls.io service</source>
+        <target state="needs-translation">Shows new posts of Facebook, Twitter and Instagram through the walls.io service</target>
+      </trans-unit>
+      <trans-unit id="tabs.configuration">
+        <source>Walls.io</source>
+        <target state="needs-translation">Walls.io</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
