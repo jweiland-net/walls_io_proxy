@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<xliff version="1.0">
+  <file source-language="en" target-language="nl" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
+    <header/>
+    <body>
+      <trans-unit id="sheetGeneral">
+        <source>General</source>
+        <target state="needs-translation">General</target>
+      </trans-unit>
+      <trans-unit id="accessToken">
+        <source>Please enter the API access token from walls.io</source>
+        <target state="needs-translation">Please enter the API access token from walls.io</target>
+      </trans-unit>
+      <trans-unit id="requestType">
+        <source>Which posts do you want to retrieve?</source>
+        <target state="needs-translation">Which posts do you want to retrieve?</target>
+      </trans-unit>
+      <trans-unit id="requestType.posts">
+        <source>Current postings sorted by date of receipt at walls.io</source>
+        <target state="needs-translation">Current postings sorted by date of receipt at walls.io</target>
+      </trans-unit>
+      <trans-unit id="requestType.changedPosts">
+        <source>Current postings sorted by modification date</source>
+        <target state="needs-translation">Current postings sorted by modification date</target>
+      </trans-unit>
+      <trans-unit id="entriesToLoad">
+        <source>Amount of entries to load</source>
+        <target state="needs-translation">Amount of entries to load</target>
+      </trans-unit>
+      <trans-unit id="entriesToLoad.description">
+        <source>How many entries should be called from walls.io?</source>
+        <target state="needs-translation">How many entries should be called from walls.io?</target>
+      </trans-unit>
+      <trans-unit id="entriesToShow">
+        <source>Amount of entries to show</source>
+        <target state="needs-translation">Amount of entries to show</target>
+      </trans-unit>
+      <trans-unit id="showWallsSince">
+        <source>Show entries of the last x days</source>
+        <target state="needs-translation">Show entries of the last x days</target>
+      </trans-unit>
+      <trans-unit id="showWallsSince.description">
+        <source>Enter the max. days that the entries to be displayed may be old. If you set the value too low, it could happen that fewer entries are output than defined above.</source>
+        <target state="needs-translation">Enter the max. days that the entries to be displayed may be old. If you set the value too low, it could happen that fewer entries are output than defined above.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
