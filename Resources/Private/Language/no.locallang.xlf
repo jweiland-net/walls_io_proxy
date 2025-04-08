@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<xliff version="1.0">
+  <file source-language="en" target-language="no" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
+    <header/>
+    <body>
+      <trans-unit id="creationTime.seconds">
+        <source>1 minute ago</source>
+        <target state="needs-translation">1 minute ago</target>
+      </trans-unit>
+      <trans-unit id="creationTime.minutes">
+        <source>%s minutes ago</source>
+        <target state="needs-translation">%s minutes ago</target>
+      </trans-unit>
+      <trans-unit id="creationTime.hours">
+        <source>%s hours ago</source>
+        <target state="needs-translation">%s hours ago</target>
+      </trans-unit>
+      <trans-unit id="creationTime.date">
+        <source>on %s</source>
+        <target state="needs-translation">on %s</target>
+      </trans-unit>
+      <trans-unit id="loadPosts">
+        <source>Load further posts</source>
+        <target state="needs-translation">Load further posts</target>
+      </trans-unit>
+      <trans-unit id="noPosts">
+        <source>No posts found. Please activate posts at walls.io</source>
+        <target state="needs-translation">No posts found. Please activate posts at walls.io</target>
+      </trans-unit>
+      <trans-unit id="clearCache.posts">
+        <source>Clear cached walls.io posts</source>
+        <target state="needs-translation">Clear cached walls.io posts</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
