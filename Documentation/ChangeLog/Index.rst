@@ -7,6 +7,11 @@
 ChangeLog
 =========
 
+Version 7.0.1
+=============
+
+*   TASK: Add import path into proxy directory
+
 Version 7.0.0
 =============
 
