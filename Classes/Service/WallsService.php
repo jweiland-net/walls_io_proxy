@@ -224,7 +224,7 @@ class WallsService
     public function getTargetDirectory(int $contentRecordUid): string
     {
         $targetDirectory = sprintf(
-            '%s/%s/%s/',
+            '%s/%s/%s',
             Environment::getPublicPath(),
             $this->targetDirectory,
             $contentRecordUid
@@ -296,14 +296,17 @@ class WallsService
     protected function cacheExternalResources(string $resource, int $contentRecordUid): string
     {
         $pathParts = GeneralUtility::split_fileref(parse_url($resource, PHP_URL_PATH));
+
         $filePath = sprintf(
-            '%s%s.%s',
+            '%s/%s/%s.%s',
             $this->getTargetDirectory($contentRecordUid),
+            trim($pathParts['path'], '/'),
             $pathParts['filebody'],
             $pathParts['fileext']
         );
 
         if (!file_exists($filePath)) {
+            GeneralUtility::mkdir_deep(dirname($filePath));
             GeneralUtility::writeFile($filePath, GeneralUtility::getUrl($resource));
         }
 
