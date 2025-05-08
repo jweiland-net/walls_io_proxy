@@ -1,5 +1,7 @@
 <?php
 
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+
 /*
  * This file is part of the package jweiland/walls-io-proxy.
  *
@@ -12,7 +14,7 @@ if (!defined('TYPO3')) {
 }
 
 call_user_func(static function () {
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
+    ExtensionManagementUtility::addStaticFile(
         'walls_io_proxy',
         'Configuration/TypoScript',
         'Walls.io Proxy'
