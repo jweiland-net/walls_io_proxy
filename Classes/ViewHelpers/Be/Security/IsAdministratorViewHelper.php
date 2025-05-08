@@ -46,7 +46,7 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
                     return $userAspect->isAdmin();
                 }
             }
-        } catch (AspectNotFoundException $e) {
+        } catch (AspectNotFoundException $aspectNotFoundException) {
         }
 
         return false;
