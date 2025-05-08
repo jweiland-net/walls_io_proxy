@@ -106,7 +106,7 @@ class WallsIoClient
 
         if ($response['status'] !== 'success') {
             $this->logger->error(
-                implode($response['info']),
+                implode('', $response['info']),
                 [
                     'status' => $response['status'],
                 ]
