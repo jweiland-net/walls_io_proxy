@@ -13,7 +13,6 @@ namespace JWeiland\WallsIoProxy\Hook;
 
 use JWeiland\WallsIoProxy\Service\WallsService;
 use TYPO3\CMS\Core\Http\ServerRequestFactory;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Let's clear cache for our individual cacheCmd=WallsIoProxy
