@@ -40,7 +40,6 @@ class DataHandlerHook
             isset($params['cacheCmd'])
             && strtolower($params['cacheCmd']) === 'wallioproxy'
             && ($contentRecordUid = (int)($request->getQueryParams()['contentRecordUid'] ?? 0))
-            && ($contentRecordUid = (int)GeneralUtility::_GET('contentRecordUid'))
             && $contentRecordUid > 0
         ) {
             echo $this->wallsService->clearCache($contentRecordUid);
