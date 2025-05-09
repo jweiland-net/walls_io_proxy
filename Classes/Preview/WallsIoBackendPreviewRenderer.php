@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Preview;
 
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Backend\Preview\PreviewRendererInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
@@ -31,12 +32,10 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
  */
 class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
 {
-    protected Registry $registry;
-
-    public function __construct(Registry $registry)
-    {
-        $this->registry = $registry;
-    }
+    public function __construct(
+        private readonly Registry $registry,
+        private readonly LoggerInterface $logger,
+    ) {}
 
     public function renderPageModulePreviewHeader(GridColumnItem $item): string
     {
