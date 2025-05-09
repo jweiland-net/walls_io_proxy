@@ -26,6 +26,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 class IsAdministratorViewHelperTest extends FunctionalTestCase
 {
     protected bool $resetSingletonInstances = true;
+
     protected array $testExtensionsToLoad = [
         'jweiland/walls-io-proxy',
     ];

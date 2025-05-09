@@ -102,7 +102,7 @@ abstract class AbstractRequest implements RequestInterface
             $isValid = false;
         }
 
-        if (empty($uri)) {
+        if ($uri === '' || $uri === '0') {
             $isValid = false;
         }
 

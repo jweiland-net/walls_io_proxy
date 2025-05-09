@@ -29,15 +29,15 @@
 		"source": "https://github.com/jweiland-net/walls_io_proxy"
 	},
 	"require": {
-		"typo3/cms-core": "^11.5.38 || ^12.4.17"
+		"typo3/cms-core": "^13.4"
 	},
 	"require-dev": {
-		"ergebnis/composer-normalize": "~2.42.0",
+		"ergebnis/composer-normalize": "^2.44",
 		"friendsofphp/php-cs-fixer": "^3.14",
 		"phpstan/phpstan": "^1.10",
-		"phpunit/phpunit": "^9.6",
-		"typo3/coding-standards": "^0.6",
-		"typo3/testing-framework": "^7.1.0"
+		"roave/security-advisories": "dev-latest",
+		"typo3/coding-standards": "^0.8",
+		"typo3/testing-framework": "^9.0.1"
 	},
 	"replace": {
 		"typo3-ter/walls_io_proxy": "self.version"

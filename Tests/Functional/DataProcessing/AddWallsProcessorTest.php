@@ -163,9 +163,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         $this->wallsServiceMock
             ->expects(self::once())
             ->method('getWallPosts')
-            ->with(self::callback(function (PluginConfiguration $config) {
-                return $config->getAccessToken() === 'ABC123';
-            }))
+            ->with(self::callback(fn(PluginConfiguration $config) => $config->getAccessToken() === 'ABC123'))
             ->willReturn([]);
 
         self::assertSame(
@@ -194,9 +192,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
             ->expects(self::once())
             ->method('getWallPosts')
             ->with(
-                self::callback(function (PluginConfiguration $pluginConfiguration) {
-                    return $pluginConfiguration->getRecordUid() === 1;
-                })
+                self::callback(fn(PluginConfiguration $pluginConfiguration) => $pluginConfiguration->getRecordUid() === 1)
             )
             ->willReturn([]);
 

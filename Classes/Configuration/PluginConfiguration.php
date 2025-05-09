@@ -17,9 +17,13 @@ namespace JWeiland\WallsIoProxy\Configuration;
 class PluginConfiguration
 {
     protected string $requestType = '';
+
     protected string $accessToken = '';
+
     protected int $showWallsSince = 365;
+
     protected int $entriesToLoad = 24;
+
     protected int $entriesToShow = 8;
 
     /**

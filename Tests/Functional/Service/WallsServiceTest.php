@@ -52,9 +52,6 @@ class WallsServiceTest extends FunctionalTestCase
         ],
     ];
 
-    /**
-     * @var array
-     */
     protected array $testExtensionsToLoad = [
         'jweiland/walls-io-proxy',
     ];

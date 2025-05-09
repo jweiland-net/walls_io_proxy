@@ -191,11 +191,7 @@ class WallsService
             return false;
         }
 
-        if (!class_exists($pluginConfiguration->getRequestType())) {
-            return false;
-        }
-
-        return true;
+        return class_exists($pluginConfiguration->getRequestType());
     }
 
     /**
@@ -287,6 +283,7 @@ class WallsService
                     }
                 }
             }
+
             $post['html_comment'] = nl2br($post['comment']);
         }
 
