@@ -14,6 +14,7 @@ namespace JWeiland\WallsIoProxy\Tests\Unit\Hook;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Hook\DataHandlerHook;
 use JWeiland\WallsIoProxy\Service\WallsService;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Registry;
@@ -65,9 +66,7 @@ class DataHandlerHookTest extends UnitTestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function clearCachePostProcWithEmptyParamsDoesNothing(): void
     {
         // Set expectation that clearCache should not be called
@@ -78,9 +77,7 @@ class DataHandlerHookTest extends UnitTestCase
         $this->subject->clearCachePostProc([]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function clearCachePostProcWithInvalidCacheCmdDoesNothing(): void
     {
         // Set expectation that clearCache should not be called
@@ -93,9 +90,7 @@ class DataHandlerHookTest extends UnitTestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function clearCachePostProcWithEmptyContentUidDoesNothing(): void
     {
         $_GET['contentRecordUid'] = 0;
@@ -110,9 +105,7 @@ class DataHandlerHookTest extends UnitTestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function clearCachePostProcWithValidCacheCmdAndContentRecordUidWillClearCache(): void
     {
         $_GET['contentRecordUid'] = 12;

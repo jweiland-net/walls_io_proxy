@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Tests\Unit\Request;
 
 use JWeiland\WallsIoProxy\Request\PostsRequest;
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
@@ -37,9 +38,7 @@ class PostsRequestTest extends UnitTestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPathInitiallyReturnsDefaultPath(): void
     {
         self::assertSame(
@@ -48,9 +47,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setPathSetsPath(): void
     {
         $this->subject->setPath('foo bar');
@@ -61,9 +58,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setPathSetsTrimmedPath(): void
     {
         $this->subject->setPath('   trimmed   ');
@@ -74,9 +69,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getParametersInitiallyReturnsDefaultParameters(): void
     {
         self::assertSame(
@@ -89,9 +82,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getParameterReturnsOneParameter(): void
     {
         self::assertSame(
@@ -100,9 +91,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasParameterReturnsTrue(): void
     {
         self::assertTrue(
@@ -110,9 +99,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasParameterReturnsFalse(): void
     {
         self::assertFalse(
@@ -120,9 +107,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setParametersSetsParameters(): void
     {
         $expectedParameters = [
@@ -137,9 +122,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setParametersSetsOnlyAllowedParameters(): void
     {
         $this->subject->setParameters([
@@ -155,9 +138,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addParameterAddsParameter(): void
     {
         $this->subject->addParameter('access_token', '123');
@@ -173,9 +154,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addParameterWillNotAddDisallowedParameter(): void
     {
         $this->subject->addParameter('accessToken', '123');
@@ -190,9 +169,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildUriReturnsUriWithEmptyAccessToken(): void
     {
         self::assertSame(
@@ -201,9 +178,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildUriReturnsUriWithAccessToken(): void
     {
         $this->subject = new PostsRequest();
@@ -215,9 +190,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildUriWithAdditionalParameterReturnsUriWithAccessToken(): void
     {
         $this->subject = new PostsRequest();
@@ -231,9 +204,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isValidRequestWithInvalidAccessTokenReturnsFalse(): void
     {
         self::assertFalse(
@@ -241,9 +212,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isValidRequestWithAccessTokenReturnsTrue(): void
     {
         $this->subject = new PostsRequest();
@@ -254,9 +223,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setFieldsWithValidFieldsSetsFields(): void
     {
         $this->subject->setFields([
@@ -271,9 +238,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setFieldsWithInvalidFieldsSomeFields(): void
     {
         $this->subject->setFields([
@@ -288,9 +253,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setLimitSetsLimit(): void
     {
         $this->subject->setLimit(15);
@@ -301,9 +264,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setIncludeInactiveWithTrueSetsIncludeInactive(): void
     {
         $this->subject->setIncludeInactive(true);
@@ -314,9 +275,7 @@ class PostsRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setIncludeInactiveWithFalseSetsIncludeInactive(): void
     {
         $this->subject->setIncludeInactive(false);

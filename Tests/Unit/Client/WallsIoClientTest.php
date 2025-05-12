@@ -14,6 +14,7 @@ namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 use GuzzleHttp\Psr7\Stream;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
@@ -62,9 +63,7 @@ class WallsIoClientTest extends UnitTestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processRequestWithInvalidRequestLogsError(): void
     {
         /** @var PostsRequest|MockObject $postsRequest */
@@ -91,9 +90,7 @@ class WallsIoClientTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processRequestWithInvalidClientResponseLogsError(): void
     {
         /** @var PostsRequest|MockObject $postsRequest */
@@ -130,9 +127,7 @@ class WallsIoClientTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processRequestWithExceptionLogsError(): void
     {
         $postsRequest = $this->getMockBuilder(PostsRequest::class)
@@ -175,9 +170,7 @@ class WallsIoClientTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processRequestWithInvalidResponseLogsError(): void
     {
         /** @var PostsRequest|MockObject $postsRequest */
@@ -227,9 +220,7 @@ class WallsIoClientTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processRequestWithInvalidStatusLogsError(): void
     {
         /** @var PostsRequest|MockObject $postsRequest */
@@ -283,9 +274,7 @@ class WallsIoClientTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processRequestReturnsWalls(): void
     {
         /** @var PostsRequest|MockObject $postsRequest */

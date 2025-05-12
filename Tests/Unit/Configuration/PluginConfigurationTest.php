@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Tests\Unit\Configuration;
 
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
@@ -21,9 +22,7 @@ class PluginConfigurationTest extends UnitTestCase
 {
     protected PluginConfiguration $subject;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRecordInitiallyReturnsEmptyArray(): void
     {
         $this->subject = new PluginConfiguration([]);
@@ -34,9 +33,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRecordWithRecordWillReturnRecord(): void
     {
         $data = [
@@ -53,9 +50,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessTokenInitiallyReturnsEmptyString(): void
     {
         $this->subject = new PluginConfiguration([]);
@@ -66,9 +61,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessTokenWithAccessTokenWillReturnAccessToken(): void
     {
         $accessToken = 'ABC123';
@@ -84,9 +77,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRequestTypeInitiallyReturnsEmptyString(): void
     {
         $this->subject = new PluginConfiguration([]);
@@ -97,9 +88,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRequestTypeWithRequestTypeWillReturnRequestType(): void
     {
         $requestType = 'RequestClass';
@@ -116,9 +105,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getEntriesToLoadInitiallyReturns24(): void
     {
         $this->subject = new PluginConfiguration([]);
@@ -129,9 +116,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getEntriesToLoadWithEntriesToLoadWillReturnEntriesToLoad(): void
     {
         $entriesToLoad = 34;
@@ -147,9 +132,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getEntriesToShowInitiallyReturns8(): void
     {
         $this->subject = new PluginConfiguration([]);
@@ -160,9 +143,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getEntriesToShowWithEntriesToShowWillReturnEntriesToShow(): void
     {
         $entriesToShow = 12;
@@ -178,9 +159,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getShowWallsSinceInitiallyReturns365(): void
     {
         $this->subject = new PluginConfiguration([]);
@@ -191,9 +170,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getShowWallsSinceWithShowWallsSinceWillReturnShowWallsSince(): void
     {
         $showWallsSince = 48;
@@ -209,9 +186,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRecordUidInitiallyReturns0(): void
     {
         $this->subject = new PluginConfiguration([]);
@@ -222,9 +197,7 @@ class PluginConfigurationTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRecordUidWithRecordWillReturnRecordUid(): void
     {
         $this->subject = new PluginConfiguration([

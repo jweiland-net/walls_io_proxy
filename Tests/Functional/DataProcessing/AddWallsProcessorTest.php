@@ -14,6 +14,7 @@ namespace JWeiland\WallsIoProxy\Tests\Unit\DataProcessing;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor;
 use JWeiland\WallsIoProxy\Service\WallsService;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Service\FlexFormService;
@@ -76,9 +77,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processWithValidTypoScriptConditionWillNotModifyProcessedData(): void
     {
         $processedData = [];
@@ -111,9 +110,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processWithNonPiFlexformWillAddEmptyConfVariable(): void
     {
         $processedData = [];
@@ -138,9 +135,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processWithValidPiFlexformWillAddConfVariable(): void
     {
         $processedData = [
@@ -177,9 +172,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processWillCallGetWallPostsWithPluginConfiguration(): void
     {
         $processedData = [
@@ -213,9 +206,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processAddsWallsToProcessedData(): void
     {
         $processedData = [

@@ -61,9 +61,7 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function beUserIsNotAdministrator(): void
     {
         /** @var BackendUserAuthentication|MockObject $backendUserAuthenticationMock */
@@ -116,9 +114,7 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function beUserHasNoUserRecord(): void
     {
         /** @var BackendUserAuthentication|MockObject $backendUserAuthenticationMock */
@@ -145,9 +141,7 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function beUserIsNotSet(): void
     {
         $view = new StandaloneView();
