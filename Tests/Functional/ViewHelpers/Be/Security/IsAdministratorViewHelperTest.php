@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\ViewHelpers\Be;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Context\Context;
@@ -31,10 +32,7 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
         'jweiland/walls-io-proxy',
     ];
 
-    /**
-     * @test
-     * @throws Exception
-     */
+    #[Test]
     public function beUserIsAdministrator(): void
     {
         $this->importCSVDataSet(__DIR__ . '/../../../Fixtures/Database/be_users.csv');

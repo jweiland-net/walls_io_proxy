@@ -15,6 +15,7 @@ use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Service\WallsService;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Http\ServerRequest;
@@ -125,10 +126,8 @@ class WallsServiceTest extends FunctionalTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider dataProviderForInvalidPluginConfiguration
-     */
+    #[Test]
+    #[DataProvider('dataProviderForInvalidPluginConfiguration')]
     public function getWallPostsWithInvalidPluginConfigurationWillReturnEmptyArray(array $processedData): void
     {
         self::assertSame(
