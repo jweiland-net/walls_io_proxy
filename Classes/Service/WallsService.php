@@ -135,10 +135,12 @@ class WallsService
             'ContentRecordUid_' . $pluginConfiguration->getRecordUid(),
             $wallPosts
         );
+
+        $cacheLifetime = $GLOBALS['TSFE']->page['cache_timeout'] ?? 0;
         $this->registry->set(
             'WallsIoProxy',
             'PageCacheExpireTime_' . $pluginConfiguration->getRecordUid(),
-            $GLOBALS['EXEC_TIME'] + $this->getTypoScriptFrontendController()->get_cache_timeout()
+            $GLOBALS['EXEC_TIME'] + $cacheLifetime
         );
     }
 
