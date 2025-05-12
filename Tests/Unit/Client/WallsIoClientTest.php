@@ -40,6 +40,8 @@ class WallsIoClientTest extends UnitTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->requestFactoryMock = $this->getMockBuilder(RequestFactory::class)
             ->disableOriginalConstructor()
             ->getMock();

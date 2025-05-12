@@ -44,6 +44,8 @@ class DataHandlerHookTest extends UnitTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->registryMock = $this->createMock(Registry::class);
         $this->clientMock = $this->createMock(WallsIoClient::class);
         $this->requestMock = $this->createMock(ServerRequest::class);
