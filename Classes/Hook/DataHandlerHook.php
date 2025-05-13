@@ -36,7 +36,7 @@ class DataHandlerHook
     public function clearCachePostProc(array $params): void
     {
         if (Environment::isCli()) {
-            $contentRecordUid = (int)$_GET['contentRecordUid'] ?? 0;
+            $contentRecordUid = isset($_GET['contentRecordUid']) ?(int)$_GET['contentRecordUid'] : 0;
         } else {
             $request = ServerRequestFactory::fromGlobals();
             $contentRecordUid = (int)($request->getQueryParams()['contentRecordUid'] ?? 0);
