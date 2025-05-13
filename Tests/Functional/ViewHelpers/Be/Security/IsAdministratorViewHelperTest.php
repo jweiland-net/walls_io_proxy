@@ -31,7 +31,6 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
         'jweiland/walls-io-proxy',
     ];
 
-    #[Test]
     public function beUserIsAdministrator(): void
     {
         $this->importCSVDataSet(__DIR__ . '/../../../Fixtures/Database/be_users.csv');
