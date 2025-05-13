@@ -36,18 +36,19 @@ class DataHandlerHook
     public function clearCachePostProc(array $params): void
     {
         if (Environment::isCli()) {
-            echo 1;
+            $contentRecordUid = (int)$_GET['contentRecordUid'];
         } else {
             $request = ServerRequestFactory::fromGlobals();
+            $contentRecordUid = (int)($request->getQueryParams()['contentRecordUid'] ?? 0);
+        }
 
-            if (
-                isset($params['cacheCmd'])
-                && strtolower($params['cacheCmd']) === 'wallioproxy'
-                && ($contentRecordUid = (int)($request->getQueryParams()['contentRecordUid'] ?? 0))
-                && $contentRecordUid > 0
-            ) {
-                echo $this->wallsService->clearCache($contentRecordUid);
-            }
+        if (
+            isset($params['cacheCmd'])
+            && ($contentRecordUid)
+            && strtolower($params['cacheCmd']) === 'wallioproxy'
+            && $contentRecordUid > 0
+        ) {
+            echo $this->wallsService->clearCache($contentRecordUid);
         }
     }
 }
