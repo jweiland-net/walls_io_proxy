@@ -61,10 +61,11 @@ class DataHandlerHookTest extends UnitTestCase
             ->expects(self::never())
             ->method('addCacheTags');
 
-        $GLOBALS['TYPO3_REQUEST'] = $this->request->withAttribute(
+        $_SERVER['TYPO3_REQUEST'] = $this->request->withAttribute(
             'frontend.controller',
             $typoScriptFrontendControllerMock,
         );
+        $_SERVER['REQUEST_URI'] = 'https://www.example.com';
         $this->wallsServiceMock = $this->getMockBuilder(WallsService::class)
             ->setConstructorArgs([$this->registryMock, $this->clientMock, $this->requestMock])
             ->getMock();
