@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Hook;
 
 use JWeiland\WallsIoProxy\Service\WallsService;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\ServerRequestFactory;
 
 /**
@@ -34,14 +36,19 @@ class DataHandlerHook
      */
     public function clearCachePostProc(array $params): void
     {
-        $request = ServerRequestFactory::fromGlobals();
-        if (
-            isset($params['cacheCmd'])
-            && strtolower($params['cacheCmd']) === 'wallioproxy'
-            && ($contentRecordUid = (int)($request->getQueryParams()['contentRecordUid'] ?? 0))
-            && $contentRecordUid > 0
-        ) {
-            echo $this->wallsService->clearCache($contentRecordUid);
+        if (Environment::isCli()) {
+            echo 1;
+        } else {
+            $request = ServerRequestFactory::fromGlobals();
+
+            if (
+                isset($params['cacheCmd'])
+                && strtolower($params['cacheCmd']) === 'wallioproxy'
+                && ($contentRecordUid = (int)($request->getQueryParams()['contentRecordUid'] ?? 0))
+                && $contentRecordUid > 0
+            ) {
+                echo $this->wallsService->clearCache($contentRecordUid);
+            }
         }
     }
 }

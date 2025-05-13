@@ -65,7 +65,6 @@ class DataHandlerHookTest extends UnitTestCase
             'frontend.controller',
             $typoScriptFrontendControllerMock,
         );
-        $_SERVER['REQUEST_URI'] = 'https://www.example.com';
         $this->wallsServiceMock = $this->getMockBuilder(WallsService::class)
             ->setConstructorArgs([$this->registryMock, $this->clientMock, $this->requestMock])
             ->getMock();
