@@ -16,8 +16,11 @@ use JWeiland\WallsIoProxy\Hook\DataHandlerHook;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Registry;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
@@ -42,13 +45,26 @@ class DataHandlerHookTest extends UnitTestCase
      */
     protected $requestMock;
 
+    protected ServerRequestInterface $request;
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->request = new ServerRequest('https://www.example.com', 'GET');
+        $this->request = $this->request->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
         $this->registryMock = $this->createMock(Registry::class);
         $this->clientMock = $this->createMock(WallsIoClient::class);
         $this->requestMock = $this->createMock(ServerRequest::class);
+        $typoScriptFrontendControllerMock = $this->createMock(TypoScriptFrontendController::class);
+        $typoScriptFrontendControllerMock
+            ->expects(self::never())
+            ->method('addCacheTags');
+
+        $GLOBALS['TYPO3_REQUEST'] = $this->request->withAttribute(
+            'frontend.controller',
+            $typoScriptFrontendControllerMock,
+        );
         $this->wallsServiceMock = $this->getMockBuilder(WallsService::class)
             ->setConstructorArgs([$this->registryMock, $this->clientMock, $this->requestMock])
             ->getMock();
@@ -62,7 +78,9 @@ class DataHandlerHookTest extends UnitTestCase
         unset(
             $this->subject,
             $this->wallsServiceMock,
-            $_GET['contentRecordUid']
+            $_GET['contentRecordUid'],
+            $this->request,
+            $GLOBALS['TYPO3_REQUEST'],
         );
 
         parent::tearDown();

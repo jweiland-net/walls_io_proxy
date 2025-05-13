@@ -18,7 +18,6 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\UserAspect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3\TestingFramework\Core\Exception;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
