@@ -13,7 +13,6 @@ namespace JWeiland\WallsIoProxy\Hook;
 
 use JWeiland\WallsIoProxy\Service\WallsService;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\ServerRequestFactory;
 
 /**
