@@ -164,6 +164,13 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
         return $previewHeader || $previewContent ? '<div class="element-preview">' . $previewHeader . $previewContent . '</div>' : '';
     }
 
+    /**
+     * @param array<string, int> $targetRecord
+     * @param array<string, int> $shortcutRecord
+     * @param string $tableName
+     * @param int $uid
+     * @return array<string, int>
+     */
     protected function translateShortcutRecord(array $targetRecord, array $shortcutRecord, string $tableName, int $uid): array
     {
         $targetLanguage = (int)($targetRecord['sys_language_uid'] ?? 0);
@@ -186,6 +193,12 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
         return $shortcutRecord;
     }
 
+    /**
+     * @param GridColumnItem $item
+     * @param string $fieldList
+     * @param array<int, string> $info
+     * @return void
+     */
     protected function getProcessedValue(GridColumnItem $item, string $fieldList, array &$info): void
     {
         $itemLabels = $item->getContext()->getItemLabels();
@@ -200,10 +213,21 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
         }
     }
 
+    /**
+     * @param array<string, mixed> $row
+     * @param GridColumnItem|null $item
+     * @return string|null
+     * @throws \JsonException
+     */
     protected function renderContentElementPreviewFromFluidTemplate(array $row, ?GridColumnItem $item = null): ?string
     {
         // Backwards compatibility for call of this method with only 1 parameter.
-        $recordType = $item instanceof GridColumnItem ? ($item->getRecordType() ?? $row['CType'] ?? null) : ($row['CType'] ?? null);
+        if ($item instanceof GridColumnItem && $item->getRecordType() !== null) {
+            $recordType = $item->getRecordType();
+        } else {
+            $recordType = $row['CType'] ?? null;
+        }
+
         if ($recordType === null) {
             return null;
         }
@@ -284,11 +308,11 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
      * Used for content element content displayed so the user can click the content / "Edit in Rich Text Editor" button
      *
      * @param string $linkText String to link. Must be prepared for HTML output.
-     * @param array $row The row.
+     * @param array<string, mixed> $row The row.
      * @return string If the whole thing was editable and $linkText is not empty $linkText is returned with link around. Otherwise just $linkText.
      * @throws RouteNotFoundException
      */
-    protected function linkEditContent(string $linkText, $row, string $table = 'tt_content'): string
+    protected function linkEditContent(string $linkText, array $row, string $table = 'tt_content'): string
     {
         if ($linkText === '' || $linkText === '0') {
             return $linkText;
@@ -339,6 +363,10 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
         );
     }
 
+    /**
+     * @param array<string, mixed> $ttContentRecord
+     * @return bool
+     */
     protected function isValidPlugin(array $ttContentRecord): bool
     {
         if (!isset($ttContentRecord['CType'])) {
@@ -348,6 +376,11 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
         return in_array($ttContentRecord['CType'], self::ALLOWED_PLUGINS, true);
     }
 
+    /**
+     * @param ViewInterface $view
+     * @param array<string, mixed> $ttContentRecord
+     * @return void
+     */
     protected function addPluginName(ViewInterface $view, array $ttContentRecord): void
     {
         $langKey = sprintf(
@@ -361,6 +394,10 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
         );
     }
 
+    /**
+     * @param array<string, mixed>$ttContentRecord
+     * @return array<string, mixed>
+     */
     protected function getPiFlexformData(array $ttContentRecord): array
     {
         $data = [];
