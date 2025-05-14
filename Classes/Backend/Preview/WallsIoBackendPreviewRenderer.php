@@ -9,7 +9,7 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\WallsIoProxy\Preview;
+namespace JWeiland\WallsIoProxy\Backend\Preview;
 
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Backend\Preview\PreviewRendererInterface;
@@ -25,6 +25,10 @@ use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Core\View\ViewInterface;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
@@ -32,7 +36,15 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
  */
 class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
 {
+    private const PREVIEW_TEMPLATE = 'EXT:walls_io_proxy/Resources/Private/Templates/PluginPreview/WallsIoProxyPluginPreview.html';
+
+    private const ALLOWED_PLUGINS = [
+        'wallsioproxy',
+    ];
+
     public function __construct(
+        private readonly FlexFormService $flexFormService,
+        private readonly ViewFactoryInterface $viewFactory,
         private readonly Registry $registry,
         private readonly LoggerInterface $logger,
     ) {}
@@ -72,31 +84,27 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
 
     public function renderPageModulePreviewContent(GridColumnItem $item): string
     {
-        $recordType = $item->getRecordType();
-        $languageService = $this->getLanguageService();
-        $table = 'tt_content';
-        $record = $item->getRecord();
-        $out = '';
-
-        // If record type is unknown, render warning message.
-        if ($item->getTypeColumn() !== '' && !is_array($GLOBALS['TCA'][$table]['types'][$recordType] ?? null)) {
-            $message = sprintf(
-                $languageService->sL('LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.noMatchingValue'),
-                $recordType
-            );
-            return $out . ('<span class="badge badge-warning">' . htmlspecialchars($message) . '</span>');
+        $ttContentRecord = $item->getRecord();
+        if (!$this->isValidPlugin($ttContentRecord)) {
+            return '';
         }
 
-        // Check if a Fluid-based preview template was defined for this record type
-        $tsConfig = BackendUtility::getPagesTSconfig($record['pid'])['mod.']['web_layout.'][$table . '.']['preview.'] ?? [];
-        if (!empty($tsConfig[$recordType]) || !empty($tsConfig[$recordType . '.'])) {
-            $fluidPreview = $this->renderContentElementPreviewFromFluidTemplate($record, $item);
-            if ($fluidPreview !== null) {
-                return $fluidPreview;
-            }
+        $view = $this->viewFactory->create(
+            new ViewFactoryData(
+                templatePathAndFilename: self::PREVIEW_TEMPLATE,
+            )
+        );
+        $view->assignMultiple($ttContentRecord);
+
+        $this->addPluginName($view, $ttContentRecord);
+
+        // Add data from column pi_flexform
+        $piFlexformData = $this->getPiFlexformData($ttContentRecord);
+        if ($piFlexformData !== []) {
+            $view->assign('pi_flexform_transformed', $piFlexformData);
         }
 
-        return $out;
+        return $view->render();
     }
 
     /**
@@ -329,5 +337,37 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
             'PageCacheExpireTime_' . $recordUid,
             0
         );
+    }
+
+    protected function isValidPlugin(array $ttContentRecord): bool
+    {
+        if (!isset($ttContentRecord['CType'])) {
+            return false;
+        }
+
+        return in_array($ttContentRecord['CType'], self::ALLOWED_PLUGINS, true);
+    }
+
+    protected function addPluginName(ViewInterface $view, array $ttContentRecord): void
+    {
+        $langKey = sprintf(
+            'plugin.%s.title',
+            $ttContentRecord['CType'],
+        );
+
+        $view->assign(
+            'pluginName',
+            LocalizationUtility::translate('LLL:EXT:maps2/Resources/Private/Language/locallang_db.xlf:' . $langKey),
+        );
+    }
+
+    protected function getPiFlexformData(array $ttContentRecord): array
+    {
+        $data = [];
+        if (!empty($ttContentRecord['pi_flexform'] ?? '')) {
+            $data = $this->flexFormService->convertFlexFormContentToArray($ttContentRecord['pi_flexform']);
+        }
+
+        return $data;
     }
 }
