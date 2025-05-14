@@ -197,7 +197,6 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
      * @param GridColumnItem $item
      * @param string $fieldList
      * @param array<int, string> $info
-     * @return void
      */
     protected function getProcessedValue(GridColumnItem $item, string $fieldList, array &$info): void
     {
@@ -379,7 +378,6 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
     /**
      * @param ViewInterface $view
      * @param array<string, mixed> $ttContentRecord
-     * @return void
      */
     protected function addPluginName(ViewInterface $view, array $ttContentRecord): void
     {
