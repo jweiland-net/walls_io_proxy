@@ -17,8 +17,10 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\UserAspect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
+use TYPO3Fluid\Fluid\View\TemplateView;
 
 /**
  * Test IsAdministratorViewHelper
@@ -31,26 +33,31 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
         'jweiland/walls-io-proxy',
     ];
 
+    private ViewFactoryInterface $viewFactory;
+
+    #[Test]
     public function beUserIsAdministrator(): void
     {
         $this->importCSVDataSet(__DIR__ . '/../../../Fixtures/Database/be_users.csv');
+        $this->setUpBackendUser(2);
 
-        $backendUserAuthentication = $this->setUpBackendUser(2);
-        $GLOBALS['BE_USER'] = $backendUserAuthentication;
-
-        $view = new StandaloneView();
-        $view->setTemplateSource('
+        $context = $this->get(RenderingContextFactory::class)->create();
+        $context->getTemplatePaths()->setTemplateSource(
+            '
             <html lang="en"
                   xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
                   xmlns:w="http://typo3.org/ns/JWeiland/WallsIoProxy/ViewHelpers"
                   data-namespace-typo3-fluid="true">
+                  <f:debug inline="1"><w:be.security.isAdministrator></w:be.security.isAdministrator></f:debug>
                 <w:be.security.isAdministrator>
                     <f:then>IS ADMIN</f:then>
                     <f:else>IS NOT ADMIN</f:else>
                 </w:be.security.isAdministrator>
             </html>
-        ');
+            '
+        );
 
+        $view = new TemplateView($context);
         self::assertStringContainsString(
             'IS ADMIN',
             $view->render()
@@ -91,8 +98,9 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
         // Replace the Context instance in the GeneralUtility
         GeneralUtility::setSingletonInstance(Context::class, $contextMock);
 
-        $view = new StandaloneView();
-        $view->setTemplateSource('
+        $context = $this->get(RenderingContextFactory::class)->create();
+        $context->getTemplatePaths()->setTemplateSource(
+            '
             <html lang="en"
                   xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
                   xmlns:w="http://typo3.org/ns/JWeiland/WallsIoProxy/ViewHelpers"
@@ -102,8 +110,10 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
                     <f:else>IS NOT ADMIN</f:else>
                 </w:be.security.isAdministrator>
             </html>
-        ');
+            '
+        );
 
+        $view = new TemplateView($context);
         self::assertStringContainsString(
             'IS NOT ADMIN',
             $view->render()
@@ -118,8 +128,9 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
 
         $GLOBALS['BE_USER'] = $backendUserAuthenticationMock;
 
-        $view = new StandaloneView();
-        $view->setTemplateSource('
+        $context = $this->get(RenderingContextFactory::class)->create();
+        $context->getTemplatePaths()->setTemplateSource(
+            '
             <html lang="en"
                   xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
                   xmlns:w="http://typo3.org/ns/JWeiland/WallsIoProxy/ViewHelpers"
@@ -129,8 +140,10 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
                     <f:else>IS NOT ADMIN</f:else>
                 </w:be.security.isAdministrator>
             </html>
-        ');
+            '
+        );
 
+        $view = new TemplateView($context);
         self::assertStringContainsString(
             'IS NOT ADMIN',
             $view->render()
@@ -140,8 +153,9 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
     #[Test]
     public function beUserIsNotSet(): void
     {
-        $view = new StandaloneView();
-        $view->setTemplateSource('
+        $context = $this->get(RenderingContextFactory::class)->create();
+        $context->getTemplatePaths()->setTemplateSource(
+            '
             <html lang="en"
                   xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
                   xmlns:w="http://typo3.org/ns/JWeiland/WallsIoProxy/ViewHelpers"
@@ -151,8 +165,10 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
                     <f:else>IS NOT ADMIN</f:else>
                 </w:be.security.isAdministrator>
             </html>
-        ');
+            '
+        );
 
+        $view = new TemplateView($context);
         self::assertStringContainsString(
             'IS NOT ADMIN',
             $view->render()
