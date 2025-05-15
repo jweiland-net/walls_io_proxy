@@ -15,6 +15,7 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Context\UserAspect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
@@ -25,15 +26,15 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
     /**
      * This method decides, if the current logged-in user is an administrator
      *
-     * @return mixed Returns string if the user is an administrator, otherwise false.
+     * @return bool Returns true if the user is an administrator, otherwise false.
      */
-    public function render(): mixed
+    public static function verdict(array $arguments, RenderingContextInterface $renderingContext): bool
     {
         if (self::isBeUserAdmin()) {
-            return $this->renderThenChild();
-        } else {
-            return false;
+            return true;
         }
+
+        return false;
     }
 
     private static function isBeUserAdmin(): bool
