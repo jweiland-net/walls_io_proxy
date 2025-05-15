@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Tests\Unit\Request\Posts;
 
 use JWeiland\WallsIoProxy\Request\Posts\ChangedRequest;
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
@@ -26,6 +27,8 @@ class ChangedRequestTest extends UnitTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->subject = new ChangedRequest();
     }
 
@@ -37,9 +40,7 @@ class ChangedRequestTest extends UnitTestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPathInitiallyReturnsDefaultPath(): void
     {
         self::assertSame(
@@ -48,9 +49,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setPathSetsPath(): void
     {
         $this->subject->setPath('foo bar');
@@ -61,9 +60,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setPathSetsTrimmedPath(): void
     {
         $this->subject->setPath('   trimmed   ');
@@ -74,9 +71,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getParametersInitiallyReturnsDefaultParameters(): void
     {
         self::assertSame(
@@ -89,9 +84,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getParameterReturnsOneParameter(): void
     {
         self::assertSame(
@@ -100,9 +93,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasParameterReturnsTrue(): void
     {
         self::assertTrue(
@@ -110,9 +101,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasParameterReturnsFalse(): void
     {
         self::assertFalse(
@@ -120,9 +109,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setParametersSetsParameters(): void
     {
         $expectedParameters = [
@@ -137,9 +124,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setParametersSetsOnlyAllowedParameters(): void
     {
         $this->subject->setParameters([
@@ -155,9 +140,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addParameterAddsParameter(): void
     {
         $this->subject->addParameter('access_token', '123');
@@ -173,9 +156,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addParameterWillNotAddDisallowedParameter(): void
     {
         $this->subject->addParameter('accessToken', '123');
@@ -190,9 +171,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildUriReturnsUriWithEmptyAccessToken(): void
     {
         self::assertSame(
@@ -201,9 +180,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildUriReturnsUriWithAccessToken(): void
     {
         $this->subject = new ChangedRequest();
@@ -215,9 +192,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildUriWithAdditionalParameterReturnsUriWithAccessToken(): void
     {
         $this->subject = new ChangedRequest();
@@ -231,9 +206,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isValidRequestWithInvalidAccessTokenReturnsFalse(): void
     {
         self::assertFalse(
@@ -241,9 +214,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isValidRequestWithAccessTokenReturnsTrue(): void
     {
         $this->subject = new ChangedRequest();
@@ -254,9 +225,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setFieldsWithValidFieldsSetsFields(): void
     {
         $this->subject->setFields([
@@ -271,9 +240,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setFieldsWithInvalidFieldsSomeFields(): void
     {
         $this->subject->setFields([
@@ -288,9 +255,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setLimitSetsLimit(): void
     {
         $this->subject->setLimit(15);
@@ -301,9 +266,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setIncludeInactiveWithTrueSetsIncludeInactive(): void
     {
         $this->subject->setIncludeInactive(true);
@@ -314,9 +277,7 @@ class ChangedRequestTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setIncludeInactiveWithFalseSetsIncludeInactive(): void
     {
         $this->subject->setIncludeInactive(false);

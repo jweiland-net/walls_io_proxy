@@ -15,6 +15,8 @@ use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Service\WallsService;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Localization\LanguageService;
@@ -52,9 +54,6 @@ class WallsServiceTest extends FunctionalTestCase
         ],
     ];
 
-    /**
-     * @var array
-     */
     protected array $testExtensionsToLoad = [
         'jweiland/walls-io-proxy',
     ];
@@ -127,10 +126,8 @@ class WallsServiceTest extends FunctionalTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider dataProviderForInvalidPluginConfiguration
-     */
+    #[Test]
+    #[DataProvider('dataProviderForInvalidPluginConfiguration')]
     public function getWallPostsWithInvalidPluginConfigurationWillReturnEmptyArray(array $processedData): void
     {
         self::assertSame(
@@ -142,9 +139,7 @@ class WallsServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getWallPostsWithEmptyClientResultWillReturnEmptyWalls(): void
     {
         $this->wallsIoClientMock
@@ -170,9 +165,7 @@ class WallsServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getWallPostsWithEmptyClientResultWillReturnCachedWalls(): void
     {
         $this->registry->set(
@@ -202,9 +195,7 @@ class WallsServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getWallPostsWillReturnFreshWallPosts(): void
     {
         $expected = [
@@ -242,9 +233,7 @@ class WallsServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getWallPostsWillConvertTimestampHumanReadable(): void
     {
         $date = new \DateTime('now');
@@ -286,9 +275,7 @@ class WallsServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getWallPostsWillConvertNewLinesToBR(): void
     {
         $data = [

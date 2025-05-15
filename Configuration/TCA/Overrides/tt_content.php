@@ -11,7 +11,7 @@ if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
-use JWeiland\WallsIoProxy\Preview\WallsIoBackendPreviewRenderer;
+use JWeiland\WallsIoProxy\Backend\Preview\WallsIoBackendPreviewRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 $GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['showitem'] = '
@@ -50,5 +50,5 @@ ExtensionManagementUtility::addPlugin(
     'walls_io_proxy'
 );
 
-$GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['previewRenderer']
-    = WallsIoBackendPreviewRenderer::class;
+// Backend Plugin Preview
+$GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['previewRenderer'] = WallsIoBackendPreviewRenderer::class;

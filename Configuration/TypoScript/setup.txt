@@ -1,2 +1,0 @@
-# Important: This file is deprecated and will be removed with next major version of EXT:walls_io_proxy
-@import 'EXT:walls_io_proxy/Configuration/TypoScript/Gallery/setup.typoscript'

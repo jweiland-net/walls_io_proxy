@@ -7,6 +7,12 @@
 ChangeLog
 =========
 
+Version 8.0.0
+=============
+
+*   TASK: Add TYPO3 13 compatibility
+*   Removed lower version compatibilities
+
 Version 7.0.1
 =============
 

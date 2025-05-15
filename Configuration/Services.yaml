@@ -27,5 +27,5 @@ services:
   JWeiland\WallsIoProxy\Hook\PageLayoutViewHook:
     public: true
 
-  JWeiland\WallsIoProxy\Preview\WallsIoBackendPreviewRenderer:
+  JWeiland\WallsIoProxy\Backend\Preview\WallsIoBackendPreviewRenderer:
     public: true

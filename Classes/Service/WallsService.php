@@ -135,10 +135,12 @@ class WallsService
             'ContentRecordUid_' . $pluginConfiguration->getRecordUid(),
             $wallPosts
         );
+
+        $cacheLifetime = $GLOBALS['TSFE']->page['cache_timeout'] ?? 0;
         $this->registry->set(
             'WallsIoProxy',
             'PageCacheExpireTime_' . $pluginConfiguration->getRecordUid(),
-            $GLOBALS['EXEC_TIME'] + $this->getTypoScriptFrontendController()->get_cache_timeout()
+            $GLOBALS['EXEC_TIME'] + $cacheLifetime
         );
     }
 
@@ -191,11 +193,7 @@ class WallsService
             return false;
         }
 
-        if (!class_exists($pluginConfiguration->getRequestType())) {
-            return false;
-        }
-
-        return true;
+        return class_exists($pluginConfiguration->getRequestType());
     }
 
     /**
@@ -287,6 +285,7 @@ class WallsService
                     }
                 }
             }
+
             $post['html_comment'] = nl2br($post['comment']);
         }
 
