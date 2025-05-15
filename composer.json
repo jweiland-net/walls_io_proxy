@@ -33,7 +33,7 @@
 	},
 	"require-dev": {
 		"ergebnis/composer-normalize": "^2.44",
-		"friendsofphp/php-cs-fixer": "^3.14",
+		"friendsofphp/php-cs-fixer": "^3.75",
 		"phpstan/phpstan": "^1.10",
 		"roave/security-advisories": "dev-latest",
 		"typo3/coding-standards": "^0.8",
@@ -66,7 +66,7 @@
 		"typo3/cms": {
 			"app-dir": ".Build",
 			"extension-key": "walls_io_proxy",
-			"web-dir": ".Build/web"
+			"web-dir": ".Build/Web"
 		}
 	}
 }
