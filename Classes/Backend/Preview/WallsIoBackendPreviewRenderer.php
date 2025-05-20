@@ -244,7 +244,7 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
             $view = GeneralUtility::makeInstance(StandaloneView::class);
             $view->setTemplatePathAndFilename($fluidTemplateFileAbsolutePath);
             $view->assignMultiple($row);
-            if (!empty($row['pi_flexform'])) {
+            if ($row['pi_flexform'] !== '') {
                 $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
                 $view->assign('pi_flexform_transformed', $flexFormService->convertFlexFormContentToArray($row['pi_flexform']));
             }
