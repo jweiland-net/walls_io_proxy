@@ -87,7 +87,7 @@ class WallsService
 
             // Do not store wall posts on BE yoast request
             if ($request->getHeaders() && !array_key_exists('x-yoast-page-request', $request->getHeaders())) {
-                $this->setWallPostsToRegistry($wallPosts, $pluginConfiguration);
+                $this->setWallPostsToRegistry($request, $wallPosts, $pluginConfiguration);
             }
         }
 
@@ -128,7 +128,7 @@ class WallsService
     /**
      * @param array<string, mixed> $wallPosts
      */
-    protected function setWallPostsToRegistry(array $wallPosts, PluginConfiguration $pluginConfiguration): void
+    protected function setWallPostsToRegistry(ServerRequestInterface $request, array $wallPosts, PluginConfiguration $pluginConfiguration): void
     {
         $this->registry->set(
             'WallsIoProxy',
@@ -136,17 +136,14 @@ class WallsService
             $wallPosts
         );
 
-        $cacheLifetime = $GLOBALS['TSFE']->page['cache_timeout'] ?? 0;
+        $cacheDataCollector = $request->getAttribute('frontend.cache.collector');
+        $cacheLifetime = min($GLOBALS['EXEC_TIME'] + $cacheDataCollector->resolveLifetime(), PHP_INT_MAX);
+
         $this->registry->set(
             'WallsIoProxy',
             'PageCacheExpireTime_' . $pluginConfiguration->getRecordUid(),
-            $GLOBALS['EXEC_TIME'] + $cacheLifetime
+            $cacheLifetime
         );
-    }
-
-    protected function getTypoScriptFrontendController(): TypoScriptFrontendController
-    {
-        return $GLOBALS['TSFE'];
     }
 
     protected function getWallsIoRequest(PluginConfiguration $pluginConfiguration): RequestInterface
