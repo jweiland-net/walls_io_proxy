@@ -360,7 +360,6 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
 
     /**
      * @param array<string, mixed> $ttContentRecord
-     * @return bool
      */
     protected function isValidPlugin(array $ttContentRecord): bool
     {
