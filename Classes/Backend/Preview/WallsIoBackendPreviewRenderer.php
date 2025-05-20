@@ -372,7 +372,6 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
     }
 
     /**
-     * @param ViewInterface $view
      * @param array<string, mixed> $ttContentRecord
      */
     protected function addPluginName(ViewInterface $view, array $ttContentRecord): void
