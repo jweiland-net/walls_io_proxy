@@ -51,20 +51,9 @@ class DataHandlerHookTest extends UnitTestCase
     {
         parent::setUp();
 
-        $this->request = new ServerRequest('https://www.example.com', 'GET');
-        $this->request = $this->request->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
         $this->registryMock = $this->createMock(Registry::class);
         $this->clientMock = $this->createMock(WallsIoClient::class);
         $this->requestMock = $this->createMock(ServerRequest::class);
-        $typoScriptFrontendControllerMock = $this->createMock(TypoScriptFrontendController::class);
-        $typoScriptFrontendControllerMock
-            ->expects(self::never())
-            ->method('addCacheTags');
-
-        $_SERVER['TYPO3_REQUEST'] = $this->request->withAttribute(
-            'frontend.controller',
-            $typoScriptFrontendControllerMock,
-        );
         $this->wallsServiceMock = $this->getMockBuilder(WallsService::class)
             ->setConstructorArgs([$this->registryMock, $this->clientMock, $this->requestMock])
             ->getMock();
@@ -79,8 +68,6 @@ class DataHandlerHookTest extends UnitTestCase
             $this->subject,
             $this->wallsServiceMock,
             $_GET['contentRecordUid'],
-            $this->request,
-            $GLOBALS['TYPO3_REQUEST'],
         );
 
         parent::tearDown();
