@@ -194,8 +194,6 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
     }
 
     /**
-     * @param GridColumnItem $item
-     * @param string $fieldList
      * @param array<int, string> $info
      */
     protected function getProcessedValue(GridColumnItem $item, string $fieldList, array &$info): void
