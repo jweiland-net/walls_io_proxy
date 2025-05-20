@@ -4,9 +4,9 @@
 [![Latest Stable Version][extension-build-shield]][extension-ter-url]
 [![Total Downloads][extension-downloads-badge]][extension-packagist-url]
 [![Monthly Downloads][extension-monthly-downloads]][extension-packagist-url]
-[![TYPO3 12.4][TYPO3-shield]][TYPO3-12-url]
+[![TYPO3 13.4][TYPO3-shield]][TYPO3-13-url]
 
-![Build Status](https://github.com/jweiland-net/walls_io_proxy/workflows/CI/badge.svg)
+![Build Status](https://github.com/jweiland-net/walls_io_proxy/actions/workflows/ci.yml/badge.svg)
 
 **walls.io** is a service that displays entries or posts related to a specific topic or hashtag from various social media websites like Facebook, Twitter, and Instagram on your website. However, without a Premium Account (costing €500 per month as of January 10, 2020), you cannot use their API and must accept their cookies when using their embedded iframe or JS file implementation.
 
@@ -52,6 +52,6 @@ After installing the extension, you need to configure it to start retrieving dat
 
 [packagist-logo-stable]: https://img.shields.io/badge/--grey.svg?style=for-the-badge&logo=packagist&logoColor=white
 
-[TYPO3-12-url]: https://get.typo3.org/version/12
+[TYPO3-13-url]: https://get.typo3.org/version/13
 
-[TYPO3-shield]: https://img.shields.io/badge/TYPO3-12.4-green.svg?style=for-the-badge&logo=typo3
+[TYPO3-shield]: https://img.shields.io/badge/TYPO3-13.4-green.svg?style=for-the-badge&logo=typo3
