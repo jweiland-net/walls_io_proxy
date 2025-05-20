@@ -214,8 +214,6 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
 
     /**
      * @param array<string, mixed> $row
-     * @param GridColumnItem|null $item
-     * @return string|null
      * @throws \JsonException
      */
     protected function renderContentElementPreviewFromFluidTemplate(array $row, ?GridColumnItem $item = null): ?string
