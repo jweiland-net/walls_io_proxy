@@ -48,7 +48,6 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
                   xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
                   xmlns:w="http://typo3.org/ns/JWeiland/WallsIoProxy/ViewHelpers"
                   data-namespace-typo3-fluid="true">
-                  <f:debug inline="1"><w:be.security.isAdministrator></w:be.security.isAdministrator></f:debug>
                 <w:be.security.isAdministrator>
                     <f:then>IS ADMIN</f:then>
                     <f:else>IS NOT ADMIN</f:else>
