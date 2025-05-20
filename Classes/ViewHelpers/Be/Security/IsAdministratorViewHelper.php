@@ -30,11 +30,7 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
      */
     public static function verdict(array $arguments, RenderingContextInterface $renderingContext): bool
     {
-        if (self::isBeUserAdmin()) {
-            return true;
-        }
-
-        return false;
+        return self::isBeUserAdmin();
     }
 
     private static function isBeUserAdmin(): bool
