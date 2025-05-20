@@ -14,7 +14,10 @@ namespace JWeiland\WallsIoProxy\Tests\Unit\Hook;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Hook\DataHandlerHook;
 use JWeiland\WallsIoProxy\Service\WallsService;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
@@ -41,8 +44,15 @@ class DataHandlerHookTest extends UnitTestCase
      */
     protected $requestMock;
 
+    protected ServerRequestInterface $request;
+
     protected function setUp(): void
     {
+        parent::setUp();
+
+        $GLOBALS['TYPO3_REQUEST'] = (new ServerRequest('https://www.example.com/'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+
         $this->registryMock = $this->createMock(Registry::class);
         $this->clientMock = $this->createMock(WallsIoClient::class);
         $this->requestMock = $this->createMock(ServerRequest::class);
@@ -59,15 +69,14 @@ class DataHandlerHookTest extends UnitTestCase
         unset(
             $this->subject,
             $this->wallsServiceMock,
-            $_GET['contentRecordUid']
+            $_GET['contentRecordUid'],
+            $GLOBALS['TYPO3_REQUEST'],
         );
 
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function clearCachePostProcWithEmptyParamsDoesNothing(): void
     {
         // Set expectation that clearCache should not be called
@@ -78,9 +87,7 @@ class DataHandlerHookTest extends UnitTestCase
         $this->subject->clearCachePostProc([]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function clearCachePostProcWithInvalidCacheCmdDoesNothing(): void
     {
         // Set expectation that clearCache should not be called
@@ -93,12 +100,14 @@ class DataHandlerHookTest extends UnitTestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function clearCachePostProcWithEmptyContentUidDoesNothing(): void
     {
-        $_GET['contentRecordUid'] = 0;
+        $GLOBALS['TYPO3_REQUEST'] = (new ServerRequest('https://www.example.com/'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
+            ->withQueryParams([
+                'contentRecordUid' => 0,
+            ]);
 
         // Set expectation that clearCache should not be called
         $this->wallsServiceMock
@@ -110,12 +119,14 @@ class DataHandlerHookTest extends UnitTestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function clearCachePostProcWithValidCacheCmdAndContentRecordUidWillClearCache(): void
     {
-        $_GET['contentRecordUid'] = 12;
+        $GLOBALS['TYPO3_REQUEST'] = (new ServerRequest('https://www.example.com/'))
+            ->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
+            ->withQueryParams([
+                'contentRecordUid' => 12,
+            ]);
 
         $this->wallsServiceMock
             ->expects(self::once())

@@ -9,8 +9,9 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\WallsIoProxy\Preview;
+namespace JWeiland\WallsIoProxy\Backend\Preview;
 
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Backend\Preview\PreviewRendererInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
@@ -24,6 +25,10 @@ use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Core\View\ViewInterface;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
@@ -31,12 +36,18 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
  */
 class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
 {
-    protected Registry $registry;
+    private const PREVIEW_TEMPLATE = 'EXT:walls_io_proxy/Resources/Private/Templates/PluginPreview/WallsIoProxyPluginPreview.html';
 
-    public function __construct(Registry $registry)
-    {
-        $this->registry = $registry;
-    }
+    private const ALLOWED_PLUGINS = [
+        'wallsioproxy',
+    ];
+
+    public function __construct(
+        private readonly FlexFormService $flexFormService,
+        private readonly ViewFactoryInterface $viewFactory,
+        private readonly Registry $registry,
+        private readonly LoggerInterface $logger,
+    ) {}
 
     public function renderPageModulePreviewHeader(GridColumnItem $item): string
     {
@@ -73,32 +84,27 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
 
     public function renderPageModulePreviewContent(GridColumnItem $item): string
     {
-        $recordType = $item->getRecordType();
-        $languageService = $this->getLanguageService();
-        $table = 'tt_content';
-        $record = $item->getRecord();
-        $out = '';
-
-        // If record type is unknown, render warning message.
-        if ($item->getTypeColumn() !== '' && !is_array($GLOBALS['TCA'][$table]['types'][$recordType] ?? null)) {
-            $message = sprintf(
-                $languageService->sL('LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.noMatchingValue'),
-                $recordType
-            );
-            $out .= '<span class="badge badge-warning">' . htmlspecialchars($message) . '</span>';
-            return $out;
+        $ttContentRecord = $item->getRecord();
+        if (!$this->isValidPlugin($ttContentRecord)) {
+            return '';
         }
 
-        // Check if a Fluid-based preview template was defined for this record type
-        $tsConfig = BackendUtility::getPagesTSconfig($record['pid'])['mod.']['web_layout.'][$table . '.']['preview.'] ?? [];
-        if (!empty($tsConfig[$recordType]) || !empty($tsConfig[$recordType . '.'])) {
-            $fluidPreview = $this->renderContentElementPreviewFromFluidTemplate($record, $item);
-            if ($fluidPreview !== null) {
-                return $fluidPreview;
-            }
+        $view = $this->viewFactory->create(
+            new ViewFactoryData(
+                templatePathAndFilename: self::PREVIEW_TEMPLATE,
+            )
+        );
+        $view->assignMultiple($ttContentRecord);
+
+        $this->addPluginName($view, $ttContentRecord);
+
+        // Add data from column pi_flexform
+        $piFlexformData = $this->getPiFlexformData($ttContentRecord);
+        if ($piFlexformData !== []) {
+            $view->assign('pi_flexform_transformed', $piFlexformData);
         }
 
-        return $out;
+        return $view->render();
     }
 
     /**
@@ -114,25 +120,29 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
         if ($startTimeField !== '') {
             $fieldList[] = $startTimeField;
         }
+
         $endTimeField = (string)($GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['endtime'] ?? '');
         if ($endTimeField !== '') {
             $fieldList[] = $endTimeField;
         }
+
         $feGroupField = (string)($GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['fe_group'] ?? '');
         if ($feGroupField !== '') {
             $fieldList[] = $feGroupField;
         }
-        if ($table === 'tt_content') {
-            if (is_array($GLOBALS['TCA'][$table]['columns']['space_before_class'] ?? null)) {
-                $fieldList[] = 'space_before_class';
-            }
-            if (is_array($GLOBALS['TCA'][$table]['columns']['space_after_class'] ?? null)) {
-                $fieldList[] = 'space_after_class';
-            }
+
+        if (is_array($GLOBALS['TCA'][$table]['columns']['space_before_class'] ?? null)) {
+            $fieldList[] = 'space_before_class';
         }
+
+        if (is_array($GLOBALS['TCA'][$table]['columns']['space_after_class'] ?? null)) {
+            $fieldList[] = 'space_after_class';
+        }
+
         if ($fieldList === []) {
             return '';
         }
+
         $this->getProcessedValue($item, implode(',', $fieldList), $info);
 
         if (!empty($GLOBALS['TCA'][$table]['ctrl']['descriptionColumn']) && !empty($record[$GLOBALS['TCA'][$table]['ctrl']['descriptionColumn']])) {
@@ -142,18 +152,25 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
         if ($info !== []) {
             return implode('<br>', $info);
         }
+
         return '';
     }
 
     public function wrapPageModulePreview(string $previewHeader, string $previewContent, GridColumnItem $item): string
     {
-        $previewHeader = $previewHeader ? '<div class="element-preview-header">' . $previewHeader . '</div>' : '';
-        $previewContent = $previewContent ? '<div class="element-preview-content">' . $previewContent . '</div>' : '';
-        $preview = $previewHeader || $previewContent ? '<div class="element-preview">' . $previewHeader . $previewContent . '</div>' : '';
+        $previewHeader = $previewHeader !== '' && $previewHeader !== '0' ? '<div class="element-preview-header">' . $previewHeader . '</div>' : '';
+        $previewContent = $previewContent !== '' && $previewContent !== '0' ? '<div class="element-preview-content">' . $previewContent . '</div>' : '';
 
-        return $preview;
+        return $previewHeader || $previewContent ? '<div class="element-preview">' . $previewHeader . $previewContent . '</div>' : '';
     }
 
+    /**
+     * @param array<string, int> $targetRecord
+     * @param array<string, int> $shortcutRecord
+     * @param string $tableName
+     * @param int $uid
+     * @return array<string, int>
+     */
     protected function translateShortcutRecord(array $targetRecord, array $shortcutRecord, string $tableName, int $uid): array
     {
         $targetLanguage = (int)($targetRecord['sys_language_uid'] ?? 0);
@@ -169,13 +186,16 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
 
         // record is localized - fetch the shortcut record translation, if available
         $shortcutRecordLocalization = BackendUtility::getRecordLocalization($tableName, $uid, $targetLanguage);
-        if (is_array($shortcutRecordLocalization) && !empty($shortcutRecordLocalization)) {
+        if (is_array($shortcutRecordLocalization) && $shortcutRecordLocalization !== []) {
             $shortcutRecord = $shortcutRecordLocalization[0];
         }
 
         return $shortcutRecord;
     }
 
+    /**
+     * @param array<int, string> $info
+     */
     protected function getProcessedValue(GridColumnItem $item, string $fieldList, array &$info): void
     {
         $itemLabels = $item->getContext()->getItemLabels();
@@ -190,13 +210,23 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
         }
     }
 
+    /**
+     * @param array<string, mixed> $row
+     * @throws \JsonException
+     */
     protected function renderContentElementPreviewFromFluidTemplate(array $row, ?GridColumnItem $item = null): ?string
     {
         // Backwards compatibility for call of this method with only 1 parameter.
-        $recordType = $item !== null ? ($item->getRecordType() ?? $row['CType'] ?? null) : ($row['CType'] ?? null);
+        if ($item instanceof GridColumnItem && $item->getRecordType() !== null) {
+            $recordType = $item->getRecordType();
+        } else {
+            $recordType = $row['CType'] ?? null;
+        }
+
         if ($recordType === null) {
             return null;
         }
+
         $table = 'tt_content';
         $tsConfig = BackendUtility::getPagesTSconfig($row['pid'])['mod.']['web_layout.'][$table . '.']['preview.'] ?? [];
         $fluidTemplateFile = $tsConfig['wallsioproxy'] ?? '';
@@ -209,32 +239,35 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
         if ($fluidTemplateFileAbsolutePath === '') {
             return null;
         }
+
         try {
             $view = GeneralUtility::makeInstance(StandaloneView::class);
             $view->setTemplatePathAndFilename($fluidTemplateFileAbsolutePath);
             $view->assignMultiple($row);
-            if ($table === 'tt_content' && !empty($row['pi_flexform'])) {
+            if ($row['pi_flexform'] !== '') {
                 $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
                 $view->assign('pi_flexform_transformed', $flexFormService->convertFlexFormContentToArray($row['pi_flexform']));
             }
+
             $view->assign('pageCacheExpireTime', $this->getPageCacheExpireTime((int)($row['uid'] ?? 0)));
             return $view->render();
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $this->logger->warning('The backend preview for content element {uid} can not be rendered using the Fluid template file "{file}"', [
                 'uid' => $row['uid'],
                 'file' => $fluidTemplateFileAbsolutePath,
-                'exception' => $e,
+                'exception' => $exception,
             ]);
 
             if ($this->getBackendUser()->shallDisplayDebugInformation()) {
                 $view = GeneralUtility::makeInstance(StandaloneView::class);
                 $view->assign('error', [
-                    'message' => str_replace(Environment::getProjectPath(), '', $e->getMessage()),
+                    'message' => str_replace(Environment::getProjectPath(), '', $exception->getMessage()),
                     'title' => 'Error while rendering FluidTemplate preview using ' . str_replace(Environment::getProjectPath(), '', $fluidTemplateFileAbsolutePath),
                 ]);
                 $view->setTemplateSource('<f:be.infobox title="{error.title}" state="2">{error.message}</f:be.infobox>');
                 return $view->render();
             }
+
             return null;
         }
     }
@@ -249,7 +282,7 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
      */
     protected function getThumbCodeUnlinked($row, $table, $field): string
     {
-        return BackendUtility::thumbCode($row, $table, $field, false);
+        return BackendUtility::thumbCode($row, $table, $field);
     }
 
     /**
@@ -270,13 +303,13 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
      * Used for content element content displayed so the user can click the content / "Edit in Rich Text Editor" button
      *
      * @param string $linkText String to link. Must be prepared for HTML output.
-     * @param array $row The row.
+     * @param array<string, mixed> $row The row.
      * @return string If the whole thing was editable and $linkText is not empty $linkText is returned with link around. Otherwise just $linkText.
      * @throws RouteNotFoundException
      */
-    protected function linkEditContent(string $linkText, $row, string $table = 'tt_content'): string
+    protected function linkEditContent(string $linkText, array $row, string $table = 'tt_content'): string
     {
-        if (empty($linkText)) {
+        if ($linkText === '' || $linkText === '0') {
             return $linkText;
         }
 
@@ -297,6 +330,7 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
             $url = (string)$uriBuilder->buildUriFromRoute('record_edit', $urlParameters);
             return '<a href="' . htmlspecialchars($url) . '" title="' . htmlspecialchars($this->getLanguageService()->sL('LLL:EXT:backend/Resources/Private/Language/locallang_layout.xlf:edit')) . '">' . $linkText . '</a>';
         }
+
         return $linkText;
     }
 
@@ -322,5 +356,47 @@ class WallsIoBackendPreviewRenderer implements PreviewRendererInterface
             'PageCacheExpireTime_' . $recordUid,
             0
         );
+    }
+
+    /**
+     * @param array<string, mixed> $ttContentRecord
+     */
+    protected function isValidPlugin(array $ttContentRecord): bool
+    {
+        if (!isset($ttContentRecord['CType'])) {
+            return false;
+        }
+
+        return in_array($ttContentRecord['CType'], self::ALLOWED_PLUGINS, true);
+    }
+
+    /**
+     * @param array<string, mixed> $ttContentRecord
+     */
+    protected function addPluginName(ViewInterface $view, array $ttContentRecord): void
+    {
+        $langKey = sprintf(
+            'plugin.%s.title',
+            $ttContentRecord['CType'],
+        );
+
+        $view->assign(
+            'pluginName',
+            LocalizationUtility::translate('LLL:EXT:maps2/Resources/Private/Language/locallang_db.xlf:' . $langKey),
+        );
+    }
+
+    /**
+     * @param array<string, mixed>$ttContentRecord
+     * @return array<string, mixed>
+     */
+    protected function getPiFlexformData(array $ttContentRecord): array
+    {
+        $data = [];
+        if (!empty($ttContentRecord['pi_flexform'] ?? '')) {
+            $data = $this->flexFormService->convertFlexFormContentToArray($ttContentRecord['pi_flexform']);
+        }
+
+        return $data;
     }
 }

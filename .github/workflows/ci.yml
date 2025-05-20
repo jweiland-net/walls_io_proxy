@@ -13,10 +13,9 @@ jobs:
 
       matrix:
         php:
-          - '7.4'
-          - '8.0'
-          - '8.1'
           - '8.2'
+          - '8.3'
+          - '8.4'
 
     steps:
       - name: 'Checkout'
@@ -35,9 +34,11 @@ jobs:
         run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerNormalize -n
 
       - name: 'CGL'
+        if: ${{ matrix.php <= '8.3' }}
         run: Build/Scripts/runTests.sh -n -p ${{ matrix.php }} -s cgl
 
       - name: 'phpstan'
+        if: ${{ matrix.php <= '8.3' }}
         run: Build/Scripts/runTests.sh -n -p ${{ matrix.php }} -s phpstan
 
       - name: 'Execute unit tests'

@@ -12,7 +12,8 @@ declare(strict_types=1);
 namespace JWeiland\WallsIoProxy\Hook;
 
 use JWeiland\WallsIoProxy\Service\WallsService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Http\ServerRequestFactory;
 
 /**
  * Let's clear cache for our individual cacheCmd=WallsIoProxy
@@ -34,13 +35,26 @@ class DataHandlerHook
      */
     public function clearCachePostProc(array $params): void
     {
+        $request = $this->getTypo3Request();
+        $contentRecordUid = (int)($request->getQueryParams()['contentRecordUid'] ?? 0);
+
         if (
             isset($params['cacheCmd'])
+            && ($contentRecordUid)
             && strtolower($params['cacheCmd']) === 'wallioproxy'
-            && ($contentRecordUid = (int)GeneralUtility::_GET('contentRecordUid'))
             && $contentRecordUid > 0
         ) {
             echo $this->wallsService->clearCache($contentRecordUid);
         }
+    }
+
+    private function getTypo3Request(): ServerRequestInterface
+    {
+        if ($GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface) {
+            return $GLOBALS['TYPO3_REQUEST'];
+        }
+
+        // Build up a minified version with just the server variables like GET, POST, COOKIE
+        return ServerRequestFactory::fromGlobals();
     }
 }

@@ -23,7 +23,6 @@ use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * Service to retrieve result from WallsIO, decode the result and store entries into Cache
@@ -87,7 +86,7 @@ class WallsService
 
             // Do not store wall posts on BE yoast request
             if ($request->getHeaders() && !array_key_exists('x-yoast-page-request', $request->getHeaders())) {
-                $this->setWallPostsToRegistry($wallPosts, $pluginConfiguration);
+                $this->setWallPostsToRegistry($request, $wallPosts, $pluginConfiguration);
             }
         }
 
@@ -128,23 +127,22 @@ class WallsService
     /**
      * @param array<string, mixed> $wallPosts
      */
-    protected function setWallPostsToRegistry(array $wallPosts, PluginConfiguration $pluginConfiguration): void
+    protected function setWallPostsToRegistry(ServerRequestInterface $request, array $wallPosts, PluginConfiguration $pluginConfiguration): void
     {
         $this->registry->set(
             'WallsIoProxy',
             'ContentRecordUid_' . $pluginConfiguration->getRecordUid(),
             $wallPosts
         );
+
+        $cacheDataCollector = $request->getAttribute('frontend.cache.collector');
+        $cacheLifetime = min($GLOBALS['EXEC_TIME'] + $cacheDataCollector->resolveLifetime(), PHP_INT_MAX);
+
         $this->registry->set(
             'WallsIoProxy',
             'PageCacheExpireTime_' . $pluginConfiguration->getRecordUid(),
-            $GLOBALS['EXEC_TIME'] + $this->getTypoScriptFrontendController()->get_cache_timeout()
+            $cacheLifetime
         );
-    }
-
-    protected function getTypoScriptFrontendController(): TypoScriptFrontendController
-    {
-        return $GLOBALS['TSFE'];
     }
 
     protected function getWallsIoRequest(PluginConfiguration $pluginConfiguration): RequestInterface
@@ -191,11 +189,7 @@ class WallsService
             return false;
         }
 
-        if (!class_exists($pluginConfiguration->getRequestType())) {
-            return false;
-        }
-
-        return true;
+        return class_exists($pluginConfiguration->getRequestType());
     }
 
     /**
@@ -287,6 +281,7 @@ class WallsService
                     }
                 }
             }
+
             $post['html_comment'] = nl2br($post['comment']);
         }
 

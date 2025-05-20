@@ -42,7 +42,7 @@ class StringUtility
      */
     private static function customBeginsWith(string $haystack, string $needle): bool
     {
-        return substr($haystack, 0, strlen($needle)) === $needle;
+        return str_starts_with($haystack, $needle);
     }
 
     /**
