@@ -7,10 +7,15 @@
 ChangeLog
 =========
 
-Version 8.0.1
+Version 8.0.2
 =============
 
 *   BUGFIX: Update testing directory
+
+Version 8.0.1
+=============
+
+*   Prevent exception, when asset loading results in 403
 
 Version 8.0.0
 =============
