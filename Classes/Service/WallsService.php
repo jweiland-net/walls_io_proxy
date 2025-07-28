@@ -36,7 +36,7 @@ class WallsService
     /**
      * Fields to get from the API
      *
-     * @var array<string> $fields
+     * @var array<int, string> $fields
      */
     protected const ENDPOINT_FIELDS = [
         'id',
