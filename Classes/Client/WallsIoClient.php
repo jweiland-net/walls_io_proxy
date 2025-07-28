@@ -17,21 +17,14 @@ use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
 
 /**
- * This is the walls.io client which will send the request to the walls.io server
+ * This is the walls.io client that will send the request to the walls.io server
  */
-class WallsIoClient
+readonly class WallsIoClient
 {
-    protected RequestFactory $requestFactory;
-
-    protected LoggerInterface $logger;
-
     public function __construct(
-        RequestFactory $requestFactory,
-        LoggerInterface $logger
-    ) {
-        $this->requestFactory = $requestFactory;
-        $this->logger = $logger;
-    }
+        protected RequestFactory $requestFactory,
+        protected LoggerInterface $logger
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -74,7 +67,7 @@ class WallsIoClient
     /**
      * This method will only check the report of the client and not the result itself.
      *
-     * @return bool Returns false, if no errors were found
+     * @return bool Returns false if no errors were found
      */
     protected function checkClientResponseForErrors(ResponseInterface $response): bool
     {
@@ -92,7 +85,7 @@ class WallsIoClient
     }
 
     /**
-     * Check processed response from walls.io for errors
+     * Check the processed response from walls.io for errors
      *
      * @param array<string, mixed>|null $response
      */
