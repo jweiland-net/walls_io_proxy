@@ -16,7 +16,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\ServerRequestFactory;
 
 /**
- * Let's clear cache for our individual cacheCmd=WallsIoProxy
+ * Let's clear the cache for our individual cacheCmd=WallsIoProxy
  * We do not use CachingFramework, but we use their API to catch that cacheCmd.
  */
 class DataHandlerHook
@@ -44,6 +44,7 @@ class DataHandlerHook
             && strtolower($params['cacheCmd']) === 'wallioproxy'
             && $contentRecordUid > 0
         ) {
+            // ToDo: With next release we should check how to get rid of that "echo". ResponseInterface?
             echo $this->wallsService->clearCache($contentRecordUid);
         }
     }

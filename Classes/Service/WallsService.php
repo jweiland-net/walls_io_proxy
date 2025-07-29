@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Service;
 
+use GuzzleHttp\Exception\TransferException;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Request\Posts\ChangedRequest;
@@ -19,23 +20,25 @@ use JWeiland\WallsIoProxy\Request\RequestInterface;
 use JWeiland\WallsIoProxy\Utility\StringUtility;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
- * Service to retrieve result from WallsIO, decode the result and store entries into Cache
+ * Service to retrieve the result from WallsIO, decode the result and store entries into Cache
  */
 class WallsService
 {
-    protected string $targetDirectory = 'typo3temp/assets/walls_io_proxy';
+    protected const TARGET_DIRECTORY = 'typo3temp/assets/walls_io_proxy';
 
     /**
      * Fields to get from the API
-     * @var array<string> $fields
+     *
+     * @var array<int, string> $fields
      */
-    protected array $fields = [
+    protected const ENDPOINT_FIELDS = [
         'id',
         'comment',
         'type',
@@ -50,17 +53,13 @@ class WallsService
         'post_link',
     ];
 
-    protected Registry $registry;
-
-    protected WallsIoClient $client;
-
     protected ServerRequestInterface $request;
 
-    public function __construct(Registry $registry, WallsIoClient $client)
-    {
-        $this->registry = $registry;
-        $this->client = $client;
-    }
+    public function __construct(
+        protected readonly Registry $registry,
+        protected readonly WallsIoClient $client,
+        protected readonly RequestFactory $requestFactory,
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -152,7 +151,7 @@ class WallsService
 
         /** @phpstan-var RequestInterface $wallsIoRequest */
         $wallsIoRequest = GeneralUtility::makeInstance($requestType);
-        $wallsIoRequest->setFields($this->fields);
+        $wallsIoRequest->setFields(self::ENDPOINT_FIELDS);
         $wallsIoRequest->setAccessToken($pluginConfiguration->getAccessToken());
         $wallsIoRequest->setLimit($pluginConfiguration->getEntriesToLoad());
 
@@ -220,7 +219,7 @@ class WallsService
         $targetDirectory = sprintf(
             '%s/%s/%s',
             Environment::getPublicPath(),
-            $this->targetDirectory,
+            self::TARGET_DIRECTORY,
             $contentRecordUid
         );
 
@@ -301,8 +300,17 @@ class WallsService
         );
 
         if (!file_exists($filePath)) {
-            GeneralUtility::mkdir_deep(dirname($filePath));
-            GeneralUtility::writeFile($filePath, GeneralUtility::getUrl($resource));
+            try {
+                $response = $this->requestFactory->request($resource);
+                $content = $response->getBody()->getContents();
+
+                GeneralUtility::mkdir_deep(dirname($filePath));
+                GeneralUtility::writeFile($filePath, $content);
+            } catch (TransferException) {
+                $content = '';
+            }
+
+            GeneralUtility::writeFile($filePath, $content);
         }
 
         return PathUtility::getAbsoluteWebPath($filePath);
