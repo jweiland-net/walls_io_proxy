@@ -9,7 +9,7 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\WallsIoProxy\Tests\Unit\Service;
+namespace JWeiland\WallsIoProxy\Tests\Functional\Service;
 
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
@@ -18,8 +18,9 @@ use JWeiland\WallsIoProxy\Service\WallsService;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\ServerRequest;
-use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
@@ -32,15 +33,11 @@ class WallsServiceTest extends FunctionalTestCase
 
     protected Registry $registry;
 
-    /**
-     * @var ServerRequest|MockObject|(ServerRequest&MockObject)
-     */
-    protected $requestMock;
+    protected WallsIoClient|MockObject $wallsIoClientMock;
 
-    /**
-     * @var WallsIoClient|MockObject|(WallsIoClient&MockObject)
-     */
-    protected $wallsIoClientMock;
+    protected RequestFactory|MockObject $requestFactoryMock;
+
+    protected ServerRequest|MockObject $requestMock;
 
     protected array $processedDataForPostsRequest = [
         'data' => [
@@ -66,20 +63,18 @@ class WallsServiceTest extends FunctionalTestCase
         $this->importCSVDataSet(__DIR__ . '/../Fixtures/Database/tt_content.csv');
         $this->setUpFrontendRootPage(1);
 
-        $GLOBALS['LANG'] = $this->getMockBuilder(LanguageService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $GLOBALS['LANG'] = $this->get(LanguageServiceFactory::class)->create('default');
 
         $this->registry = new Registry();
-        $this->wallsIoClientMock = $this->getMockBuilder(WallsIoClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->wallsIoClientMock = $this->createMock(WallsIoClient::class);
+        $this->requestFactoryMock = $this->createMock(RequestFactory::class);
 
         $this->requestMock = $this->createMock(ServerRequest::class);
 
         $this->subject = new WallsService(
             $this->registry,
-            $this->wallsIoClientMock
+            $this->wallsIoClientMock,
+            $this->requestFactoryMock,
         );
     }
 
@@ -87,8 +82,9 @@ class WallsServiceTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
+            $this->requestFactoryMock,
+            $this->wallsIoClientMock,
             $this->registry,
-            $this->wallsIoClientMock
         );
 
         parent::tearDown();
@@ -153,15 +149,12 @@ class WallsServiceTest extends FunctionalTestCase
                 ]
             );
 
-        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
-        $result = $this->subject->getWallPosts(
-            new PluginConfiguration($this->processedDataForPostsRequest),
-            $this->requestMock
-        );
-
         self::assertSame(
             [],
-            $result
+            $this->subject->getWallPosts(
+                new PluginConfiguration($this->processedDataForPostsRequest),
+                $this->requestMock
+            )
         );
     }
 
@@ -181,17 +174,15 @@ class WallsServiceTest extends FunctionalTestCase
             ->method('processRequest')
             ->with(self::isInstanceOf(PostsRequest::class))
             ->willReturn(['status' => 'error']);
-        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
-        $result = $this->subject->getWallPosts(
-            new PluginConfiguration($this->processedDataForPostsRequest),
-            $this->requestMock
-        );
 
         self::assertSame(
             [
                 'foo' => 'far',
             ],
-            $result
+            $this->subject->getWallPosts(
+                new PluginConfiguration($this->processedDataForPostsRequest),
+                $this->requestMock
+            )
         );
     }
 
@@ -221,15 +212,12 @@ class WallsServiceTest extends FunctionalTestCase
                 ]
             );
 
-        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
-        $result = $this->subject->getWallPosts(
-            new PluginConfiguration($this->processedDataForPostsRequest),
-            $this->requestMock
-        );
-
         self::assertSame(
             $expected,
-            $result
+            $this->subject->getWallPosts(
+                new PluginConfiguration($this->processedDataForPostsRequest),
+                $this->requestMock
+            )
         );
     }
 
@@ -265,13 +253,12 @@ class WallsServiceTest extends FunctionalTestCase
                 ]
             );
 
-        $result = $this->subject->getWallPosts(
-            new PluginConfiguration($this->processedDataForPostsRequest),
-            $this->requestMock
-        );
         self::assertSame(
             $expected,
-            $result
+            $this->subject->getWallPosts(
+                new PluginConfiguration($this->processedDataForPostsRequest),
+                $this->requestMock
+            )
         );
     }
 
@@ -304,14 +291,12 @@ class WallsServiceTest extends FunctionalTestCase
                 ]
             );
 
-        $this->subject = new WallsService($this->registry, $this->wallsIoClientMock, $this->requestMock);
-        $result = $this->subject->getWallPosts(
-            new PluginConfiguration($this->processedDataForPostsRequest),
-            $this->requestMock
-        );
         self::assertSame(
             $expected,
-            $result
+            $this->subject->getWallPosts(
+                new PluginConfiguration($this->processedDataForPostsRequest),
+                $this->requestMock
+            )
         );
     }
 }

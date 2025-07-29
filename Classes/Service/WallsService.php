@@ -27,7 +27,7 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
- * Service to retrieve result from WallsIO, decode the result and store entries into Cache
+ * Service to retrieve the result from WallsIO, decode the result and store entries into Cache
  */
 class WallsService
 {

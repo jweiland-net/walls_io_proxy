@@ -9,7 +9,7 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace JWeiland\WallsIoProxy\Tests\Unit\DataProcessing;
+namespace JWeiland\WallsIoProxy\Tests\Functional\DataProcessing;
 
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor;
