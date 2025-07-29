@@ -26,7 +26,7 @@ class DataHandlerHookTest extends UnitTestCase
 {
     protected DataHandlerHook $subject;
 
-    protected WallsService|MockObject$wallsServiceMock;
+    protected WallsService|MockObject $wallsServiceMock;
 
     protected function setUp(): void
     {
