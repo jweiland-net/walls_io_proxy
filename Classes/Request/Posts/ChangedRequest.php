@@ -109,7 +109,7 @@ class ChangedRequest extends AbstractRequest
     /**
      * A comma-separated list of fields you would like to receive for each post.
      *
-     * @param array<string, mixed> $fields
+     * @param array<int, string> $fields
      */
     public function setFields(array $fields): void
     {

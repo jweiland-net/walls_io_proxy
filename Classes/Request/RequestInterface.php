@@ -48,7 +48,7 @@ interface RequestInterface
     public function buildUri(): string;
 
     /**
-     * @param array<string, mixed> $fields
+     * @param array<int, string> $fields
      */
     public function setFields(array $fields): void;
 
