@@ -7,6 +7,11 @@
 ChangeLog
 =========
 
+Version 8.0.2
+=============
+
+*   BUGFIX: Update testing directory
+
 Version 8.0.1
 =============
 
