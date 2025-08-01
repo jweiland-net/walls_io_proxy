@@ -9,7 +9,6 @@
                edit-on-github-branch="main"
                edit-on-github="jweiland-net/walls_io_proxy"
                typo3-core-preferred="stable"/>
-
     <project title="Walls.io Proxy" release="8.0" version="8.0.2" copyright="by jweiland.net"/>
     <inventory id="t3coreapi" url="https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/"/>
     <inventory id="t3install" url="https://docs.typo3.org/m/typo3/guide-installation/main/en-us/"/>
