@@ -37,6 +37,11 @@ After installing the extension, you need to configure it to start retrieving dat
 2. **Template Setup**: Create a FluidTemplate to define how the social media posts should be displayed on your website.
 3. **Integration**: Integrate the template into your TYPO3 site using TypoScript or other preferred methods.
 
+## Support
+
+Free Support is available via [GitHub Issue Tracker](https://github.com/jweiland-net/walls_io_proxy/issues).
+
+For commercial support, please contact us at [support@jweiland.net](support@jweiland.net).
 
 <!-- MARKDOWN LINKS & IMAGES -->
 
