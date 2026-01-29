@@ -7,6 +7,11 @@
 ChangeLog
 =========
 
+Version 8.0.3
+=============
+
+*   BUGFIX: Deleted ContentElementPreview.tsconfig as it show errors in BE
+
 Version 8.0.2
 =============
 
