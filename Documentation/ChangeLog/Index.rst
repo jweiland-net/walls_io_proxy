@@ -7,6 +7,14 @@
 ChangeLog
 =========
 
+Version 8.1.0
+=============
+
+*   BUGFIX: Removed old version compatibility supported items
+*   TASK: Moved page.tsconfig to Site Sets folder
+*   TASK: Removes redundant target-language attributes from XLF files
+*   TASK: Drop support for TYPO3 v11 and cleanup configuration
+
 Version 8.0.3
 =============
 
