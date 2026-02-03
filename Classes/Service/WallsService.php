@@ -29,7 +29,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 /**
  * Service to retrieve the result from WallsIO, decode the result and store entries into Cache
  */
-class WallsService
+readonly class WallsService
 {
     protected const TARGET_DIRECTORY = 'typo3temp/assets/walls_io_proxy';
 
@@ -53,12 +53,10 @@ class WallsService
         'post_link',
     ];
 
-    protected ServerRequestInterface $request;
-
     public function __construct(
-        protected readonly Registry $registry,
-        protected readonly WallsIoClient $client,
-        protected readonly RequestFactory $requestFactory,
+        protected Registry $registry,
+        protected WallsIoClient $client,
+        protected RequestFactory $requestFactory,
     ) {}
 
     /**
@@ -193,7 +191,7 @@ class WallsService
 
     /**
      * Clear cache for a specific wall plugin (tt_content record UID).
-     * Will be called by Clear Cache post hook.
+     * Will be called by Clear Cache post-hook.
      */
     public function clearCache(int $contentRecordUid): int
     {
@@ -211,7 +209,7 @@ class WallsService
     }
 
     /**
-     * Get cache directory for related files within the content of the wall posts comments.
+     * Get a cache directory for related files within the content of the wall posts comments.
      * Will be called by the AddWallsProcessor (DataProcessor)
      */
     public function getTargetDirectory(int $contentRecordUid): string
@@ -353,10 +351,5 @@ class WallsService
             'walls_io_proxy',
             [$creationDate->format('d.m.Y H:i')]
         );
-    }
-
-    protected function getTypo3Request(): ServerRequestInterface
-    {
-        return $this->request;
     }
 }
