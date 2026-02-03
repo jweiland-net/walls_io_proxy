@@ -7,6 +7,11 @@
 ChangeLog
 =========
 
+Version 8.1.1
+=============
+
+*   BUGFIX: Do not relate on server request on CLI usage
+
 Version 8.1.0
 =============
 

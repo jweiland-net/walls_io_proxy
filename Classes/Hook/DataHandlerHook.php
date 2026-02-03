@@ -13,20 +13,16 @@ namespace JWeiland\WallsIoProxy\Hook;
 
 use JWeiland\WallsIoProxy\Service\WallsService;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Http\ServerRequestFactory;
 
 /**
  * Let's clear the cache for our individual cacheCmd=WallsIoProxy
  * We do not use CachingFramework, but we use their API to catch that cacheCmd.
  */
-class DataHandlerHook
+readonly class DataHandlerHook
 {
-    protected WallsService $wallsService;
-
-    public function __construct(WallsService $wallsService)
-    {
-        $this->wallsService = $wallsService;
-    }
+    public function __construct(
+        protected WallsService $wallsService,
+    ) {}
 
     /**
      * Removes the cache of one specific walls_io_proxy Plugin from sys_registry
@@ -35,12 +31,14 @@ class DataHandlerHook
      */
     public function clearCachePostProc(array $params): void
     {
-        $request = $this->getTypo3Request();
+        if (($request = $this->getTypo3Request()) === null) {
+            return;
+        }
+
         $contentRecordUid = (int)($request->getQueryParams()['contentRecordUid'] ?? 0);
 
         if (
             isset($params['cacheCmd'])
-            && ($contentRecordUid)
             && strtolower($params['cacheCmd']) === 'wallioproxy'
             && $contentRecordUid > 0
         ) {
@@ -49,13 +47,10 @@ class DataHandlerHook
         }
     }
 
-    private function getTypo3Request(): ServerRequestInterface
+    private function getTypo3Request(): ?ServerRequestInterface
     {
-        if ($GLOBALS['TYPO3_REQUEST'] instanceof ServerRequestInterface) {
-            return $GLOBALS['TYPO3_REQUEST'];
-        }
-
-        // Build up a minified version with just the server variables like GET, POST, COOKIE
-        return ServerRequestFactory::fromGlobals();
+        return ($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+            ? $GLOBALS['TYPO3_REQUEST']
+            : null;
     }
 }
