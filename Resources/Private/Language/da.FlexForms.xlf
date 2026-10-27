@@ -3,29 +3,29 @@
   <file source-language="en" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy" target-language="da">
     <header/>
     <body>
-      <trans-unit id="sheetGeneral">
+      <trans-unit id="sheetGeneral" approved="yes">
         <source>General</source>
-        <target state="needs-translation">General</target>
+        <target state="final">Generel</target>
       </trans-unit>
-      <trans-unit id="accessToken">
+      <trans-unit id="accessToken" approved="yes">
         <source>Please enter the API access token from walls.io</source>
-        <target state="needs-translation">Please enter the API access token from walls.io</target>
+        <target state="final">Indtast venligst API-adgangstoken fra walls.io</target>
       </trans-unit>
-      <trans-unit id="requestType">
+      <trans-unit id="requestType" approved="yes">
         <source>Which posts do you want to retrieve?</source>
-        <target state="needs-translation">Which posts do you want to retrieve?</target>
+        <target state="final">Hvilke indlæg vil du hente?</target>
       </trans-unit>
-      <trans-unit id="requestType.posts">
+      <trans-unit id="requestType.posts" approved="yes">
         <source>Current postings sorted by date of receipt at walls.io</source>
-        <target state="needs-translation">Current postings sorted by date of receipt at walls.io</target>
+        <target state="final">Nuværende opslag sorteret efter datoen for modtagelse på walls.io</target>
       </trans-unit>
-      <trans-unit id="requestType.changedPosts">
+      <trans-unit id="requestType.changedPosts" approved="yes">
         <source>Current postings sorted by modification date</source>
-        <target state="needs-translation">Current postings sorted by modification date</target>
+        <target state="final">Nuværende indlæg sorteret efter ændringsdato</target>
       </trans-unit>
-      <trans-unit id="entriesToLoad">
+      <trans-unit id="entriesToLoad" approved="yes">
         <source>Amount of entries to load</source>
-        <target state="needs-translation">Amount of entries to load</target>
+        <target state="final">Antal indgange der skal indlæses</target>
       </trans-unit>
       <trans-unit id="entriesToLoad.description">
         <source>How many entries should be called from walls.io?</source>
