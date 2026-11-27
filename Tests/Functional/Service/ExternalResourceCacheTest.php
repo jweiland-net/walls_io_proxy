@@ -373,10 +373,11 @@ class ExternalResourceCacheTest extends FunctionalTestCase
             ->willReturn(new Response(200, [], $this->getFixture('pixel.png')));
 
         self::assertNotNull($this->subject->cache(self::URL, self::CONTENT_RECORD_UID));
-        self::assertGreaterThan(
-            0,
-            filesize($targetDirectory . '/' . hash('sha256', self::URL) . '.png'),
-        );
+
+        // The size of the empty file was read before, so PHP's stat cache has to be cleared
+        $cachedFile = $targetDirectory . '/' . hash('sha256', self::URL) . '.png';
+        clearstatcache(true, $cachedFile);
+        self::assertGreaterThan(0, filesize($cachedFile));
     }
 
     #[Test]
