@@ -21,9 +21,47 @@
 			<trans-unit id="noPosts">
 				<source>No posts found. Please activate posts at walls.io</source>
 			</trans-unit>
-
 			<trans-unit id="clearCache.posts">
 				<source>Clear cached walls.io posts</source>
+			</trans-unit>
+			<trans-unit id="clearCache.success.title">
+				<source>Cache cleared</source>
+			</trans-unit>
+			<trans-unit id="clearCache.success.message">
+				<source>The cached walls.io posts of content record %d were cleared.</source>
+			</trans-unit>
+			<trans-unit id="clearCache.error.title">
+				<source>Cache could not be cleared</source>
+			</trans-unit>
+			<trans-unit id="clearCache.error.forbidden">
+				<source>Only administrators are allowed to clear the walls.io cache.</source>
+			</trans-unit>
+			<trans-unit id="clearCache.error.invalidRecord">
+				<source>The content record %d does not exist or is not a walls.io plugin.</source>
+			</trans-unit>
+			<trans-unit id="clearCache.error.failed">
+				<source>The cached walls.io posts of content record %d could not be cleared.</source>
+			</trans-unit>
+			<trans-unit id="clearCache.error.request.title">
+				<source>Request error</source>
+			</trans-unit>
+			<trans-unit id="clearCache.error.request.message">
+				<source>The request to clear the walls.io cache failed. Please reload the page and try again.</source>
+			</trans-unit>
+			<trans-unit id="invalidConfiguration.title">
+				<source>The walls.io plugin is not configured completely, so no posts are rendered.</source>
+			</trans-unit>
+			<trans-unit id="invalidConfiguration.accessToken">
+				<source>No access token configured.</source>
+			</trans-unit>
+			<trans-unit id="invalidConfiguration.requestType">
+				<source>No valid request type selected.</source>
+			</trans-unit>
+			<trans-unit id="invalidConfiguration.entriesToLoad">
+				<source>"Entries to load" has to be greater than 0.</source>
+			</trans-unit>
+			<trans-unit id="invalidConfiguration.entriesToShow">
+				<source>"Entries to show" has to be greater than 0.</source>
 			</trans-unit>
 		</body>
 	</file>

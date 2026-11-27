@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2019-01-09T12:17:04Z" product-name="walls_io_proxy">
 		<header/>
 		<body>
 			<trans-unit id="creationTime.seconds">
 				<source>1 minute ago</source>
-				<target>vor %s Minuten</target>
+				<target>vor 1 Minute</target>
 			</trans-unit>
 			<trans-unit id="creationTime.minutes">
 				<source>%s minutes ago</source>
@@ -27,10 +27,61 @@
 				<source>No posts found. Please activate posts at walls.io</source>
 				<target>Keine Posts gefunden. Bitte aktivieren Sie Posts bei walls.io</target>
 			</trans-unit>
-
 			<trans-unit id="clearCache.posts">
 				<source>Clear cached walls.io posts</source>
-				<target>Lösche zwischengespeicherte wall.io Beiträge</target>
+				<target>Lösche zwischengespeicherte walls.io Beiträge</target>
+			</trans-unit>
+			<trans-unit id="clearCache.success.title">
+				<source>Cache cleared</source>
+				<target>Cache geleert</target>
+			</trans-unit>
+			<trans-unit id="clearCache.success.message">
+				<source>The cached walls.io posts of content record %d were cleared.</source>
+				<target>Die zwischengespeicherten walls.io Beiträge des Inhaltselements %d wurden gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="clearCache.error.title">
+				<source>Cache could not be cleared</source>
+				<target>Cache konnte nicht geleert werden</target>
+			</trans-unit>
+			<trans-unit id="clearCache.error.forbidden">
+				<source>Only administrators are allowed to clear the walls.io cache.</source>
+				<target>Nur Administratoren dürfen den walls.io Cache leeren.</target>
+			</trans-unit>
+			<trans-unit id="clearCache.error.invalidRecord">
+				<source>The content record %d does not exist or is not a walls.io plugin.</source>
+				<target>Das Inhaltselement %d existiert nicht oder ist kein walls.io Plugin.</target>
+			</trans-unit>
+			<trans-unit id="clearCache.error.failed">
+				<source>The cached walls.io posts of content record %d could not be cleared.</source>
+				<target>Die zwischengespeicherten walls.io Beiträge des Inhaltselements %d konnten nicht gelöscht werden.</target>
+			</trans-unit>
+			<trans-unit id="clearCache.error.request.title">
+				<source>Request error</source>
+				<target>Anfragefehler</target>
+			</trans-unit>
+			<trans-unit id="clearCache.error.request.message">
+				<source>The request to clear the walls.io cache failed. Please reload the page and try again.</source>
+				<target>Die Anfrage zum Leeren des walls.io Caches ist fehlgeschlagen. Bitte laden Sie die Seite neu und versuchen Sie es erneut.</target>
+			</trans-unit>
+			<trans-unit id="invalidConfiguration.title">
+				<source>The walls.io plugin is not configured completely, so no posts are rendered.</source>
+				<target>Das walls.io Plugin ist nicht vollständig konfiguriert, daher werden keine Beiträge ausgegeben.</target>
+			</trans-unit>
+			<trans-unit id="invalidConfiguration.accessToken">
+				<source>No access token configured.</source>
+				<target>Es wurde kein Access Token konfiguriert.</target>
+			</trans-unit>
+			<trans-unit id="invalidConfiguration.requestType">
+				<source>No valid request type selected.</source>
+				<target>Es wurde kein gültiger Anfragetyp ausgewählt.</target>
+			</trans-unit>
+			<trans-unit id="invalidConfiguration.entriesToLoad">
+				<source>"Entries to load" has to be greater than 0.</source>
+				<target>"Zu ladende Einträge" muss größer als 0 sein.</target>
+			</trans-unit>
+			<trans-unit id="invalidConfiguration.entriesToShow">
+				<source>"Entries to show" has to be greater than 0.</source>
+				<target>"Anzuzeigende Einträge" muss größer als 0 sein.</target>
 			</trans-unit>
 		</body>
 	</file>

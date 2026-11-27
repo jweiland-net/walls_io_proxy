@@ -32,15 +32,10 @@ TypoScript Setup Reference
 
 You can change the templateRootPaths. See above.
 
-Further you can change walls.io CSS file and our JS:
-
-..  code-block:: typoscript
-
-    # Change CSS file
-    page.includeCSS.wall-fluid = EXT:your_ext/Resources/Public/Css/WhatEver.css
-
-    # Change our JS file
-    page.includeJSFooterlibs.wall-fluid = EXT:your_ext/Resources/Public/JavaScript/Wall.js
+CSS and JavaScript are included by the Fluid template with the ViewHelpers
+`f:asset.css` and `f:asset.script` (identifier `walls-io-proxy`). If you want
+to use your own files, override the template in your own `templateRootPaths`
+or replace the assets in your template.
 
 
 ..  _configuration-wallsioproxy:
