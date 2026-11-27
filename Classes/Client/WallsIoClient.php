@@ -19,11 +19,13 @@ use TYPO3\CMS\Core\Http\RequestFactory;
 /**
  * This is the walls.io client that will send the request to the walls.io server
  */
-readonly class WallsIoClient
+final readonly class WallsIoClient
 {
+    private const REDACTED_TOKEN = 'XXX';
+
     public function __construct(
-        protected RequestFactory $requestFactory,
-        protected LoggerInterface $logger
+        private RequestFactory $requestFactory,
+        private LoggerInterface $logger,
     ) {}
 
     /**
@@ -35,30 +37,39 @@ readonly class WallsIoClient
             $this->logger->error(
                 'Request URI is empty or contains invalid chars.',
                 [
-                    'uri' => $request->buildUri(),
-                ]
+                    'uri' => $this->redactAccessToken($request, $request->buildUri()),
+                ],
             );
 
             return [];
         }
 
-        $processedResponse = [];
         try {
             $response = $this->requestFactory->request($request->buildUri());
-
-            if (!$this->checkClientResponseForErrors($response)) {
-                $processedResponse = json_decode((string)$response->getBody(), true);
-                if ($this->hasResponseErrors($processedResponse)) {
-                    $processedResponse = [];
-                }
-            }
         } catch (\Exception $exception) {
             $this->logger->error(
-                str_replace($request->getParameter('access_token'), 'XXX', $exception->getMessage()),
+                $this->redactAccessToken($request, $exception->getMessage()),
                 [
-                    'Exception Code' => $exception->getCode(),
-                ]
+                    'exceptionCode' => $exception->getCode(),
+                ],
             );
+
+            return [];
+        }
+
+        if ($this->hasClientResponseErrors($response)) {
+            return [];
+        }
+
+        $processedResponse = json_decode((string)$response->getBody(), true);
+        if (!is_array($processedResponse)) {
+            $this->logger->error('The response of walls.io was not a valid JSON response.');
+
+            return [];
+        }
+
+        if ($this->hasResponseErrors($processedResponse)) {
+            return [];
         }
 
         return $processedResponse;
@@ -67,47 +78,66 @@ readonly class WallsIoClient
     /**
      * This method will only check the report of the client and not the result itself.
      *
-     * @return bool Returns false if no errors were found
+     * @return bool Returns true if errors were found
      */
-    protected function checkClientResponseForErrors(ResponseInterface $response): bool
+    private function hasClientResponseErrors(ResponseInterface $response): bool
     {
-        if ($response->getStatusCode() !== 200) {
-            $this->logger->error(
-                'Walls.io responses with a status code different from 200',
-                [
-                    'Status Code' => $response->getStatusCode(),
-                ]
-            );
-            return true;
+        if ($response->getStatusCode() === 200) {
+            return false;
         }
 
-        return false;
+        $this->logger->error(
+            'Walls.io responses with a status code different from 200',
+            [
+                'statusCode' => $response->getStatusCode(),
+            ],
+        );
+
+        return true;
     }
 
     /**
      * Check the processed response from walls.io for errors
      *
-     * @param array<string, mixed>|null $response
+     * @param array<mixed> $response
      */
-    protected function hasResponseErrors(array $response = null): bool
+    private function hasResponseErrors(array $response): bool
     {
-        if ($response === null) {
-            $this->logger->error('The response of walls.io was not a valid JSON response.');
-
-            return true;
+        if (($response['status'] ?? '') === 'success') {
+            return false;
         }
 
-        if ($response['status'] !== 'success') {
-            $this->logger->error(
-                implode('', $response['info']),
-                [
-                    'status' => $response['status'],
-                ]
-            );
+        $info = $response['info'] ?? [];
+        $message = is_array($info) ? implode('', array_filter($info, is_scalar(...))) : '';
+        $this->logger->error(
+            $message !== '' ? $message : 'Unknown error',
+            [
+                'status' => $response['status'] ?? 'unknown',
+            ],
+        );
 
-            return true;
+        return true;
+    }
+
+    /**
+     * The access token is part of the URI and may be part of exception messages.
+     * It must never end up in log files.
+     */
+    private function redactAccessToken(RequestInterface $request, string $value): string
+    {
+        if (!$request->hasParameter('access_token')) {
+            return $value;
         }
 
-        return false;
+        $accessToken = (string)$request->getParameter('access_token');
+        if ($accessToken === '') {
+            return $value;
+        }
+
+        return str_replace(
+            [$accessToken, rawurlencode($accessToken), urlencode($accessToken)],
+            self::REDACTED_TOKEN,
+            $value,
+        );
     }
 }

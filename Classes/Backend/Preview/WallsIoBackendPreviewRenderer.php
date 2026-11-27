@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Backend\Preview;
 
+use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use TYPO3\CMS\Backend\Preview\StandardContentPreviewRenderer;
 use TYPO3\CMS\Backend\View\BackendLayout\Grid\GridColumnItem;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
@@ -22,9 +23,9 @@ use TYPO3\CMS\Core\View\ViewFactoryInterface;
  * Renders the content of the walls.io plugin in the page module.
  * Header, footer and wrapping are inherited from TYPO3's standard preview renderer.
  */
-class WallsIoBackendPreviewRenderer extends StandardContentPreviewRenderer
+final class WallsIoBackendPreviewRenderer extends StandardContentPreviewRenderer
 {
-    private const PREVIEW_TEMPLATE = 'EXT:walls_io_proxy/Resources/Private/Templates/PluginPreview/WallsIoProxyPluginPreview.html';
+    private const PREVIEW_TEMPLATE = 'EXT:walls_io_proxy/Resources/Private/Templates/PluginPreview/WallsIoProxyPluginPreview.fluid.html';
 
     public function __construct(
         private readonly FlexFormTools $flexFormTools,
@@ -44,8 +45,12 @@ class WallsIoBackendPreviewRenderer extends StandardContentPreviewRenderer
                 templatePathAndFilename: self::PREVIEW_TEMPLATE,
             ),
         );
+        $flexFormData = $this->getPiFlexformData($row);
+        $pluginConfiguration = PluginConfiguration::fromProcessedData(['data' => $row, 'conf' => $flexFormData]);
+
         $view->assignMultiple($row);
-        $view->assign('pi_flexform_transformed', $this->getPiFlexformData($row));
+        $view->assign('pi_flexform_transformed', $flexFormData);
+        $view->assign('invalidConfigurationFields', $pluginConfiguration->getInvalidFields());
         $view->assign('pageCacheExpireTime', $this->getPageCacheExpireTime($recordUid));
 
         return $view->render();

@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Request;
 
-use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
-
 /**
  * An abstract request with useful methods for extending request objects
  */
@@ -27,8 +25,6 @@ abstract class AbstractRequest implements RequestInterface
      * @var array<string, mixed>
      */
     protected array $parameters = [];
-
-    protected PluginConfiguration $pluginConfiguration;
 
     protected string $path = '';
 
@@ -58,14 +54,14 @@ abstract class AbstractRequest implements RequestInterface
         $this->parameters = array_intersect_key($parameters, $this->allowedParameters);
     }
 
-    public function addParameter(string $parameter, $value): void
+    public function addParameter(string $parameter, int|string $value): void
     {
         if (array_key_exists($parameter, $this->allowedParameters)) {
             $this->parameters[$parameter] = $value;
         }
     }
 
-    public function getParameter(string $parameter)
+    public function getParameter(string $parameter): int|string
     {
         return $this->parameters[$parameter];
     }
@@ -86,7 +82,7 @@ abstract class AbstractRequest implements RequestInterface
         return sprintf(
             'https://api.walls.io%s?%s',
             $this->getPath(),
-            http_build_query($this->getParameters())
+            http_build_query($this->getParameters()),
         );
     }
 

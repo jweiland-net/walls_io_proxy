@@ -11,14 +11,13 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Unit\Client;
 
-use GuzzleHttp\Psr7\Stream;
+use GuzzleHttp\Psr7\Response;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Request\PostsRequest;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Http\RequestFactory;
-use TYPO3\CMS\Core\Http\Response;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
@@ -26,32 +25,24 @@ use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
  */
 class WallsIoClientTest extends UnitTestCase
 {
-    protected WallsIoClient $subject;
+    private const ACCESS_TOKEN = 'ABC+123/secret';
 
-    /**
-     * @var RequestFactory|MockObject|(RequestFactory&MockObject)
-     */
-    protected $requestFactoryMock;
+    private WallsIoClient $subject;
 
-    /**
-     * @var LoggerInterface|MockObject|(LoggerInterface&MockObject)
-     */
-    protected $loggerMock;
+    private RequestFactory&MockObject $requestFactoryMock;
+
+    private LoggerInterface&MockObject $loggerMock;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->requestFactoryMock = $this->getMockBuilder(RequestFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMock();
+        $this->requestFactoryMock = $this->createMock(RequestFactory::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->subject = new WallsIoClient(
             $this->requestFactoryMock,
-            $this->loggerMock
+            $this->loggerMock,
         );
     }
 
@@ -60,270 +51,160 @@ class WallsIoClientTest extends UnitTestCase
         unset(
             $this->subject,
             $this->requestFactoryMock,
-            $this->loggerMock
+            $this->loggerMock,
         );
         parent::tearDown();
     }
 
-    #[Test]
-    public function processRequestWithInvalidRequestLogsError(): void
+    private function createRequest(string $accessToken = self::ACCESS_TOKEN): PostsRequest
     {
-        /** @var PostsRequest|MockObject $postsRequest */
-        $postsRequest = $this->createMock(PostsRequest::class);
-        $postsRequest
-            ->method('buildUri')
-            ->willReturn('https://www.jweiland.net');
-        $postsRequest
-            ->expects(self::once())
-            ->method('isValidRequest')
-            ->willReturn(false);
+        $request = new PostsRequest();
+        $request->setAccessToken($accessToken);
+
+        return $request;
+    }
+
+    #[Test]
+    public function processRequestWithInvalidRequestLogsErrorWithoutAccessToken(): void
+    {
+        $request = $this->createRequest('');
+
+        $this->requestFactoryMock
+            ->expects($this->never())
+            ->method('request');
 
         $this->loggerMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('error')
             ->with(
                 'Request URI is empty or contains invalid chars.',
-                ['uri' => 'https://www.jweiland.net']
+                ['uri' => 'https://api.walls.io/v1/posts?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token='],
             );
 
-        self::assertSame(
-            [],
-            $this->subject->processRequest($postsRequest)
-        );
+        self::assertSame([], $this->subject->processRequest($request));
     }
 
     #[Test]
     public function processRequestWithInvalidClientResponseLogsError(): void
     {
-        /** @var PostsRequest|MockObject $postsRequest */
-        $postsRequest = $this->getMockBuilder(PostsRequest::class)->getMock();
-        $postsRequest
-            ->method('buildUri')
-            ->willReturn('https://www.jweiland.net');
-        $postsRequest
-            ->method('isValidRequest')
-            ->willReturn(true);
-
-        /** @var Response|MockObject $clientResponse */
-        $clientResponse = $this->createMock(Response::class);
-        $clientResponse
-            ->method('getStatusCode')
-            ->willReturn(500);
-
         $this->requestFactoryMock
             ->method('request')
-            ->with('https://www.jweiland.net')
-            ->willReturn($clientResponse);
+            ->willReturn(new Response(500));
 
         $this->loggerMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('error')
             ->with(
                 'Walls.io responses with a status code different from 200',
-                ['Status Code' => 500]
+                ['statusCode' => 500],
             );
 
-        self::assertSame(
-            [],
-            $this->subject->processRequest($postsRequest)
-        );
+        self::assertSame([], $this->subject->processRequest($this->createRequest()));
     }
 
     #[Test]
-    public function processRequestWithExceptionLogsError(): void
+    public function processRequestWithExceptionLogsErrorWithoutAccessToken(): void
     {
-        $postsRequest = $this->getMockBuilder(PostsRequest::class)
-            ->getMock();
-        $postsRequest
-            ->method('buildUri')
-            ->willReturn('https://www.jweiland.net');
-        $postsRequest
-            ->method('getParameter')
-            ->with('access_token')
-            ->willReturn('ABC');
-        $postsRequest
-            ->method('isValidRequest')
-            ->willReturn(true);
-
         $exception = new \ErrorException(
-            'Server down. Uri: https://api.walls.io?fields=test&access_token=ABC&since=123',
+            'Server down. Uri: https://api.walls.io?fields=test&access_token='
+                . rawurlencode(self::ACCESS_TOKEN) . '&since=123 (' . self::ACCESS_TOKEN . ')',
             564,
-            1,
-            __FILE__,
-            123
         );
 
         $this->requestFactoryMock
             ->method('request')
-            ->with('https://www.jweiland.net')
             ->willThrowException($exception);
 
         $this->loggerMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('error')
             ->with(
-                'Server down. Uri: https://api.walls.io?fields=test&access_token=XXX&since=123',
-                ['Exception Code' => 564]
+                'Server down. Uri: https://api.walls.io?fields=test&access_token=XXX&since=123 (XXX)',
+                ['exceptionCode' => 564],
             );
 
-        self::assertSame(
-            [],
-            $this->subject->processRequest($postsRequest)
-        );
+        self::assertSame([], $this->subject->processRequest($this->createRequest()));
     }
 
     #[Test]
     public function processRequestWithInvalidResponseLogsError(): void
     {
-        /** @var PostsRequest|MockObject $postsRequest */
-        $postsRequest = $this->getMockBuilder(PostsRequest::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $postsRequest
-            ->method('buildUri')
-            ->willReturn('https://www.jweiland.net');
-        $postsRequest
-            ->method('isValidRequest')
-            ->willReturn(true);
-
-        /** @var Response|MockObject $clientResponse */
-        $clientResponse = $this->getMockBuilder(Response::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $clientResponse
-            ->method('getStatusCode')
-            ->willReturn(200);
-
-        // Create a mock for the StreamInterface
-        $streamMock = $this->getMockBuilder(Stream::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $streamMock->method('__toString')
-            ->willReturn('');
-
-        $clientResponse
-            ->method('getBody')
-            ->willReturn($streamMock);
-
         $this->requestFactoryMock
             ->method('request')
-            ->with('https://www.jweiland.net')
-            ->willReturn($clientResponse);
+            ->willReturn(new Response(200, [], ''));
 
         $this->loggerMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('error')
             ->with('The response of walls.io was not a valid JSON response.');
 
-        self::assertSame(
-            [],
-            $this->subject->processRequest($postsRequest)
-        );
+        self::assertSame([], $this->subject->processRequest($this->createRequest()));
     }
 
     #[Test]
     public function processRequestWithInvalidStatusLogsError(): void
     {
-        /** @var PostsRequest|MockObject $postsRequest */
-        $postsRequest = $this->createMock(PostsRequest::class);
-        $postsRequest
-            ->method('buildUri')
-            ->willReturn('https://www.jweiland.net');
-
-        $postsRequest
-            ->method('isValidRequest')
-            ->willReturn(true);
-
-        $clientResponse = $this->createMock(Response::class);
-        $clientResponse
-            ->method('getStatusCode')
-            ->willReturn(200);
-
-        $streamMock = $this->getMockBuilder(Stream::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        // Configure the stream mock to return the JSON string when __toString() is called
-        $streamMock->expects(self::once())
-            ->method('__toString')
-            ->willReturn(
-                json_encode([
-                    'status' => 'error',
-                    'info' => [
-                        0 => 'broken',
-                    ],
-                ], JSON_THROW_ON_ERROR)
-            );
-
-        $clientResponse
-            ->method('getBody')
-            ->willReturn($streamMock);
-
         $this->requestFactoryMock
             ->method('request')
-            ->with('https://www.jweiland.net')
-            ->willReturn($clientResponse);
+            ->willReturn(
+                new Response(
+                    200,
+                    [],
+                    json_encode(['status' => 'error', 'info' => ['broken']], JSON_THROW_ON_ERROR),
+                ),
+            );
 
         $this->loggerMock
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('error')
             ->with('broken', ['status' => 'error']);
 
-        self::assertSame(
-            [],
-            $this->subject->processRequest($postsRequest)
-        );
+        self::assertSame([], $this->subject->processRequest($this->createRequest()));
+    }
+
+    #[Test]
+    public function processRequestWithResponseWithoutStatusLogsError(): void
+    {
+        $this->requestFactoryMock
+            ->method('request')
+            ->willReturn(new Response(200, [], '{"foo": "bar"}'));
+
+        $this->loggerMock
+            ->expects($this->once())
+            ->method('error')
+            ->with('Unknown error', ['status' => 'unknown']);
+
+        self::assertSame([], $this->subject->processRequest($this->createRequest()));
+    }
+
+    #[Test]
+    public function processRequestRequestsUriOfRequest(): void
+    {
+        $request = $this->createRequest();
+
+        $this->requestFactoryMock
+            ->expects($this->once())
+            ->method('request')
+            ->with($request->buildUri())
+            ->willReturn(new Response(200, [], '{"status": "success"}'));
+
+        $this->loggerMock
+            ->expects($this->never())
+            ->method('error');
+
+        $this->subject->processRequest($request);
     }
 
     #[Test]
     public function processRequestReturnsWalls(): void
     {
-        /** @var PostsRequest|MockObject $postsRequest */
-        $postsRequest = $this->getMockBuilder(PostsRequest::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $postsRequest
-            ->method('buildUri')
-            ->willReturn('https://www.jweiland.net');
-        $postsRequest
-            ->method('isValidRequest')
-            ->willReturn(true);
-
-        $streamMock = $this->getMockBuilder(Stream::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        // Configure the stream mock to return the JSON string when __toString() is called
-        $streamMock->expects(self::once())
-            ->method('__toString')
-            ->willReturn(
-                json_encode([
-                    'status' => 'success',
-                ], JSON_THROW_ON_ERROR)
-            );
-
-        /** @var Response|MockObject $clientResponse */
-        $clientResponse = $this->getMockBuilder(Response::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $clientResponse
-            ->method('getStatusCode')
-            ->willReturn(200);
-        $clientResponse
-            ->method('getBody')
-            ->willReturn($streamMock);
-
         $this->requestFactoryMock
             ->method('request')
-            ->with('https://www.jweiland.net')
-            ->willReturn($clientResponse);
+            ->willReturn(new Response(200, [], json_encode(['status' => 'success'], JSON_THROW_ON_ERROR)));
 
         self::assertSame(
-            [
-                'status' => 'success',
-            ],
-            $this->subject->processRequest($postsRequest)
+            ['status' => 'success'],
+            $this->subject->processRequest($this->createRequest()),
         );
     }
 }

@@ -11,7 +11,6 @@ if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
-use JWeiland\WallsIoProxy\Hook\DataHandlerHook;
 use Psr\Log\LogLevel;
 use TYPO3\CMS\Core\Log\Writer\FileWriter;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -29,7 +28,7 @@ ExtensionManagementUtility::addTypoScript(
     '
     # Setting walls_io_proxy plugin TypoScript
     ' . $pluginContent,
-    'defaultContentRendering'
+    'defaultContentRendering',
 );
 
 if (!isset($GLOBALS['TYPO3_CONF_VARS']['LOG']['JWeiland']['WallsIoProxy']['writerConfiguration'])) {
@@ -41,6 +40,3 @@ if (!isset($GLOBALS['TYPO3_CONF_VARS']['LOG']['JWeiland']['WallsIoProxy']['write
         ],
     ];
 }
-
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['wallsioproxy_clearcache']
-    = DataHandlerHook::class . '->clearCachePostProc';

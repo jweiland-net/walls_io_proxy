@@ -6,14 +6,14 @@ services:
 
   JWeiland\WallsIoProxy\:
     resource: '../Classes/*'
+    exclude:
+      - '../Classes/Configuration/PluginConfiguration.php'
+      - '../Classes/Request/*'
 
   # Will be called by GeneralUtility::makeInstance in ContentDataProcessor::process()
   JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor:
     public: true
 
-  # Will be called by GeneralUtility::makeInstance in TYPO3's DataHandler
-  JWeiland\WallsIoProxy\Hook\DataHandlerHook:
-    public: true
-
+  # Will be called by GeneralUtility::makeInstance in TYPO3's PreviewRendererResolver
   JWeiland\WallsIoProxy\Backend\Preview\WallsIoBackendPreviewRenderer:
     public: true

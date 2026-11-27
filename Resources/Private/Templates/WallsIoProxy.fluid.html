@@ -5,6 +5,9 @@
 <f:layout name="Default"/>
 
 <f:section name="Main">
+	<f:asset.css identifier="walls-io-proxy" href="EXT:walls_io_proxy/Resources/Public/Css/WallFluid.css" />
+	<f:asset.script identifier="walls-io-proxy" src="EXT:walls_io_proxy/Resources/Public/JavaScript/Wall.js" defer="1" />
+
 	<f:flashMessages queueIdentifier="core.template.flashMessages" />
 
 	<div class="socialwall_container" data-uid="{data.uid}" data-entries-to-show="{conf.entriesToShow}">
@@ -57,6 +60,7 @@
 									</div>
 								</f:if>
 								<div class="checkin-message" dir="auto">
+									<f:comment>html_comment is sanitized by the HTML sanitizer of EXT:walls_io_proxy before it reaches this template</f:comment>
 									{wall.html_comment -> f:format.raw()->f:format.crop(maxCharacters: 200, respectWordBoundaries: 1, respectHtml: 1)}
 								</div>
 								<div class="checkin-user clearfix">
@@ -66,12 +70,12 @@
 						</div>
 					</f:for>
 				</div>
-				<button type="button" class="wallsio-load-more-button" onclick="showWallIoEntries({data.uid})">
-					{f:translate(key: 'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang.xlf:loadPosts')}
+				<button type="button" class="wallsio-load-more-button" data-walls-io-load-more="{data.uid}">
+					<f:translate key="walls_io_proxy.messages:loadPosts" />
 				</button>
 			</f:then>
 			<f:else>
-				<div>{f:translate(key: 'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang.xlf:noPosts')}</div>
+				<div><f:translate key="walls_io_proxy.messages:noPosts" /></div>
 			</f:else>
 		</f:if>
 	</div>
@@ -86,13 +90,13 @@
 </f:section>
 
 <f:section name="renderFacebook">
-	<a href="https://www.facebook.com/{wall.external_user_id}"
+	<a href="https://www.facebook.com/{wall.external_user_id -> f:format.urlencode()}"
 		 class="checkin-user-image"
 		 target="_blank"
 		 rel="nofollow noopener"
 		 style="background-image: url({wall.external_image})"></a>
 	<div class="checkin-user-name" title="{wall.external_fullname}">
-		<a href="https://www.facebook.com/{wall.external_user_id}" target="_blank" rel="nofollow noopener">
+		<a href="https://www.facebook.com/{wall.external_user_id -> f:format.urlencode()}" target="_blank" rel="nofollow noopener">
 			{wall.external_fullname}
 		</a>
 	</div>
@@ -102,13 +106,13 @@
 </f:section>
 
 <f:section name="renderTwitter">
-	<a href="https://twitter.com/{wall.external_name}"
+	<a href="https://twitter.com/{wall.external_name -> f:format.urlencode()}"
 		 class="checkin-user-image"
 		 target="_blank"
 		 rel="nofollow noopener"
 		 style="background-image: url({wall.external_image})"></a>
 	<div class="checkin-user-name" title="@{wall.external_name} ({wall.external_fullname})">
-		<a href="https://twitter.com/{wall.external_name}" target="_blank" rel="nofollow noopener">
+		<a href="https://twitter.com/{wall.external_name -> f:format.urlencode()}" target="_blank" rel="nofollow noopener">
 			<span class="checkin-user-name-part checkin-user-name-full">{wall.external_fullname}</span>
 			<span class="checkin-user-name-part checkin-user-name-short">@{wall.external_name}</span>
 		</a>
@@ -118,13 +122,13 @@
 </f:section>
 
 <f:section name="renderInstagram">
-	<a href="https://www.instagram.com/{wall.external_name}/"
+	<a href="https://www.instagram.com/{wall.external_name -> f:format.urlencode()}/"
 		 class="checkin-user-image"
 		 target="_blank"
 		 rel="nofollow noopener"
 		 style="background-image: url({wall.external_image})"></a>
-	<div class="checkin-user-name" title="@{wall.external_name} (external_fullname)">
-		<a href="https://www.instagram.com/{wall.external_name}/" target="_blank" rel="nofollow noopener">
+	<div class="checkin-user-name" title="@{wall.external_name} ({wall.external_fullname})">
+		<a href="https://www.instagram.com/{wall.external_name -> f:format.urlencode()}/" target="_blank" rel="nofollow noopener">
 			<span class="checkin-user-name-part checkin-user-name-full">{wall.external_fullname}</span>
 			<span class="checkin-user-name-part checkin-user-name-short">@{wall.external_name}</span>
 		</a>

@@ -19,7 +19,7 @@ namespace JWeiland\WallsIoProxy\Request;
  *
  * @link https://github.com/DieSocialisten/Walls.io-API-Docs/blob/master/endpoints/GET_posts.md
  */
-class PostsRequest extends AbstractRequest
+final class PostsRequest extends AbstractRequest
 {
     protected string $path = '/v1/posts';
 
@@ -91,7 +91,7 @@ class PostsRequest extends AbstractRequest
     {
         $this->addParameter(
             'access_token',
-            $accessToken
+            $accessToken,
         );
     }
 
@@ -104,7 +104,7 @@ class PostsRequest extends AbstractRequest
     {
         $this->addParameter(
             'fields',
-            implode(',', array_intersect($this->allowedFields, $fields))
+            implode(',', array_intersect($this->allowedFields, $fields)),
         );
     }
 
@@ -115,7 +115,7 @@ class PostsRequest extends AbstractRequest
     {
         $this->addParameter(
             'limit',
-            $limit
+            $limit,
         );
     }
 
@@ -131,7 +131,7 @@ class PostsRequest extends AbstractRequest
         if (preg_match('/\d+/', $postId)) {
             $this->addParameter(
                 'before',
-                $postId
+                $postId,
             );
         }
     }
@@ -144,7 +144,7 @@ class PostsRequest extends AbstractRequest
     {
         $this->addParameter(
             'include_inactive',
-            $includeInactive ? '1' : '0'
+            $includeInactive ? '1' : '0',
         );
     }
 }

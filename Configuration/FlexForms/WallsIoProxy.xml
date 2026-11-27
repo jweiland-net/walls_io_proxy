@@ -2,11 +2,11 @@
     <sheets>
         <sDEF>
             <ROOT>
-                <sheetTitle>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:sheetGeneral</sheetTitle>
+                <sheetTitle>walls_io_proxy.flex_forms:sheetGeneral</sheetTitle>
                 <type>array</type>
                 <el>
                     <accessToken>
-                        <label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:accessToken</label>
+                        <label>walls_io_proxy.flex_forms:accessToken</label>
                         <config>
                             <type>input</type>
                             <size>30</size>
@@ -15,25 +15,25 @@
                         </config>
                     </accessToken>
                     <requestType>
-                        <label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:requestType</label>
+                        <label>walls_io_proxy.flex_forms:requestType</label>
                         <config>
                             <type>select</type>
                             <renderType>selectSingle</renderType>
                             <items>
                                 <numIndex index="0">
-                                    <label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:requestType.posts</label>
-                                    <value>JWeiland\WallsIoProxy\Request\PostsRequest</value>
+                                    <label>walls_io_proxy.flex_forms:requestType.posts</label>
+                                    <value>posts</value>
                                 </numIndex>
                                 <numIndex index="1">
-                                    <label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:requestType.changedPosts</label>
-                                    <value>JWeiland\WallsIoProxy\Request\Posts\ChangedRequest</value>
+                                    <label>walls_io_proxy.flex_forms:requestType.changedPosts</label>
+                                    <value>changed</value>
                                 </numIndex>
                             </items>
                         </config>
                     </requestType>
                     <entriesToLoad>
-                        <label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:entriesToLoad</label>
-                        <description>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:entriesToLoad.description</description>
+                        <label>walls_io_proxy.flex_forms:entriesToLoad</label>
+                        <description>walls_io_proxy.flex_forms:entriesToLoad.description</description>
                         <config>
                             <type>number</type>
                             <format>integer</format>
@@ -51,7 +51,7 @@
                         </config>
                     </entriesToLoad>
                     <entriesToShow>
-                        <label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:entriesToShow</label>
+                        <label>walls_io_proxy.flex_forms:entriesToShow</label>
                         <config>
                             <type>number</type>
                             <format>integer</format>
@@ -69,8 +69,8 @@
                         </config>
                     </entriesToShow>
                     <showWallsSince>
-                        <label>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:showWallsSince</label>
-                        <description>LLL:EXT:walls_io_proxy/Resources/Private/Language/FlexForms.xlf:showWallsSince.description</description>
+                        <label>walls_io_proxy.flex_forms:showWallsSince</label>
+                        <description>walls_io_proxy.flex_forms:showWallsSince.description</description>
                         <config>
                             <type>number</type>
                             <format>integer</format>

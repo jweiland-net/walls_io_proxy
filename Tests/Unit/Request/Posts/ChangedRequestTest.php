@@ -35,7 +35,7 @@ class ChangedRequestTest extends UnitTestCase
     protected function tearDown(): void
     {
         unset(
-            $this->subject
+            $this->subject,
         );
         parent::tearDown();
     }
@@ -45,7 +45,7 @@ class ChangedRequestTest extends UnitTestCase
     {
         self::assertSame(
             '/v1/posts/changed',
-            $this->subject->getPath()
+            $this->subject->getPath(),
         );
     }
 
@@ -56,7 +56,7 @@ class ChangedRequestTest extends UnitTestCase
 
         self::assertSame(
             'foo bar',
-            $this->subject->getPath()
+            $this->subject->getPath(),
         );
     }
 
@@ -67,7 +67,7 @@ class ChangedRequestTest extends UnitTestCase
 
         self::assertSame(
             'trimmed',
-            $this->subject->getPath()
+            $this->subject->getPath(),
         );
     }
 
@@ -80,7 +80,7 @@ class ChangedRequestTest extends UnitTestCase
                 'include_inactive' => 0,
                 'limit' => 24,
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -89,7 +89,7 @@ class ChangedRequestTest extends UnitTestCase
     {
         self::assertSame(
             24,
-            $this->subject->getParameter('limit')
+            $this->subject->getParameter('limit'),
         );
     }
 
@@ -97,7 +97,7 @@ class ChangedRequestTest extends UnitTestCase
     public function hasParameterReturnsTrue(): void
     {
         self::assertTrue(
-            $this->subject->hasParameter('limit')
+            $this->subject->hasParameter('limit'),
         );
     }
 
@@ -105,7 +105,7 @@ class ChangedRequestTest extends UnitTestCase
     public function hasParameterReturnsFalse(): void
     {
         self::assertFalse(
-            $this->subject->hasParameter('accessToken')
+            $this->subject->hasParameter('accessToken'),
         );
     }
 
@@ -120,7 +120,7 @@ class ChangedRequestTest extends UnitTestCase
 
         self::assertSame(
             $expectedParameters,
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -136,7 +136,7 @@ class ChangedRequestTest extends UnitTestCase
             [
                 'languages' => 'de',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -152,7 +152,7 @@ class ChangedRequestTest extends UnitTestCase
                 'limit' => 24,
                 'access_token' => '123',
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -167,7 +167,7 @@ class ChangedRequestTest extends UnitTestCase
                 'include_inactive' => 0,
                 'limit' => 24,
             ],
-            $this->subject->getParameters()
+            $this->subject->getParameters(),
         );
     }
 
@@ -176,7 +176,7 @@ class ChangedRequestTest extends UnitTestCase
     {
         self::assertSame(
             'https://api.walls.io/v1/posts/changed?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24',
-            $this->subject->buildUri()
+            $this->subject->buildUri(),
         );
     }
 
@@ -188,7 +188,7 @@ class ChangedRequestTest extends UnitTestCase
 
         self::assertSame(
             'https://api.walls.io/v1/posts/changed?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123',
-            $this->subject->buildUri()
+            $this->subject->buildUri(),
         );
     }
 
@@ -202,7 +202,7 @@ class ChangedRequestTest extends UnitTestCase
 
         self::assertSame(
             'https://api.walls.io/v1/posts/changed?fields=id%2Ccomment%2Ctype&include_inactive=0&limit=24&access_token=ABC123&languages=de',
-            $this->subject->buildUri()
+            $this->subject->buildUri(),
         );
     }
 
@@ -210,7 +210,7 @@ class ChangedRequestTest extends UnitTestCase
     public function isValidRequestWithInvalidAccessTokenReturnsFalse(): void
     {
         self::assertFalse(
-            $this->subject->isValidRequest()
+            $this->subject->isValidRequest(),
         );
     }
 
@@ -221,7 +221,7 @@ class ChangedRequestTest extends UnitTestCase
         $this->subject->setAccessToken('ABC123');
 
         self::assertTrue(
-            $this->subject->isValidRequest()
+            $this->subject->isValidRequest(),
         );
     }
 
@@ -236,7 +236,7 @@ class ChangedRequestTest extends UnitTestCase
 
         self::assertSame(
             'id,type,post_link',
-            $this->subject->getParameter('fields')
+            $this->subject->getParameter('fields'),
         );
     }
 
@@ -251,7 +251,7 @@ class ChangedRequestTest extends UnitTestCase
 
         self::assertSame(
             'id,post_link',
-            $this->subject->getParameter('fields')
+            $this->subject->getParameter('fields'),
         );
     }
 
@@ -262,7 +262,7 @@ class ChangedRequestTest extends UnitTestCase
 
         self::assertSame(
             15,
-            $this->subject->getParameter('limit')
+            $this->subject->getParameter('limit'),
         );
     }
 
@@ -273,7 +273,7 @@ class ChangedRequestTest extends UnitTestCase
 
         self::assertSame(
             '1',
-            $this->subject->getParameter('include_inactive')
+            $this->subject->getParameter('include_inactive'),
         );
     }
 
@@ -284,7 +284,7 @@ class ChangedRequestTest extends UnitTestCase
 
         self::assertSame(
             '0',
-            $this->subject->getParameter('include_inactive')
+            $this->subject->getParameter('include_inactive'),
         );
     }
 }
