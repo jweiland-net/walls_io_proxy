@@ -13,8 +13,7 @@ namespace JWeiland\WallsIoProxy\DataProcessing;
 
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
 use JWeiland\WallsIoProxy\Service\WallsService;
-use TYPO3\CMS\Core\Http\ServerRequest;
-use TYPO3\CMS\Core\Service\FlexFormService;
+use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\ContentObject\DataProcessorInterface;
@@ -25,18 +24,10 @@ use TYPO3\CMS\Frontend\ContentObject\DataProcessorInterface;
  */
 class AddWallsProcessor implements DataProcessorInterface
 {
-    protected WallsService $wallsService;
-
-    protected FlexFormService $flexFormService;
-
-    protected ServerRequest $request;
-
-    public function __construct(WallsService $wallsService, FlexFormService $flexFormService, ServerRequest $request)
-    {
-        $this->wallsService = $wallsService;
-        $this->flexFormService = $flexFormService;
-        $this->request = $request;
-    }
+    public function __construct(
+        private readonly WallsService $wallsService,
+        private readonly FlexFormTools $flexFormTools,
+    ) {}
 
     /**
      * Process data of a record to resolve File objects to the view
@@ -58,13 +49,13 @@ class AddWallsProcessor implements DataProcessorInterface
             return $processedData;
         }
 
-        $processedData['conf'] = $this->flexFormService->convertFlexFormContentToArray(
-            $processedData['data']['pi_flexform'] ?? ''
+        $processedData['conf'] = $this->flexFormTools->convertFlexFormContentToArray(
+            (string)($processedData['data']['pi_flexform'] ?? ''),
         );
 
         $processedData['walls'] = $this->wallsService->getWallPosts(
             $this->getPluginConfiguration($processedData),
-            $this->request
+            $cObj->getRequest(),
         );
 
         return $processedData;

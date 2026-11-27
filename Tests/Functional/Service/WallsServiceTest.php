@@ -18,6 +18,7 @@ use JWeiland\WallsIoProxy\Service\WallsService;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\CMS\Core\Cache\CacheDataCollector;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
@@ -65,7 +66,7 @@ class WallsServiceTest extends FunctionalTestCase
 
         $GLOBALS['LANG'] = $this->get(LanguageServiceFactory::class)->create('default');
 
-        $this->registry = new Registry();
+        $this->registry = $this->get(Registry::class);
         $this->wallsIoClientMock = $this->createMock(WallsIoClient::class);
         $this->requestFactoryMock = $this->createMock(RequestFactory::class);
 
@@ -298,5 +299,43 @@ class WallsServiceTest extends FunctionalTestCase
                 $this->requestMock
             )
         );
+    }
+
+    #[Test]
+    public function getWallPostsWillStoreWallPostsAndPageCacheExpireTimeInRegistry(): void
+    {
+        $wallPosts = ['324125' => ['id' => '324125']];
+        $this->wallsIoClientMock
+            ->method('processRequest')
+            ->willReturn(['status' => 'success', 'data' => $wallPosts]);
+
+        $cacheDataCollector = new CacheDataCollector();
+        $cacheDataCollector->restrictMaximumLifetime(3600);
+        $request = (new ServerRequest('https://www.example.com/'))
+            ->withAttribute('frontend.cache.collector', $cacheDataCollector);
+
+        $this->subject->getWallPosts(new PluginConfiguration($this->processedDataForPostsRequest), $request);
+
+        self::assertSame($wallPosts, $this->registry->get('WallsIoProxy', 'ContentRecordUid_12345'));
+        self::assertSame(
+            $GLOBALS['EXEC_TIME'] + 3600,
+            $this->registry->get('WallsIoProxy', 'PageCacheExpireTime_12345'),
+        );
+    }
+
+    #[Test]
+    public function getWallPostsWithYoastRequestWillNotStoreWallPostsInRegistry(): void
+    {
+        $this->wallsIoClientMock
+            ->method('processRequest')
+            ->willReturn(['status' => 'success', 'data' => ['324125' => ['id' => '324125']]]);
+
+        $request = (new ServerRequest('https://www.example.com/'))
+            ->withHeader('X-Yoast-Page-Request', '1')
+            ->withAttribute('frontend.cache.collector', new CacheDataCollector());
+
+        $this->subject->getWallPosts(new PluginConfiguration($this->processedDataForPostsRequest), $request);
+
+        self::assertNull($this->registry->get('WallsIoProxy', 'ContentRecordUid_12345'));
     }
 }

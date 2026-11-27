@@ -7,6 +7,19 @@
 ChangeLog
 =========
 
+Version 9.0.0
+=============
+
+*   [TASK] Add compatibility for TYPO3 14 LTS
+*   [TASK] Removed support for TYPO3 13 LTS
+*   [TASK] Replace removed FlexFormService with FlexFormTools in AddWallsProcessor and backend preview
+*   [TASK] Use request of ContentObjectRenderer in AddWallsProcessor instead of injecting ServerRequest
+*   [REFACTOR] Base WallsIoBackendPreviewRenderer on StandardContentPreviewRenderer and remove StandaloneView usage
+*   [BUGFIX] Show page cache expire time in backend preview
+*   [BUGFIX] Detect the Yoast page request header case-insensitively and skip storing the expire time without cache data collector
+*   [TASK] Register plugin via addPlugin() with SelectItem and assign FlexForm via columnsOverrides
+*   [TASK] Remove obsolete service definitions from Services.yaml
+
 Version 8.1.1
 =============
 

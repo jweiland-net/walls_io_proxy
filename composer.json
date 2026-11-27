@@ -29,7 +29,7 @@
 		"source": "https://github.com/jweiland-net/walls_io_proxy"
 	},
 	"require": {
-		"typo3/cms-core": "^13.4"
+		"typo3/cms-core": "^14.3"
 	},
 	"require-dev": {
 		"ergebnis/composer-normalize": "^2.44",
@@ -37,7 +37,7 @@
 		"phpstan/phpstan": "^1.10",
 		"roave/security-advisories": "dev-latest",
 		"typo3/coding-standards": "^0.8",
-		"typo3/testing-framework": "^9.0.1"
+		"typo3/testing-framework": "^9.2.0"
 	},
 	"replace": {
 		"typo3-ter/walls_io_proxy": "self.version"
@@ -64,8 +64,12 @@
 	},
 	"extra": {
 		"typo3/cms": {
+			"Package": {
+				"providesPackages": {}
+			},
 			"app-dir": ".Build",
 			"extension-key": "walls_io_proxy",
+			"version": "9.0.0",
 			"web-dir": ".Build/public"
 		}
 	}

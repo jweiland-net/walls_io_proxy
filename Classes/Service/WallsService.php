@@ -19,6 +19,7 @@ use JWeiland\WallsIoProxy\Request\PostsRequest;
 use JWeiland\WallsIoProxy\Request\RequestInterface;
 use JWeiland\WallsIoProxy\Utility\StringUtility;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Cache\CacheDataCollector;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Registry;
@@ -82,7 +83,7 @@ readonly class WallsService
             }
 
             // Do not store wall posts on BE yoast request
-            if ($request->getHeaders() && !array_key_exists('x-yoast-page-request', $request->getHeaders())) {
+            if (!$request->hasHeader('x-yoast-page-request')) {
                 $this->setWallPostsToRegistry($request, $wallPosts, $pluginConfiguration);
             }
         }
@@ -133,6 +134,10 @@ readonly class WallsService
         );
 
         $cacheDataCollector = $request->getAttribute('frontend.cache.collector');
+        if (!$cacheDataCollector instanceof CacheDataCollector) {
+            return;
+        }
+
         $cacheLifetime = min($GLOBALS['EXEC_TIME'] + $cacheDataCollector->resolveLifetime(), PHP_INT_MAX);
 
         $this->registry->set(
@@ -196,9 +201,8 @@ readonly class WallsService
     public function clearCache(int $contentRecordUid): int
     {
         if ($contentRecordUid !== 0) {
-            $registry = GeneralUtility::makeInstance(Registry::class);
-            $registry->remove('WallsIoProxy', 'ContentRecordUid_' . $contentRecordUid);
-            $registry->remove('WallsIoProxy', 'PageCacheExpireTime_' . $contentRecordUid);
+            $this->registry->remove('WallsIoProxy', 'ContentRecordUid_' . $contentRecordUid);
+            $this->registry->remove('WallsIoProxy', 'PageCacheExpireTime_' . $contentRecordUid);
 
             GeneralUtility::rmdir($this->getTargetDirectory($contentRecordUid));
 

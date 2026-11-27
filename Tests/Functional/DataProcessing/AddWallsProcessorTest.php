@@ -16,8 +16,8 @@ use JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Http\ServerRequest;
-use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
@@ -34,12 +34,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
      */
     protected $wallsServiceMock;
 
-    /**
-     * @var ServerRequest|MockObject|(ServerRequest&MockObject)
-     */
-    protected $requestMock;
-
-    protected FlexFormService $flexFormService;
+    protected ServerRequest $request;
 
     /**
      * @var ContentObjectRenderer|MockObject
@@ -54,15 +49,16 @@ class AddWallsProcessorTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->requestMock = $this->createMock(ServerRequest::class);
+        $this->request = new ServerRequest('https://www.example.com/');
         $this->wallsServiceMock = $this->createMock(WallsService::class);
-        $this->flexFormService = new FlexFormService();
         $this->contentObjectRendererMock = $this->createMock(ContentObjectRenderer::class);
+        $this->contentObjectRendererMock
+            ->method('getRequest')
+            ->willReturn($this->request);
 
         $this->subject = new AddWallsProcessor(
             $this->wallsServiceMock,
-            $this->flexFormService,
-            $this->requestMock
+            $this->get(FlexFormTools::class),
         );
     }
 
@@ -71,7 +67,7 @@ class AddWallsProcessorTest extends FunctionalTestCase
         unset(
             $this->subject,
             $this->wallsServiceMock,
-            $this->flexFormService
+            $this->request,
         );
 
         parent::tearDown();

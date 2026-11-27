@@ -12,6 +12,7 @@ if (!defined('TYPO3')) {
 }
 
 use JWeiland\WallsIoProxy\Backend\Preview\WallsIoBackendPreviewRenderer;
+use TYPO3\CMS\Core\Schema\Struct\SelectItem;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 $GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['showitem'] = '
@@ -34,21 +35,20 @@ $GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['showitem'] = '
     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:extended,
 ';
 
-ExtensionManagementUtility::addPiFlexFormValue(
-    '*',
-    'FILE:EXT:walls_io_proxy/Configuration/FlexForms/WallsIoProxy.xml',
-    'wallsioproxy'
+ExtensionManagementUtility::addPlugin(
+    new SelectItem(
+        type: 'select',
+        label: 'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang_db.xlf:plugin.walls_io_proxy.title',
+        value: 'wallsioproxy',
+        icon: 'ext-wallsioproxy-wizard-icon',
+        group: 'plugins',
+        description: 'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang_db.xlf:plugin.walls_io_proxy.description',
+    ),
 );
 
-ExtensionManagementUtility::addPlugin(
-    [
-        'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang_db.xlf:plugin.walls_io_proxy.title',
-        'wallsioproxy',
-        null,
-    ],
-    'CType',
-    'walls_io_proxy'
-);
+// pi_flexform is already part of the showitem list above, so the data structure is assigned directly
+$GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['columnsOverrides']['pi_flexform']['config']['ds']
+    = 'FILE:EXT:walls_io_proxy/Configuration/FlexForms/WallsIoProxy.xml';
 
 // Backend Plugin Preview
 $GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['previewRenderer'] = WallsIoBackendPreviewRenderer::class;
