@@ -12,42 +12,19 @@ if (!defined('TYPO3')) {
 }
 
 use JWeiland\WallsIoProxy\Backend\Preview\WallsIoBackendPreviewRenderer;
+use TYPO3\CMS\Core\Schema\Struct\SelectItem;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-$GLOBALS['TCA']['tt_content']['types']['wallsioproxy']['showitem'] = '
-    --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
-        --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.general;general,
-        --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.headers;headers,
-    --div--;LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang_db.xlf:tabs.configuration,pi_flexform,
-    --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.appearance,
-        --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.frames;frames,
-        --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.appearanceLinks;appearanceLinks,
-    --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language,
-        --palette--;;language,
-    --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
-        --palette--;;hidden,
-        --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.access;access,
-    --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:categories,
-        categories,
-    --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
-        rowDescription,
-    --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:extended,
-';
-
-ExtensionManagementUtility::addPiFlexFormValue(
-    '*',
-    'FILE:EXT:walls_io_proxy/Configuration/FlexForms/WallsIoProxy.xml',
-    'wallsioproxy'
-);
-
 ExtensionManagementUtility::addPlugin(
-    [
-        'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang_db.xlf:plugin.walls_io_proxy.title',
-        'wallsioproxy',
-        null,
-    ],
-    'CType',
-    'walls_io_proxy'
+    new SelectItem(
+        type: 'select',
+        label: 'walls_io_proxy.db:plugin.walls_io_proxy.title',
+        value: 'wallsioproxy',
+        icon: 'ext-wallsioproxy-wizard-icon',
+        group: 'plugins',
+        description: 'walls_io_proxy.db:plugin.walls_io_proxy.description',
+    ),
+    'FILE:EXT:walls_io_proxy/Configuration/FlexForms/WallsIoProxy.xml',
 );
 
 // Backend Plugin Preview

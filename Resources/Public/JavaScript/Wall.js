@@ -1,52 +1,72 @@
-let wallIoSocialWallContainers = [];
-let wallIoElements = [];
-let wallIoEntriesToShow = [];
-let visibleWallIoElements = [];
+(() => {
+  const CONTAINER_SELECTOR = '.socialwall_container';
+  const ENTRY_SELECTOR = '.checkin-wrapper';
+  const LOAD_MORE_SELECTOR = '.wallsio-load-more-button';
 
-function showWallIoEntries(wallIoUid)
-{
-    let wallIoStart = visibleWallIoElements[wallIoUid]; // initially 0
-    let wallIoUntil = wallIoStart +  wallIoEntriesToShow[wallIoUid]; // 0 + 8 + 8 + 8...
-    for (let x = wallIoStart; x < wallIoUntil; x++) {
-        if (wallIoElements[wallIoUid].item(x) !== null) {
-            wallIoElements[wallIoUid].item(x).style.display = 'block';
-            visibleWallIoElements[wallIoUid]++;
-        }
+  /**
+   * Show the next entries of a wall. The first entries are shown on initialization.
+   */
+  class Wall {
+    constructor(container) {
+      this.container = container;
+      this.entries = Array.from(container.querySelectorAll(ENTRY_SELECTOR));
+      this.entriesToShow = parseInt(container.dataset.entriesToShow ?? '', 10) || 8;
+      this.visibleEntries = 0;
+
+      // First of all hide all entries
+      this.entries.forEach((entry) => {
+        entry.style.display = 'none';
+      });
+
+      this.showNextEntries();
     }
 
-    // If masonry is loaded, jquery is loaded as well. Re-Layout masonry
-    if (
-        document.getElementsByClassName('masonrygrid').length
-        && window.jQuery
-    ) {
-        let $masonryGrids = $('.masonrygrid');
-        if (typeof $masonryGrids.masonry === 'function') {
-            $masonryGrids.masonry();
-        }
+    showNextEntries() {
+      const until = this.visibleEntries + this.entriesToShow;
+      for (let index = this.visibleEntries; index < until && index < this.entries.length; index++) {
+        this.entries[index].style.display = 'block';
+        this.visibleEntries++;
+      }
+
+      this.relayout();
+      this.hideLoadMoreButtonIfFinished();
     }
 
-    // Hide "load more" button, if there are no more entries
-    if (visibleWallIoElements[wallIoUid] >= wallIoElements[wallIoUid].length) {
-        let buttons = wallIoSocialWallContainers[wallIoUid].getElementsByClassName('wallsio-load-more-button');
-        for (let x = 0; x < buttons.length; x++) {
-            buttons[x].style.display = 'none';
-        }
-    }
-}
+    /**
+     * Let integrators re-layout their grid (e.g. Masonry) after new entries were made visible
+     */
+    relayout() {
+      const grid = this.container.querySelector('.masonrygrid');
+      if (grid !== null && typeof window.Masonry === 'function' && typeof window.Masonry.data === 'function') {
+        window.Masonry.data(grid)?.layout();
+      }
 
-for (let x = 0; x < document.getElementsByClassName('socialwall_container').length; x++) {
-    let socialWallContainer = document.getElementsByClassName('socialwall_container')[x];
-    let wallIoUid = parseInt(socialWallContainer.getAttribute('data-uid'));
-
-    wallIoSocialWallContainers[wallIoUid] = socialWallContainer;
-    wallIoElements[wallIoUid] = socialWallContainer.getElementsByClassName('checkin-wrapper');
-    wallIoEntriesToShow[wallIoUid] = parseInt(socialWallContainer.getAttribute('data-entries-to-show'));
-    visibleWallIoElements[wallIoUid] = 0;
-
-    // First of all hide all entries
-    for (let y = 0; y < wallIoElements[wallIoUid].length; y++) {
-        wallIoElements[wallIoUid].item(y).style.display = 'none';
+      this.container.dispatchEvent(new CustomEvent('walls-io-proxy:entries-shown', { bubbles: true }));
     }
 
-    showWallIoEntries(wallIoUid);
-}
+    hideLoadMoreButtonIfFinished() {
+      if (this.visibleEntries < this.entries.length) {
+        return;
+      }
+
+      this.container.querySelectorAll(LOAD_MORE_SELECTOR).forEach((button) => {
+        button.style.display = 'none';
+      });
+    }
+  }
+
+  const initialize = () => {
+    document.querySelectorAll(CONTAINER_SELECTOR).forEach((container) => {
+      const wall = new Wall(container);
+      container.querySelectorAll(LOAD_MORE_SELECTOR).forEach((button) => {
+        button.addEventListener('click', () => wall.showNextEntries());
+      });
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize);
+  } else {
+    initialize();
+  }
+})();

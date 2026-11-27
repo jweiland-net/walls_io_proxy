@@ -64,7 +64,7 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
 
         self::assertStringContainsString(
             $expectedResult,
-            $view->render()
+            $view->render(),
         );
     }
 
@@ -83,7 +83,7 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
 
         self::assertStringContainsString(
             'IS NOT ADMIN',
-            $view->render()
+            $view->render(),
         );
     }
 
@@ -96,7 +96,7 @@ class IsAdministratorViewHelperTest extends FunctionalTestCase
         $view = new TemplateView($context);
         self::assertStringContainsString(
             'IS NOT ADMIN',
-            $view->render()
+            $view->render(),
         );
     }
 }

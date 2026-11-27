@@ -9,6 +9,16 @@
     }"
 />
 
+<f:if condition="{invalidConfigurationFields}">
+    <f:be.infobox title="{f:translate(key: 'walls_io_proxy.messages:invalidConfiguration.title')}" state="1">
+        <ul>
+            <f:for each="{invalidConfigurationFields}" as="invalidField">
+                <li><f:translate key="walls_io_proxy.messages:invalidConfiguration.{invalidField}" /></li>
+            </f:for>
+        </ul>
+    </f:be.infobox>
+</f:if>
+
 <table class="table">
     <thead>
     <tr>
@@ -52,11 +62,15 @@
         <p>
             Press following button to clear the internally stored wall posts from TYPO3 registry.
         </p>
-        <div class="btn btn-default wallsIoProxyClearCache"
-             data-content-record-uid="{uid}"
-             data-clear-cache-uri="{f:be.uri(route: 'tce_db', parameters: {cacheCmd: 'WallIoProxy', contentRecordUid: uid})}">
-            {f:translate(key: 'LLL:EXT:walls_io_proxy/Resources/Private/Language/locallang.xlf:clearCache.posts')}
-        </div>
+        <button type="button"
+                class="btn btn-default"
+                data-walls-io-proxy-clear-cache
+                data-content-record-uid="{uid}"
+                data-clear-cache-uri="{f:be.uri(route: 'ajax_walls_io_proxy_clear_cache')}"
+                data-error-title="{f:translate(key: 'walls_io_proxy.messages:clearCache.error.request.title')}"
+                data-error-message="{f:translate(key: 'walls_io_proxy.messages:clearCache.error.request.message')}">
+            <f:translate key="walls_io_proxy.messages:clearCache.posts" />
+        </button>
     </f:then>
 </w:be.security.isAdministrator>
 </html>

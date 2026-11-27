@@ -21,7 +21,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 /**
  * Check, if current logged-in user is Administrator
  */
-class IsAdministratorViewHelper extends AbstractConditionViewHelper
+final class IsAdministratorViewHelper extends AbstractConditionViewHelper
 {
     /**
      * This method decides, if the current logged-in user is an administrator
@@ -35,19 +35,18 @@ class IsAdministratorViewHelper extends AbstractConditionViewHelper
 
     private static function isBeUserAdmin(): bool
     {
-        $context = self::getContext();
         try {
             $context = self::getContext();
-            if ($context->hasAspect('backend.user')) {
-                $userAspect = $context->getAspect('backend.user');
-                if ($userAspect instanceof UserAspect) {
-                    return $userAspect->isAdmin();
-                }
+            if (!$context->hasAspect('backend.user')) {
+                return false;
             }
-        } catch (AspectNotFoundException $aspectNotFoundException) {
-        }
 
-        return false;
+            $userAspect = $context->getAspect('backend.user');
+
+            return $userAspect instanceof UserAspect && $userAspect->isAdmin();
+        } catch (AspectNotFoundException) {
+            return false;
+        }
     }
 
     private static function getContext(): Context

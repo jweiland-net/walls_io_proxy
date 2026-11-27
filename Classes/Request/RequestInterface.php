@@ -30,15 +30,9 @@ interface RequestInterface
      */
     public function setParameters(array $parameters): void;
 
-    /**
-     * @param mixed $value
-     */
-    public function addParameter(string $parameter, $value): void;
+    public function addParameter(string $parameter, int|string $value): void;
 
-    /**
-     * @return mixed
-     */
-    public function getParameter(string $parameter);
+    public function getParameter(string $parameter): int|string;
 
     public function hasParameter(string $parameter): bool;
 

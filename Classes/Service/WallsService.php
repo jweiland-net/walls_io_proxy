@@ -11,52 +11,38 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Service;
 
-use GuzzleHttp\Exception\TransferException;
 use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
-use JWeiland\WallsIoProxy\Request\Posts\ChangedRequest;
-use JWeiland\WallsIoProxy\Request\PostsRequest;
+use JWeiland\WallsIoProxy\Factory\WallsIoRequestFactory;
 use JWeiland\WallsIoProxy\Request\RequestInterface;
-use JWeiland\WallsIoProxy\Utility\StringUtility;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Http\RequestFactory;
+use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Cache\CacheDataCollector;
 use TYPO3\CMS\Core\Registry;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Service to retrieve the result from WallsIO, decode the result and store entries into Cache
  */
-readonly class WallsService
+final readonly class WallsService
 {
-    protected const TARGET_DIRECTORY = 'typo3temp/assets/walls_io_proxy';
+    /**
+     * Fields containing the URL of an image. The images will be downloaded into our local file cache.
+     */
+    private const IMAGE_FIELDS = ['external_image', 'post_image'];
 
     /**
-     * Fields to get from the API
-     *
-     * @var array<int, string> $fields
+     * Fields containing external links. Only http(s) links are allowed to be rendered in href/src attributes.
      */
-    protected const ENDPOINT_FIELDS = [
-        'id',
-        'comment',
-        'type',
-        'is_crosspost',
-        'status',
-        'created_timestamp',
-        'external_name',
-        'external_fullname',
-        'external_user_id',
-        'external_image',
-        'post_image',
-        'post_link',
-    ];
+    private const LINK_FIELDS = ['post_link', 'permalink', 'userlink', 'post_video'];
 
     public function __construct(
-        protected Registry $registry,
-        protected WallsIoClient $client,
-        protected RequestFactory $requestFactory,
+        private Registry $registry,
+        private WallsIoClient $client,
+        private WallsIoRequestFactory $requestFactory,
+        private ExternalResourceCache $resourceCache,
+        private CommentSanitizer $commentSanitizer,
+        private LoggerInterface $logger,
     ) {}
 
     /**
@@ -64,36 +50,69 @@ readonly class WallsService
      */
     public function getWallPosts(PluginConfiguration $pluginConfiguration, ServerRequestInterface $request): array
     {
-        if (!$this->isValidPluginConfiguration($pluginConfiguration)) {
+        $requestType = $pluginConfiguration->resolveRequestType();
+        if (
+            $requestType === null
+            || $pluginConfiguration->getRecordUid() === 0
+            || $pluginConfiguration->getInvalidFields() !== []
+        ) {
+            $this->logInvalidConfiguration($pluginConfiguration);
+
             return [];
         }
 
-        $requestedWallPosts = $this->getUncachedRequestFromWallsIO($this->getWallsIoRequest($pluginConfiguration));
+        $requestedWallPosts = $this->getUncachedRequestFromWallsIO(
+            $this->requestFactory->create($requestType, $pluginConfiguration),
+        );
 
         if ($requestedWallPosts === []) {
-            $wallPosts = $this->getStoredWallPostsFromRegistry($pluginConfiguration);
-        } else {
-            $wallPosts = [];
-            foreach ($requestedWallPosts as $requestedWallPost) {
-                if (is_array($requestedWallPost)) {
-                    $sanitizedWallPost = $this->getSanitizedPost($requestedWallPost, $pluginConfiguration);
-                    $wallPosts[$sanitizedWallPost['id']] = $sanitizedWallPost;
-                }
-            }
+            $storedWallPosts = $this->getStoredWallPostsFromRegistry($pluginConfiguration);
+            $this->logger->warning(
+                'Walls.io did not return any posts. Using the posts stored in registry instead.',
+                [
+                    'contentRecordUid' => $pluginConfiguration->getRecordUid(),
+                    'storedPosts' => count($storedWallPosts),
+                ],
+            );
 
-            // Do not store wall posts on BE yoast request
-            if ($request->getHeaders() && !array_key_exists('x-yoast-page-request', $request->getHeaders())) {
-                $this->setWallPostsToRegistry($request, $wallPosts, $pluginConfiguration);
+            return $storedWallPosts;
+        }
+
+        $wallPosts = [];
+        foreach ($requestedWallPosts as $requestedWallPost) {
+            if (is_array($requestedWallPost) && isset($requestedWallPost['id']) && is_scalar($requestedWallPost['id'])) {
+                $wallPosts[$requestedWallPost['id']] = $this->getSanitizedPost($requestedWallPost, $pluginConfiguration);
             }
+        }
+
+        // Do not store wall posts on BE yoast request
+        if (!$request->hasHeader('x-yoast-page-request')) {
+            $this->setWallPostsToRegistry($request, $wallPosts, $pluginConfiguration);
         }
 
         return $wallPosts;
     }
 
     /**
+     * Clear cache for a specific wall plugin (tt_content record UID).
+     * Will be called by the AJAX controller of the backend.
+     */
+    public function clearCache(int $contentRecordUid): bool
+    {
+        if ($contentRecordUid <= 0) {
+            return false;
+        }
+
+        $this->registry->remove('WallsIoProxy', 'ContentRecordUid_' . $contentRecordUid);
+        $this->registry->remove('WallsIoProxy', 'PageCacheExpireTime_' . $contentRecordUid);
+
+        return $this->resourceCache->clear($contentRecordUid);
+    }
+
+    /**
      * @return array<string, mixed>
      */
-    protected function getUncachedRequestFromWallsIO(RequestInterface $wallsIoRequest): array
+    private function getUncachedRequestFromWallsIO(RequestInterface $wallsIoRequest): array
     {
         $response = $this->client->processRequest($wallsIoRequest);
 
@@ -112,209 +131,133 @@ readonly class WallsService
     /**
      * @return array<string, mixed>
      */
-    protected function getStoredWallPostsFromRegistry(PluginConfiguration $pluginConfiguration): array
+    private function getStoredWallPostsFromRegistry(PluginConfiguration $pluginConfiguration): array
     {
-        return $this->registry->get(
+        $storedWallPosts = $this->registry->get(
             'WallsIoProxy',
             'ContentRecordUid_' . $pluginConfiguration->getRecordUid(),
-            []
+            [],
         );
+
+        return is_array($storedWallPosts) ? $storedWallPosts : [];
     }
 
     /**
      * @param array<string, mixed> $wallPosts
      */
-    protected function setWallPostsToRegistry(ServerRequestInterface $request, array $wallPosts, PluginConfiguration $pluginConfiguration): void
-    {
+    private function setWallPostsToRegistry(
+        ServerRequestInterface $request,
+        array $wallPosts,
+        PluginConfiguration $pluginConfiguration,
+    ): void {
         $this->registry->set(
             'WallsIoProxy',
             'ContentRecordUid_' . $pluginConfiguration->getRecordUid(),
-            $wallPosts
+            $wallPosts,
         );
 
         $cacheDataCollector = $request->getAttribute('frontend.cache.collector');
+        if (!$cacheDataCollector instanceof CacheDataCollector) {
+            return;
+        }
+
         $cacheLifetime = min($GLOBALS['EXEC_TIME'] + $cacheDataCollector->resolveLifetime(), PHP_INT_MAX);
 
         $this->registry->set(
             'WallsIoProxy',
             'PageCacheExpireTime_' . $pluginConfiguration->getRecordUid(),
-            $cacheLifetime
+            $cacheLifetime,
         );
     }
 
-    protected function getWallsIoRequest(PluginConfiguration $pluginConfiguration): RequestInterface
+    private function logInvalidConfiguration(PluginConfiguration $pluginConfiguration): void
     {
-        /** @var class-string<RequestInterface> $requestType */
-        $requestType = $pluginConfiguration->getRequestType();
-
-        /** @phpstan-var RequestInterface $wallsIoRequest */
-        $wallsIoRequest = GeneralUtility::makeInstance($requestType);
-        $wallsIoRequest->setFields(self::ENDPOINT_FIELDS);
-        $wallsIoRequest->setAccessToken($pluginConfiguration->getAccessToken());
-        $wallsIoRequest->setLimit($pluginConfiguration->getEntriesToLoad());
-
-        if ($wallsIoRequest instanceof PostsRequest) {
-            $wallsIoRequest->setBefore('');
-        }
-
-        if ($wallsIoRequest instanceof ChangedRequest) {
-            $wallsIoRequest->setSince(time() - (60 * 60 * 24 * $pluginConfiguration->getShowWallsSince()));
-        }
-
-        return $wallsIoRequest;
-    }
-
-    protected function isValidPluginConfiguration(PluginConfiguration $pluginConfiguration): bool
-    {
+        $invalidFields = $pluginConfiguration->getInvalidFields();
         if ($pluginConfiguration->getRecordUid() === 0) {
-            return false;
+            $invalidFields[] = 'recordUid';
         }
 
-        if ($pluginConfiguration->getAccessToken() === '') {
-            return false;
-        }
-
-        if ($pluginConfiguration->getEntriesToLoad() === 0) {
-            return false;
-        }
-
-        if ($pluginConfiguration->getEntriesToShow() === 0) {
-            return false;
-        }
-
-        if ($pluginConfiguration->getRequestType() === '') {
-            return false;
-        }
-
-        return class_exists($pluginConfiguration->getRequestType());
-    }
-
-    /**
-     * Clear cache for a specific wall plugin (tt_content record UID).
-     * Will be called by Clear Cache post-hook.
-     */
-    public function clearCache(int $contentRecordUid): int
-    {
-        if ($contentRecordUid !== 0) {
-            $registry = GeneralUtility::makeInstance(Registry::class);
-            $registry->remove('WallsIoProxy', 'ContentRecordUid_' . $contentRecordUid);
-            $registry->remove('WallsIoProxy', 'PageCacheExpireTime_' . $contentRecordUid);
-
-            GeneralUtility::rmdir($this->getTargetDirectory($contentRecordUid));
-
-            return 1;
-        }
-
-        return 0;
-    }
-
-    /**
-     * Get a cache directory for related files within the content of the wall posts comments.
-     * Will be called by the AddWallsProcessor (DataProcessor)
-     */
-    public function getTargetDirectory(int $contentRecordUid): string
-    {
-        $targetDirectory = sprintf(
-            '%s/%s/%s',
-            Environment::getPublicPath(),
-            self::TARGET_DIRECTORY,
-            $contentRecordUid
+        $this->logger->warning(
+            'Invalid walls.io plugin configuration. No posts will be requested.',
+            [
+                'contentRecordUid' => $pluginConfiguration->getRecordUid(),
+                'invalidFields' => $invalidFields,
+            ],
         );
-
-        if (!is_dir($targetDirectory)) {
-            GeneralUtility::mkdir_deep($targetDirectory);
-        }
-
-        return $targetDirectory;
     }
 
     /**
      * @param array<string, mixed> $post
      * @return array<string, mixed>
      */
-    protected function getSanitizedPost(array $post, PluginConfiguration $pluginConfiguration): array
+    private function getSanitizedPost(array $post, PluginConfiguration $pluginConfiguration): array
     {
+        $contentRecordUid = $pluginConfiguration->getRecordUid();
+
         if (array_key_exists('created_timestamp', $post)) {
             $post['created_timestamp_as_text'] = $this->getCreationText((int)$post['created_timestamp']);
         }
 
-        if (
-            array_key_exists('external_image', $post)
-            && StringUtility::beginsWith((string)$post['external_image'], 'http')
-        ) {
-            $post['external_image'] = $this->cacheExternalResources(
-                $post['external_image'],
-                $pluginConfiguration->getRecordUid()
-            );
-        }
-
-        if (
-            array_key_exists('post_image', $post)
-            && StringUtility::beginsWith((string)$post['post_image'], 'http')
-        ) {
-            $post['post_image'] = $this->cacheExternalResources(
-                $post['post_image'],
-                $pluginConfiguration->getRecordUid()
-            );
-        }
-
-        if (
-            array_key_exists('comment', $post)
-            && !empty($post['comment'])
-        ) {
-            $matches = [];
-            if (
-                preg_match_all('/<img.*?src=["|\'](?<src>.*?)["|\'].*?>/', $post['comment'], $matches)
-                && array_key_exists('src', $matches)
-                && is_array($matches['src'])
-            ) {
-                foreach ($matches['src'] as $uri) {
-                    if (StringUtility::beginsWith($uri, 'http')) {
-                        $post['comment'] = str_replace(
-                            $matches['src'],
-                            $this->cacheExternalResources($uri, $pluginConfiguration->getRecordUid()),
-                            $post['comment']
-                        );
-                    }
-                }
+        // Never fall back to the external URL. Visitors should not contact the external servers.
+        foreach (self::IMAGE_FIELDS as $field) {
+            if (array_key_exists($field, $post)) {
+                $post[$field] = is_string($post[$field])
+                    ? ($this->resourceCache->cache($post[$field], $contentRecordUid) ?? '')
+                    : '';
             }
+        }
 
-            $post['html_comment'] = nl2br($post['comment']);
+        foreach (self::LINK_FIELDS as $field) {
+            if (array_key_exists($field, $post)) {
+                $post[$field] = $this->getHttpUrl($post[$field]);
+            }
+        }
+
+        if (isset($post['comment']) && is_string($post['comment']) && $post['comment'] !== '') {
+            $post['html_comment'] = $this->commentSanitizer->sanitize(
+                $this->replaceExternalImages($post['comment'], $contentRecordUid),
+            );
         }
 
         return $post;
     }
 
-    protected function cacheExternalResources(string $resource, int $contentRecordUid): string
+    /**
+     * Replaces the external images of a comment by their locally cached copy.
+     * Images which can not be cached will be removed. All other attributes of the img tag get lost.
+     */
+    private function replaceExternalImages(string $comment, int $contentRecordUid): string
     {
-        $pathParts = GeneralUtility::split_fileref(parse_url($resource, PHP_URL_PATH));
+        return (string)preg_replace_callback(
+            '/<img\b[^>]*>/i',
+            function (array $matches) use ($contentRecordUid): string {
+                if (preg_match('/\bsrc\s*=\s*(["\'])(?<src>.*?)\1/is', $matches[0], $source) !== 1) {
+                    return '';
+                }
 
-        $filePath = sprintf(
-            '%s/%s/%s.%s',
-            $this->getTargetDirectory($contentRecordUid),
-            trim($pathParts['path'], '/'),
-            $pathParts['filebody'],
-            $pathParts['fileext']
+                $cachedImage = $this->resourceCache->cache(html_entity_decode($source['src']), $contentRecordUid);
+
+                return $cachedImage === null ? '' : '<img src="' . htmlspecialchars($cachedImage) . '" alt="">';
+            },
+            $comment,
         );
-
-        if (!file_exists($filePath)) {
-            try {
-                $response = $this->requestFactory->request($resource);
-                $content = $response->getBody()->getContents();
-
-                GeneralUtility::mkdir_deep(dirname($filePath));
-                GeneralUtility::writeFile($filePath, $content);
-            } catch (TransferException) {
-                $content = '';
-            }
-
-            GeneralUtility::writeFile($filePath, $content);
-        }
-
-        return PathUtility::getAbsoluteWebPath($filePath);
     }
 
-    protected function getCreationText(int $creationTime): string
+    /**
+     * Only http(s) links are allowed. Everything else (javascript:, data:, ...) will be removed.
+     */
+    private function getHttpUrl(mixed $url): string
+    {
+        if (!is_string($url)) {
+            return '';
+        }
+
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+
+        return is_string($scheme) && in_array(strtolower($scheme), ['http', 'https'], true) ? $url : '';
+    }
+
+    private function getCreationText(int $creationTime): string
     {
         $currentTimestamp = (int)date('U');
         $diffInSeconds = $currentTimestamp - $creationTime;
@@ -324,32 +267,32 @@ readonly class WallsService
         $dateInterval = $currentDate->diff($creationDate);
 
         if ($diffInSeconds <= 60) {
-            return LocalizationUtility::translate(
+            return (string)LocalizationUtility::translate(
                 'creationTime.seconds',
-                'walls_io_proxy'
+                'walls_io_proxy',
             );
         }
 
         if ($diffInSeconds <= 3600) {
-            return LocalizationUtility::translate(
+            return (string)LocalizationUtility::translate(
                 'creationTime.minutes',
                 'walls_io_proxy',
-                [$dateInterval->format('%i')]
+                [$dateInterval->format('%i')],
             );
         }
 
         if ($diffInSeconds <= 86400) {
-            return LocalizationUtility::translate(
+            return (string)LocalizationUtility::translate(
                 'creationTime.hours',
                 'walls_io_proxy',
-                [$dateInterval->format('%h')]
+                [$dateInterval->format('%h')],
             );
         }
 
-        return LocalizationUtility::translate(
+        return (string)LocalizationUtility::translate(
             'creationTime.date',
             'walls_io_proxy',
-            [$creationDate->format('d.m.Y H:i')]
+            [$creationDate->format('d.m.Y H:i')],
         );
     }
 }

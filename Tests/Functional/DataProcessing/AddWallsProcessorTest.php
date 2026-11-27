@@ -11,13 +11,22 @@ declare(strict_types=1);
 
 namespace JWeiland\WallsIoProxy\Tests\Functional\DataProcessing;
 
-use JWeiland\WallsIoProxy\Configuration\PluginConfiguration;
+use GuzzleHttp\Psr7\Response;
+use JWeiland\WallsIoProxy\Client\WallsIoClient;
 use JWeiland\WallsIoProxy\DataProcessing\AddWallsProcessor;
+use JWeiland\WallsIoProxy\Factory\WallsIoRequestFactory;
+use JWeiland\WallsIoProxy\Html\CommentSanitizerBuilder;
+use JWeiland\WallsIoProxy\Service\CommentSanitizer;
+use JWeiland\WallsIoProxy\Service\ExternalResourceCache;
 use JWeiland\WallsIoProxy\Service\WallsService;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\NullLogger;
+use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\ServerRequest;
-use TYPO3\CMS\Core\Service\FlexFormService;
+use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
@@ -27,24 +36,21 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class AddWallsProcessorTest extends FunctionalTestCase
 {
-    protected AddWallsProcessor $subject;
+    private AddWallsProcessor $subject;
+
+    private RequestFactory&MockObject $requestFactoryMock;
+
+    private ContentObjectRenderer&MockObject $contentObjectRendererMock;
 
     /**
-     * @var WallsService|MockObject
+     * @var list<string>
      */
-    protected $wallsServiceMock;
+    private array $requestedUris = [];
 
     /**
-     * @var ServerRequest|MockObject|(ServerRequest&MockObject)
+     * @var array<string, mixed>
      */
-    protected $requestMock;
-
-    protected FlexFormService $flexFormService;
-
-    /**
-     * @var ContentObjectRenderer|MockObject
-     */
-    protected $contentObjectRendererMock;
+    private array $wallsIoResponse = ['status' => 'success', 'data' => []];
 
     protected array $testExtensionsToLoad = [
         'jweiland/walls-io-proxy',
@@ -54,15 +60,31 @@ class AddWallsProcessorTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->requestMock = $this->createMock(ServerRequest::class);
-        $this->wallsServiceMock = $this->createMock(WallsService::class);
-        $this->flexFormService = new FlexFormService();
-        $this->contentObjectRendererMock = $this->createMock(ContentObjectRenderer::class);
+        $this->requestFactoryMock = $this->createMock(RequestFactory::class);
+        $this->requestFactoryMock
+            ->method('request')
+            ->willReturnCallback(function (string $uri): Response {
+                $this->requestedUris[] = $uri;
 
+                return new Response(200, [], json_encode($this->wallsIoResponse, JSON_THROW_ON_ERROR));
+            });
+
+        $this->contentObjectRendererMock = $this->createMock(ContentObjectRenderer::class);
+        $this->contentObjectRendererMock
+            ->method('getRequest')
+            ->willReturn(new ServerRequest('https://www.example.com/'));
+
+        $logger = new NullLogger();
         $this->subject = new AddWallsProcessor(
-            $this->wallsServiceMock,
-            $this->flexFormService,
-            $this->requestMock
+            new WallsService(
+                $this->get(Registry::class),
+                new WallsIoClient($this->requestFactoryMock, $logger),
+                new WallsIoRequestFactory($this->get(Context::class)),
+                new ExternalResourceCache($this->requestFactoryMock, $logger),
+                new CommentSanitizer(new CommentSanitizerBuilder()),
+                $logger,
+            ),
+            $this->get(FlexFormTools::class),
         );
     }
 
@@ -70,34 +92,44 @@ class AddWallsProcessorTest extends FunctionalTestCase
     {
         unset(
             $this->subject,
-            $this->wallsServiceMock,
-            $this->flexFormService
+            $this->requestFactoryMock,
+            $this->contentObjectRendererMock,
+            $this->requestedUris,
         );
 
         parent::tearDown();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    private function getProcessedDataWithValidFlexForm(): array
+    {
+        return [
+            'data' => [
+                'uid' => 1,
+                'pi_flexform' => file_get_contents(GeneralUtility::getFileAbsFileName(
+                    'EXT:walls_io_proxy/Tests/Functional/Fixtures/FlexForm.xml',
+                )),
+            ],
+        ];
+    }
+
     #[Test]
-    public function processWithValidTypoScriptConditionWillNotModifyProcessedData(): void
+    public function processWithFailedTypoScriptConditionWillNotModifyProcessedData(): void
     {
         $processedData = [];
         $processorConfiguration = [
             'if.' => [
                 'value' => '1',
-                'equals' => '1',
+                'equals' => '2',
             ],
         ];
 
         $this->contentObjectRendererMock
-            ->expects(self::atLeastOnce())
+            ->expects($this->atLeastOnce())
             ->method('checkIf')
             ->with($processorConfiguration['if.']);
-
-        $this->wallsServiceMock
-            ->expects(self::never())
-            ->method('getWallPosts')
-            ->with(self::isInstanceOf(PluginConfiguration::class))
-            ->willReturn([]);
 
         self::assertSame(
             $processedData,
@@ -105,22 +137,15 @@ class AddWallsProcessorTest extends FunctionalTestCase
                 $this->contentObjectRendererMock,
                 [],
                 $processorConfiguration,
-                $processedData
-            )
+                $processedData,
+            ),
         );
+        self::assertSame([], $this->requestedUris);
     }
 
     #[Test]
-    public function processWithNonPiFlexformWillAddEmptyConfVariable(): void
+    public function processWithNonPiFlexformWillAddEmptyConfVariableAndNoWalls(): void
     {
-        $processedData = [];
-
-        $this->wallsServiceMock
-            ->expects(self::once())
-            ->method('getWallPosts')
-            ->with(self::isInstanceOf(PluginConfiguration::class))
-            ->willReturn([]);
-
         self::assertSame(
             [
                 'conf' => [],
@@ -130,36 +155,26 @@ class AddWallsProcessorTest extends FunctionalTestCase
                 $this->contentObjectRendererMock,
                 [],
                 [],
-                $processedData
-            )
+                [],
+            ),
         );
+        self::assertSame([], $this->requestedUris);
     }
 
     #[Test]
     public function processWithValidPiFlexformWillAddConfVariable(): void
     {
-        $processedData = [
-            'data' => [
-                'pi_flexform' => file_get_contents(GeneralUtility::getFileAbsFileName(
-                    'EXT:walls_io_proxy/Tests/Functional/Fixtures/FlexForm.xml'
-                )),
-            ],
-        ];
+        $processedData = $this->getProcessedDataWithValidFlexForm();
 
         $expectedProcessedData = $processedData;
         $expectedProcessedData['conf'] = [
             'accessToken' => 'ABC123',
+            'requestType' => 'posts',
             'entriesToLoad' => '24',
             'entriesToShow' => '8',
             'showWallsSince' => '365',
         ];
         $expectedProcessedData['walls'] = [];
-
-        $this->wallsServiceMock
-            ->expects(self::once())
-            ->method('getWallPosts')
-            ->with(self::callback(fn(PluginConfiguration $config) => $config->getAccessToken() === 'ABC123'))
-            ->willReturn([]);
 
         self::assertSame(
             $expectedProcessedData,
@@ -167,28 +182,30 @@ class AddWallsProcessorTest extends FunctionalTestCase
                 $this->contentObjectRendererMock,
                 [],
                 [],
-                $processedData
-            )
+                $processedData,
+            ),
         );
     }
 
     #[Test]
-    public function processWillCallGetWallPostsWithPluginConfiguration(): void
+    public function processRequestsWallsWithPluginConfigurationOfFlexForm(): void
     {
-        $processedData = [
-            'data' => [
-                'uid' => 1,
-            ],
-        ];
+        $this->subject->process(
+            $this->contentObjectRendererMock,
+            [],
+            [],
+            $this->getProcessedDataWithValidFlexForm(),
+        );
 
-        $this->wallsServiceMock
-            ->expects(self::once())
-            ->method('getWallPosts')
-            ->with(
-                self::callback(fn(PluginConfiguration $pluginConfiguration) => $pluginConfiguration->getRecordUid() === 1)
-            )
-            ->willReturn([]);
+        self::assertCount(1, $this->requestedUris);
+        self::assertStringStartsWith('https://api.walls.io/v1/posts?', $this->requestedUris[0]);
+        self::assertStringContainsString('access_token=ABC123', $this->requestedUris[0]);
+        self::assertStringContainsString('limit=24', $this->requestedUris[0]);
+    }
 
+    #[Test]
+    public function processWithRecordWithoutConfigurationWillNotRequestWalls(): void
+    {
         self::assertSame(
             [
                 'data' => [
@@ -201,49 +218,33 @@ class AddWallsProcessorTest extends FunctionalTestCase
                 $this->contentObjectRendererMock,
                 [],
                 [],
-                $processedData
-            )
+                ['data' => ['uid' => 1]],
+            ),
         );
+        self::assertSame([], $this->requestedUris);
     }
 
     #[Test]
     public function processAddsWallsToProcessedData(): void
     {
-        $processedData = [
-            'data' => [
-                'uid' => 1,
-                'pi_flexform' => '',
-            ],
+        $this->wallsIoResponse['data'] = [
+            ['id' => '1', 'type' => 'facebook'],
+            ['id' => '2', 'type' => 'twitter'],
         ];
 
-        $walls = [
-            0 => 'Test',
-            1 => [
-                'key' => 'value',
-            ],
-        ];
-
-        $this->wallsServiceMock
-            ->expects(self::once())
-            ->method('getWallPosts')
-            ->with(self::isInstanceOf(PluginConfiguration::class))
-            ->willReturn($walls);
+        $processedData = $this->subject->process(
+            $this->contentObjectRendererMock,
+            [],
+            [],
+            $this->getProcessedDataWithValidFlexForm(),
+        );
 
         self::assertSame(
             [
-                'data' => [
-                    'uid' => 1,
-                    'pi_flexform' => '',
-                ],
-                'conf' => [],
-                'walls' => $walls,
+                1 => ['id' => '1', 'type' => 'facebook'],
+                2 => ['id' => '2', 'type' => 'twitter'],
             ],
-            $this->subject->process(
-                $this->contentObjectRendererMock,
-                [],
-                [],
-                $processedData
-            )
+            $processedData['walls'],
         );
     }
 }

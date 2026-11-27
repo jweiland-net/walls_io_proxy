@@ -6,6 +6,9 @@
 				<field index="accessToken">
 					<value index="vDEF">ABC123</value>
 				</field>
+				<field index="requestType">
+					<value index="vDEF">posts</value>
+				</field>
 				<field index="entriesToLoad">
 					<value index="vDEF">24</value>
 				</field>

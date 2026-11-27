@@ -19,7 +19,7 @@ use TYPO3\CMS\Core\Utility\MathUtility;
  *
  * @link https://github.com/DieSocialisten/Walls.io-API-Docs/blob/master/endpoints/GET_posts-changed.md
  */
-class ChangedRequest extends AbstractRequest
+final class ChangedRequest extends AbstractRequest
 {
     protected string $path = '/v1/posts/changed';
 
@@ -90,7 +90,7 @@ class ChangedRequest extends AbstractRequest
     {
         $this->addParameter(
             'access_token',
-            $accessToken
+            $accessToken,
         );
     }
 
@@ -102,7 +102,7 @@ class ChangedRequest extends AbstractRequest
     {
         $this->addParameter(
             'since',
-            $since
+            $since,
         );
     }
 
@@ -115,7 +115,7 @@ class ChangedRequest extends AbstractRequest
     {
         $this->addParameter(
             'fields',
-            implode(',', array_intersect($this->allowedFields, $fields))
+            implode(',', array_intersect($this->allowedFields, $fields)),
         );
     }
 
@@ -126,7 +126,7 @@ class ChangedRequest extends AbstractRequest
     {
         $this->addParameter(
             'limit',
-            MathUtility::forceIntegerInRange($limit, 1, 1000)
+            MathUtility::forceIntegerInRange($limit, 1, 1000),
         );
     }
 
@@ -138,7 +138,7 @@ class ChangedRequest extends AbstractRequest
     {
         $this->addParameter(
             'include_inactive',
-            $includeInactive ? '1' : '0'
+            $includeInactive ? '1' : '0',
         );
     }
 }

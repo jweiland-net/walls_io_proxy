@@ -1,3 +1,6 @@
 "tt_content",,,,,,,,,,
 ,uid,pid,header,bodytext,CType,hidden,deleted,crdate,tstamp,sorting
 ,1,1,"Welcome to our website!","This is a sample content element.","text",0,0,1625254800,1625254800,128
+,2,1,"Walls","","wallsioproxy",0,0,1625254800,1625254800,256
+,3,1,"Hidden walls","","wallsioproxy",1,0,1625254800,1625254800,384
+,4,1,"Deleted walls","","wallsioproxy",0,1,1625254800,1625254800,512
